@@ -1,0 +1,2735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Strikebook — Bowling Score Tracker</title>
+
+<!-- Home-screen icon + PWA metadata -->
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<meta name="theme-color" content="#10141F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Strikebook">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bowlby+One+SC&family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#10141F;
+    --navy-2:#181E2E;
+    --cream:#F5EFE0;
+    --cream-dim:#D8D0BC;
+    --ink:#221B12;
+    --amber:#E39B2D;
+    --red:#DE4A2E;
+    --teal:#2E8FA3;
+    --line:rgba(34,27,18,.35);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%;height:100%}
+  body{
+    height:auto;
+    background:var(--navy);
+    color:var(--cream);
+    font-family:'Barlow Semi Condensed',system-ui,sans-serif;
+    display:flex;flex-direction:column;
+    max-width:520px;margin:0 auto;
+    min-height:100dvh;
+    background-image:
+      repeating-linear-gradient(115deg, transparent 0 84px, rgba(227,155,45,.045) 84px 92px);
+  }
+  header{
+    flex-shrink:0;
+    display:flex;align-items:baseline;justify-content:space-between;
+    padding:14px 16px 8px;
+  }
+  .wordmark{
+    font-family:'Bowlby One SC',cursive;
+    font-size:22px;letter-spacing:1px;color:var(--amber);
+    text-shadow:0 2px 0 rgba(0,0,0,.4);
+  }
+  .wordmark span{color:var(--cream)}
+  #newGame{
+    background:none;border:1.5px solid rgba(245,239,224,.35);color:var(--cream-dim);
+    font-family:inherit;font-weight:600;font-size:13px;letter-spacing:.5px;
+    padding:5px 12px;border-radius:999px;cursor:pointer;
+  }
+  #newGame:active{background:rgba(245,239,224,.12)}
+
+  /* Bowler tabs */
+  .tabs{flex-shrink:0;display:flex;gap:8px;padding:6px 16px 10px;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:0 0 auto;display:flex;align-items:center;gap:8px;
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.15);
+    color:var(--cream-dim);border-radius:10px;padding:7px 12px;
+    font-family:inherit;font-weight:600;font-size:14px;line-height:1.2;cursor:pointer;
+  }
+  .tab.active{border-color:var(--amber);color:var(--cream);background:#1E2436}
+  .tab .x{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:24px;height:24px;border-radius:50%;margin:-2px -4px -2px 2px;
+    background:rgba(222,74,46,.18);color:var(--red);
+    font-size:12px;font-weight:700;line-height:1;
+  }
+  .tab .tot{font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums}
+  .tab.addTab{border-style:dashed;color:var(--cream-dim)}
+
+  /* Scoresheet */
+  .sheetwrap{flex-shrink:0;padding:0 12px}
+  .sheet{
+    background:var(--cream);color:var(--ink);
+    border-radius:10px;padding:10px 10px 8px;
+    box-shadow:0 6px 18px rgba(0,0,0,.45), inset 0 0 0 1px rgba(34,27,18,.15);
+  }
+  .sheet .who{
+    display:flex;justify-content:space-between;align-items:baseline;
+    font-weight:700;font-size:15px;line-height:1.3;letter-spacing:.4px;text-transform:uppercase;
+    padding:0 2px 6px;margin-bottom:4px;
+  }
+  .sheet .who .status{font-size:12px;font-weight:600;color:#6E5B33;text-transform:none;letter-spacing:0}
+  .sheetScroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
+  .frames{
+    display:grid;grid-template-columns:repeat(9,minmax(30px,1fr)) minmax(48px,1.35fr);
+    min-width:318px;
+    border:2px solid var(--ink);border-radius:4px;overflow:hidden;background:var(--cream);
+  }
+  .frame{border-right:1.5px solid var(--line);display:flex;flex-direction:column}
+  .frame:last-child{border-right:none}
+  .frame .num{font-size:9px;font-weight:700;text-align:center;color:#6E5B33;padding-top:2px;letter-spacing:.5px}
+  .frame .balls{display:flex;justify-content:flex-end;height:24px}
+  .frame .ball{
+    width:16px;height:16px;margin-top:4px;margin-right:2px;
+    border:1.25px solid var(--line);font-size:11px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;
+    font-variant-numeric:tabular-nums;background:#fff;
+  }
+  .frame .ball.mark-x{color:var(--red)}
+  .frame .ball.mark-s{color:var(--teal)}
+  .frame .ball.mark-f{color:#fff;background:var(--red);border-color:var(--red)}
+  .frame .cum{
+    height:24px;display:flex;align-items:center;justify-content:center;
+    font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;
+    border-top:1.25px solid var(--line);
+  }
+  .frame.current{background:#FBE7C2}
+  .frame.current .num{color:var(--red)}
+
+  /* Status line */
+  .prompt{
+    text-align:center;padding:12px 16px 4px;
+    font-size:15px;font-weight:600;color:var(--cream-dim);min-height:40px;
+  }
+  .prompt b{color:var(--amber)}
+
+  /* Pin pad */
+  .pad{padding:8px 14px 6px;margin-top:auto}
+  .numgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .numgrid button{
+    font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:22px;
+    color:var(--cream);background:var(--navy-2);
+    border:1.5px solid rgba(245,239,224,.2);border-radius:12px;
+    height:56px;cursor:pointer;font-variant-numeric:tabular-nums;
+    transition:transform .05s;
+  }
+  .numgrid button:active{transform:scale(.94);background:#232B40}
+  .numgrid button:disabled{opacity:.22;pointer-events:none}
+  .bigrow{display:grid;grid-template-columns:2.2fr .8fr .8fr;gap:8px;margin-top:8px}
+  #foulBtn{
+    background:none;border:2px solid var(--red);color:var(--red);
+    border-radius:12px;font-family:'Bowlby One SC',cursive;font-size:20px;cursor:pointer;
+  }
+  #foulBtn:active{background:rgba(222,74,46,.2)}
+  #foulBtn:disabled{opacity:.25;pointer-events:none}
+  #specialBtn{
+    font-family:'Bowlby One SC',cursive;font-size:20px;letter-spacing:1px;
+    background:var(--red);color:var(--cream);border:none;border-radius:12px;
+    height:60px;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.4);
+  }
+  #specialBtn.spare{background:var(--teal)}
+  #specialBtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.4)}
+  #specialBtn:disabled{opacity:.25;pointer-events:none;box-shadow:none}
+  #undoBtn{
+    background:none;border:1.5px solid rgba(245,239,224,.3);color:var(--cream-dim);
+    border-radius:12px;font-family:inherit;font-weight:700;font-size:15px;cursor:pointer;
+  }
+  #undoBtn:active{background:rgba(245,239,224,.1)}
+
+  /* Announcer booth */
+  .booth{
+    margin:10px 16px 0;padding:9px 12px;border-radius:10px;
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.14);
+    display:flex;align-items:center;gap:10px;min-height:44px;
+  }
+  .onair{
+    flex:0 0 auto;display:flex;align-items:center;gap:6px;
+    font-size:10px;font-weight:700;letter-spacing:1.5px;color:var(--red);
+    border:1.25px solid rgba(222,74,46,.6);border-radius:6px;padding:3px 7px;
+  }
+  .onair i{width:6px;height:6px;border-radius:50%;background:var(--red);animation:blink 1.6s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  #callText{font-size:13.5px;font-weight:500;font-style:italic;color:var(--cream-dim);line-height:1.25}
+  #callText.fresh{animation:callIn .35s ease}
+  @keyframes callIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  /* Share */
+  .actions{padding:8px 14px calc(14px + env(safe-area-inset-bottom))}
+  /* Start screen + SOP */
+  #startView{z-index:69}
+  #introView{z-index:80;display:none}
+  #introView.open{display:block}
+  .introInner{
+    max-width:520px;margin:0 auto;min-height:100%;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:32px 28px;text-align:center;gap:18px;
+  }
+  .introOnair{font-size:11px;padding:4px 9px}
+  .introQuote{
+    font-family:'Bowlby One SC',cursive;font-size:22px;line-height:1.4;color:var(--cream);
+    text-shadow:0 2px 0 rgba(0,0,0,.4);
+  }
+  .introQuote b{color:var(--amber)}
+  .introSub{font-size:13.5px;color:var(--cream-dim);font-style:italic}
+  .introBar{width:180px;height:4px;background:rgba(245,239,224,.15);border-radius:2px;overflow:hidden;margin-top:4px}
+  .introBar i{display:block;height:100%;width:0%;background:var(--amber);border-radius:2px}
+  .introBar i.run{transition:width 10s linear;width:100%}
+  .introSkip{
+    margin-top:8px;background:none;border:1.5px solid rgba(245,239,224,.3);color:var(--cream-dim);
+    border-radius:999px;padding:6px 16px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;
+  }
+  #sopView{z-index:72}
+  .startHero{text-align:center;padding:26px 0 18px}
+  .startTag{font-size:13px;color:var(--cream-dim);letter-spacing:2px;margin-top:4px;text-transform:uppercase}
+  .rosterChips{display:flex;flex-wrap:wrap;gap:8px;min-height:38px}
+  .rchip{
+    display:flex;align-items:center;gap:7px;
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.25);color:var(--cream-dim);
+    border-radius:999px;padding:8px 14px;font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;
+  }
+  .rchip.sel{border-color:var(--amber);color:var(--cream);background:#241f14}
+  .rchip.sel::before{content:'✓';color:var(--amber);font-weight:700}
+  .addRow{display:flex;gap:8px;margin-top:10px}
+  .addRow input, .eventInput{
+    flex:1;width:100%;background:var(--navy-2);border:1.5px solid rgba(245,239,224,.25);border-radius:10px;
+    color:var(--cream);font-family:inherit;font-size:15px;font-weight:600;padding:10px 12px;outline:none;
+  }
+  .addRow input:focus, .eventInput:focus{border-color:var(--amber)}
+  .addRow button{
+    width:48px;background:var(--navy-2);border:1.5px solid rgba(245,239,224,.3);color:var(--amber);
+    border-radius:10px;font-size:20px;font-weight:700;cursor:pointer;
+  }
+  #startBowlBtn{
+    width:100%;height:56px;margin-top:18px;border:none;border-radius:12px;cursor:pointer;
+    font-family:'Bowlby One SC',cursive;font-size:17px;letter-spacing:.5px;
+    background:var(--amber);color:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.45);
+  }
+  #startBowlBtn:disabled{opacity:.35;box-shadow:none;pointer-events:none}
+  #startBowlBtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.45)}
+  .startAlt{display:flex;gap:8px;margin-top:10px}
+  .startAlt button{
+    flex:1;height:46px;background:none;border:1.5px solid rgba(245,239,224,.3);color:var(--cream-dim);
+    border-radius:10px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;
+  }
+  .startCloseBtn{
+    width:100%;height:42px;margin-top:14px;background:none;border:none;color:var(--cream-dim);
+    font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;text-decoration:underline;
+  }
+  .appVersion{
+    text-align:center;font-size:11px;color:var(--cream-dim);opacity:.55;
+    letter-spacing:.5px;margin-top:10px;font-variant-numeric:tabular-nums;
+  }
+  .backupStatus{
+    display:flex;align-items:center;gap:9px;width:100%;margin-top:10px;padding:10px 13px;border-radius:10px;
+    font-family:inherit;font-size:12.5px;font-weight:600;text-align:left;cursor:pointer;line-height:1.35;
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.15);color:var(--cream-dim);
+  }
+  .backupStatus .dot{width:8px;height:8px;border-radius:50%;flex:none;background:#8a8878}
+  .backupStatus.on{border-color:rgba(93,202,165,.4)}
+  .backupStatus.on .dot{background:#5DCAA5}
+  .backupStatus.off{border-color:rgba(222,74,46,.4)}
+  .backupStatus.off .dot{background:#DE4A2E}
+  .backupStatus.needs-permission{border-color:rgba(227,155,45,.5)}
+  .backupStatus.needs-permission .dot{background:#E39B2D}
+  .backupStatus.unsupported{opacity:.7}
+  .backupStatus.unsupported .dot{background:#5a5f70}
+  .bkXBtn{background:none;border:none;color:var(--cream-dim);font-size:15px;cursor:pointer;padding:2px}
+  .bkTxt{font-size:13.5px;color:var(--cream-dim);line-height:1.5;margin-bottom:10px}
+  .bkTxt b{color:var(--cream)}
+  .bkMeta{font-size:11.5px;color:var(--cream-dim);opacity:.75;margin:-4px 0 10px}
+  #confirmDlg{z-index:95}
+  .sop h4{
+    font-family:'Bowlby One SC',cursive;font-size:13px;color:var(--amber);
+    letter-spacing:.5px;margin:18px 0 6px;
+  }
+  .sop p{font-size:13.5px;color:var(--cream-dim);line-height:1.55}
+  .sop p b{color:var(--cream)}
+  .sop p i{color:var(--cream)}
+  .hdrBtn{
+    background:none;border:1.5px solid rgba(227,155,45,.6);color:var(--amber);
+    font-family:inherit;font-weight:600;font-size:13px;letter-spacing:.5px;
+    padding:5px 12px;border-radius:999px;cursor:pointer;
+  }
+  #finishBtn{
+    display:none;width:100%;height:52px;margin-bottom:8px;border:none;border-radius:12px;cursor:pointer;
+    font-family:'Bowlby One SC',cursive;font-size:14px;letter-spacing:.4px;
+    background:none;color:var(--teal);border:2px solid var(--teal);
+  }
+  #finishBtn.show{display:block}
+  #finishBtn:active{background:rgba(46,143,163,.15)}
+  .histTabs{display:flex;gap:8px;margin-bottom:12px}
+  .histTabs button{
+    background:none;border:1.5px solid rgba(245,239,224,.3);color:var(--cream-dim);
+    border-radius:999px;padding:6px 16px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;
+  }
+  .histTabs button.on{border-color:var(--amber);color:var(--amber)}
+  .bCard{
+    width:100%;text-align:left;background:var(--navy-2);border:1.5px solid rgba(245,239,224,.12);
+    border-radius:10px;padding:11px 13px;margin-bottom:8px;cursor:pointer;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    font-family:inherit;color:var(--cream);
+  }
+  .bCard .bn{font-weight:700;font-size:16px}
+  .bCard .bs{font-size:12px;color:var(--cream-dim);margin-top:2px}
+  .bCard .avg{text-align:right}
+  .bCard .avg .n{font-family:'Bowlby One SC',cursive;font-size:20px;color:var(--amber)}
+  .bCard .avg .l{font-size:10px;color:var(--cream-dim);letter-spacing:1px}
+  .sessRow{
+    width:100%;text-align:left;background:var(--navy-2);border:1.5px solid rgba(245,239,224,.12);
+    border-radius:10px;padding:10px 13px;margin-bottom:7px;cursor:pointer;
+    font-family:inherit;color:var(--cream);
+  }
+  .sessRow .st{font-weight:700;font-size:14px}
+  .sessRow .sd{font-size:12px;color:var(--cream-dim);margin-top:2px}
+  .backupRow{display:flex;gap:8px;margin-top:16px}
+  .backupRow button{
+    flex:1;height:44px;background:var(--navy-2);border:1.5px solid rgba(245,239,224,.25);
+    color:var(--cream);border-radius:10px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;
+  }
+  .histBack{
+    background:none;border:1.5px solid rgba(245,239,224,.3);color:var(--cream-dim);
+    border-radius:999px;padding:5px 14px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;margin-bottom:12px;
+  }
+  .scopeSeg{display:flex;gap:6px;margin:0 0 14px}
+  .scopeSeg button{
+    flex:1;background:var(--navy-2);border:1.5px solid rgba(245,239,224,.2);color:var(--cream-dim);
+    border-radius:8px;padding:7px 0;font-family:inherit;font-weight:600;font-size:12px;cursor:pointer;
+  }
+  .scopeSeg button.on{border-color:var(--amber);color:var(--amber)}
+  .mchips{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:16px}
+  .mchip{background:var(--navy-2);border:1.5px solid rgba(245,239,224,.12);border-radius:9px;padding:8px 4px;text-align:center}
+  .mchip .k{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--cream-dim);opacity:.75}
+  .mchip .v{font-family:'Bowlby One SC',cursive;font-size:17px;color:var(--cream);margin-top:2px}
+  .anaHead{font-size:11px;font-weight:700;letter-spacing:1.4px;color:var(--cream-dim);opacity:.8;margin:18px 0 8px}
+  .anaHead.red{color:var(--red);opacity:1}
+  .anaHead.green{color:#5DCAA5;opacity:1}
+  .ledgerRow{
+    display:flex;align-items:center;gap:10px;background:var(--navy-2);
+    border:1.5px solid rgba(245,239,224,.1);border-radius:9px;padding:8px 11px;margin-bottom:6px;
+  }
+  .ledgerRow .lr{flex:1;min-width:0}
+  .ledgerRow .lt{display:flex;justify-content:space-between;font-size:13px}
+  .ledgerRow .lt .nm{color:var(--cream);font-weight:600}
+  .ledgerRow .lt .pc{font-weight:700}
+  .ledgerRow .bar{height:4px;background:rgba(245,239,224,.12);border-radius:2px;margin-top:5px}
+  .ledgerRow .bar i{display:block;height:4px;border-radius:2px}
+  .drillRow{
+    display:flex;justify-content:space-between;background:var(--navy-2);
+    border:1.5px solid rgba(245,239,224,.1);border-radius:9px;padding:9px 12px;margin-bottom:6px;font-size:13px;
+  }
+  .drillRow .dn{color:var(--cream);font-weight:600}
+  .drillRow .dc{color:var(--red);font-weight:600}
+  .heatWrap{background:var(--navy-2);border:1.5px solid rgba(245,239,224,.12);border-radius:12px;padding:14px;margin-bottom:8px}
+  .heatWrap svg{width:180px;display:block;margin:0 auto}
+  .heatLegend{display:flex;justify-content:center;gap:14px;margin-top:8px;font-size:11px;color:var(--cream-dim)}
+  .heatLegend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+  .noData{
+    background:rgba(227,155,45,.08);border-left:3px solid var(--amber);
+    padding:11px 13px;font-size:13px;color:var(--cream-dim);line-height:1.4;
+  }
+
+  /* Series recap */
+  .recap{
+    position:fixed;inset:0;z-index:70;background:var(--navy);
+    display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    background-image:repeating-linear-gradient(115deg, transparent 0 84px, rgba(227,155,45,.045) 84px 92px);
+  }
+  .recap.open{display:block}
+  .recapInner{max-width:520px;margin:0 auto;padding:16px 14px calc(24px + env(safe-area-inset-bottom))}
+  .recapHead{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+  .recapTitle{font-family:'Bowlby One SC',cursive;font-size:20px;color:var(--amber);letter-spacing:.5px}
+  .recapWho{font-size:14px;font-weight:600;color:var(--cream-dim);margin-top:2px}
+  .recapWho b{color:var(--amber)}
+  .eventEdit{
+    background:none;border:1px solid rgba(245,239,224,.3);color:var(--cream-dim);
+    border-radius:999px;padding:2px 8px;font-family:inherit;font-weight:600;font-size:11px;
+    cursor:pointer;margin-left:4px;vertical-align:1px;
+  }
+  #recapClose{
+    background:none;border:1.5px solid rgba(245,239,224,.3);color:var(--cream-dim);
+    border-radius:999px;padding:6px 12px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;
+  }
+  .gameCard{
+    background:var(--cream);color:var(--ink);border-radius:10px;padding:8px 10px 9px;margin-bottom:10px;
+    box-shadow:0 4px 12px rgba(0,0,0,.35);
+  }
+  .gameCard .gh{display:flex;justify-content:space-between;align-items:baseline;padding:0 2px 5px}
+  .gameCard .gh b{font-size:13px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+  .gameCard .gh .gt{font-family:'Bowlby One SC',cursive;font-size:20px;color:var(--red)}
+  .gameCard .gh .gt.best{color:#1E8A3C}
+  .gameCard.noframes{padding:12px;font-size:13px;font-weight:600;color:#6E5B33;text-align:center}
+  .recapStats{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;
+  }
+  .stat{
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.14);
+    border-radius:10px;padding:9px 6px;text-align:center;
+  }
+  .stat .k{font-size:9.5px;font-weight:700;letter-spacing:1px;color:var(--cream-dim);opacity:.75}
+  .stat .v{font-family:'Bowlby One SC',cursive;font-size:22px;color:var(--cream);margin-top:3px}
+  .stat.hero{grid-column:span 3;background:var(--amber);border-color:var(--amber)}
+  .stat.hero .k{color:rgba(34,27,18,.7);opacity:1;font-size:11px}
+  .stat.hero .v{color:var(--ink);font-size:44px}
+  .recapCall{
+    margin-top:12px;padding:11px 13px;border-radius:10px;
+    background:rgba(227,155,45,.1);border-left:3px solid var(--amber);
+    font-size:14px;font-style:italic;font-weight:500;color:var(--cream);line-height:1.35;
+  }
+  .recapStandings{margin-top:14px}
+  .recapStandings .sh{font-size:10px;font-weight:700;letter-spacing:1.4px;color:var(--cream-dim);opacity:.7;margin-bottom:6px}
+  .standRow{
+    display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.12);margin-bottom:6px;
+  }
+  .standRow .pos{font-family:'Bowlby One SC',cursive;font-size:14px;color:var(--cream-dim);width:22px}
+  .standRow.win .pos,.standRow.win .nm{color:var(--amber)}
+  .standRow .nm{flex:1;font-weight:600;font-size:15px;color:var(--cream)}
+  .standRow .gs{font-size:12px;color:var(--cream-dim);font-variant-numeric:tabular-nums}
+  .standRow .sr{font-weight:700;font-size:17px;color:var(--cream);font-variant-numeric:tabular-nums;min-width:46px;text-align:right}
+  #recapBtn{
+    display:none;width:100%;height:52px;margin-bottom:8px;border:none;border-radius:12px;cursor:pointer;
+    font-family:'Bowlby One SC',cursive;font-size:15px;letter-spacing:.4px;
+    background:none;color:var(--amber);border:2px solid var(--amber);
+  }
+  #recapBtn.show{display:block}
+  #recapBtn:active{background:rgba(227,155,45,.15)}
+  #nextGameBtn{
+    display:none;width:100%;height:52px;margin-bottom:8px;border:none;border-radius:12px;cursor:pointer;
+    font-family:'Bowlby One SC',cursive;font-size:15px;letter-spacing:.4px;
+    background:var(--amber);color:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.45);
+  }
+  #nextGameBtn.show{display:block}
+  #nextGameBtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.45)}
+  .maxLine{
+    margin-top:8px;padding:6px 10px;border-radius:6px;
+    background:rgba(34,27,18,.06);border:1.25px dashed rgba(34,27,18,.3);
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .maxLine span:first-child{font-size:11px;font-weight:700;letter-spacing:1.2px;color:#6E5B33}
+  .maxLine .mx{font-size:19px;font-weight:700;color:var(--red);font-variant-numeric:tabular-nums}
+  .maxLine.finalState{background:#FBE7C2;border-style:solid}
+  .maxLine.finalState .mx{color:var(--ink)}
+  .maxLine.perfectAlive .mx{color:#1E8A3C}
+  .sessionLine{
+    padding:6px 2px 0;font-size:12px;font-weight:600;color:#6E5B33;
+    display:none;justify-content:space-between;align-items:baseline;
+  }
+  .sessionLine .series{font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+  .shareRow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .shareRow button{
+    height:54px;border:none;border-radius:12px;cursor:pointer;
+    font-family:'Bowlby One SC',cursive;font-size:14px;letter-spacing:.4px;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    box-shadow:0 3px 0 rgba(0,0,0,.45);
+  }
+  .shareRow button:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.45)}
+  #shareBtn{background:#FFFC00;color:#000}
+  #fbBtn{background:#1877F2;color:#fff}
+  .shareRow button.pulse{animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 3px 0 rgba(0,0,0,.45),0 0 0 0 rgba(255,255,255,.35)}50%{box-shadow:0 3px 0 rgba(0,0,0,.45),0 0 0 10px rgba(255,255,255,0)}}
+  .ghosthint{font-size:12px;color:var(--cream-dim);text-align:center;padding-top:6px;opacity:.7}
+
+  /* Toast */
+  #toast{
+    position:fixed;left:50%;top:34%;transform:translate(-50%,-50%) scale(.6) rotate(-4deg);
+    font-family:'Bowlby One SC',cursive;font-size:52px;color:var(--red);
+    text-shadow:0 3px 0 rgba(0,0,0,.5), 0 0 30px rgba(222,74,46,.5);
+    opacity:0;pointer-events:none;z-index:50;white-space:nowrap;
+  }
+  #toast.show{animation:pop .9s ease forwards}
+  #toast.tealTone{color:var(--teal);text-shadow:0 3px 0 rgba(0,0,0,.5), 0 0 30px rgba(46,143,163,.5)}
+  @keyframes pop{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.5) rotate(-6deg)}
+    18%{opacity:1;transform:translate(-50%,-50%) scale(1.08) rotate(2deg)}
+    30%{transform:translate(-50%,-50%) scale(1) rotate(0deg)}
+    78%{opacity:1}
+    100%{opacity:0;transform:translate(-50%,-52%) scale(1) }
+  }
+
+  /* Name modal */
+  .modal{position:fixed;inset:0;background:rgba(10,12,20,.75);display:none;align-items:center;justify-content:center;z-index:90;padding:24px}
+  .modal.open{display:flex}
+  .modal .card{background:var(--navy-2);border:1.5px solid rgba(245,239,224,.2);border-radius:14px;padding:20px;width:100%;max-width:320px}
+  .modal h3{font-family:'Bowlby One SC',cursive;font-size:16px;color:var(--amber);margin-bottom:12px;letter-spacing:.5px}
+  .modal input{
+    width:100%;background:var(--navy);border:1.5px solid rgba(245,239,224,.25);border-radius:10px;
+    color:var(--cream);font-family:inherit;font-size:17px;font-weight:600;padding:10px 12px;outline:none;
+  }
+  .modal input:focus{border-color:var(--amber)}
+  .modal .btns{display:flex;gap:8px;margin-top:14px}
+  .modal .btns button{flex:1;height:44px;border-radius:10px;font-family:inherit;font-weight:700;font-size:15px;cursor:pointer}
+  .modal .ok{background:var(--amber);color:var(--ink);border:none}
+  .modal .cancel{background:none;color:var(--cream-dim);border:1.5px solid rgba(245,239,224,.3)}
+  .modal .ok.danger{background:var(--red);color:var(--cream)}
+  .confirmMsg{font-size:15px;font-weight:500;color:var(--cream-dim);line-height:1.4}
+  .removeBtn{
+    display:none;width:100%;margin-top:10px;height:42px;border-radius:10px;cursor:pointer;
+    font-family:inherit;font-weight:700;font-size:14px;
+    background:none;color:var(--red);border:1.5px solid rgba(222,74,46,.55);
+  }
+  .removeBtn:active{background:rgba(222,74,46,.15)}
+  .removeBtn.show{display:block}
+
+  /* Pin rack entry */
+  .modeRow{display:flex;justify-content:center;margin-bottom:8px}
+  .seg{display:inline-flex;background:var(--navy-2);border:1.5px solid rgba(245,239,224,.18);border-radius:999px;padding:3px;gap:2px}
+  .seg button{
+    border:none;background:none;color:var(--cream-dim);font-family:inherit;font-weight:700;
+    font-size:12.5px;padding:5px 13px;border-radius:999px;cursor:pointer;letter-spacing:.3px;
+  }
+  .seg button.on{background:var(--amber);color:var(--ink)}
+  .pinstage{display:none}
+  .pinstage.show{display:block}
+  #rack{display:block;width:min(64vw,250px);margin:0 auto}
+  .pin circle{
+    fill:#F5EFE0;stroke:rgba(245,239,224,.9);stroke-width:2;cursor:pointer;
+    transition:fill .1s, opacity .1s;
+  }
+  .pin text{font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:9px;fill:var(--ink);pointer-events:none}
+  .pin.down circle{fill:transparent;stroke:rgba(245,239,224,.25);stroke-dasharray:3 2}
+  .pin.down text{fill:rgba(245,239,224,.3)}
+  .pin.locked circle{cursor:default;opacity:.18;stroke-dasharray:none}
+  .pin.locked text{opacity:.15}
+  .pinhint{text-align:center;font-size:12px;font-weight:600;color:var(--cream-dim);padding:5px 0 2px;min-height:20px}
+  .pinhint b{color:var(--red)}
+  .numgrid.hide{display:none}
+  /* booth mini diagram */
+  #boothRack{width:74px;flex:0 0 auto;margin-left:auto}
+  .bpin{stroke-width:2}
+  .bpin.st-c1{fill:transparent;stroke:rgba(245,239,224,.18)}
+  .bpin.st-conv{fill:var(--teal);stroke:var(--teal)}
+  .bpin.st-miss{fill:var(--red);stroke:var(--red)}
+  .bpin.st-un{fill:transparent;stroke:var(--red);stroke-dasharray:3 2}
+  /* per-frame leave diagrams under recap sheets (cream background) */
+  .pinsRow{border:none !important;margin-top:3px;background:transparent !important}
+  .pinsRow .frame.pf{border-right:none;align-items:center;justify-content:center;min-height:24px;padding:1px 2px}
+  .pinsRow svg{width:100%;max-width:34px;height:24px;display:block;margin:0 auto}
+  .gameCard .bpin{stroke-width:6}
+  .gameCard .bpin.st-c1{fill:transparent;stroke:rgba(34,27,18,.14)}
+  .gameCard .bpin.st-conv{fill:var(--teal);stroke:var(--teal)}
+  .gameCard .bpin.st-miss{fill:var(--red);stroke:var(--red)}
+  .gameCard .bpin.st-un{fill:transparent;stroke:var(--red);stroke-dasharray:8 6}
+  /* save mode row */
+  .saveRow{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-top:12px;padding-top:10px;border-top:1px solid rgba(245,239,224,.1);
+  }
+  .saveRow>span{font-size:12px;font-weight:700;letter-spacing:.8px;color:var(--cream-dim);opacity:.8}
+  .saveRow .seg button{font-size:11.5px;padding:4px 10px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wordmark">STRIKE<span>BOOK</span></div>
+  <div style="display:flex;gap:8px">
+    <button id="historyBtn" class="hdrBtn">History</button>
+    <button id="newGame">Reset</button>
+  </div>
+</header>
+
+<div class="tabs" id="tabs"></div>
+
+<div class="sheetwrap">
+  <div class="sheet">
+    <div class="who"><span id="whoName">Bowler</span><span class="status" id="whoStatus"></span></div>
+    <div class="sheetScroll"><div class="frames" id="framesEl"></div></div>
+    <div class="maxLine" id="maxLine"></div>
+    <div class="sessionLine" id="sessionLine"></div>
+  </div>
+</div>
+
+<div class="booth">
+  <span class="onair"><i></i>ON AIR</span>
+  <span id="callText">Lace up — first ball of the game.</span>
+  <svg id="boothRack" viewBox="0 0 120 104" style="display:none"></svg>
+</div>
+
+<div class="prompt" id="promptEl"></div>
+
+<div class="pad">
+  <div class="modeRow">
+    <div class="seg" id="entrySeg">
+      <button data-mode="pins" class="on">🎳 Tap pins</button>
+      <button data-mode="nums">123 Count</button>
+    </div>
+  </div>
+  <div class="pinstage" id="pinstage">
+    <svg id="rack" viewBox="0 0 120 104"></svg>
+    <div class="pinhint" id="pinhint"></div>
+  </div>
+  <div class="numgrid" id="numgrid"></div>
+  <div class="bigrow">
+    <button id="specialBtn">STRIKE</button>
+    <button id="foulBtn">F</button>
+    <button id="undoBtn">↩</button>
+  </div>
+</div>
+
+<div class="actions">
+  <button id="recapBtn">📋 View series recap</button>
+  <button id="finishBtn">🏁 Finish session — save to history</button>
+  <button id="nextGameBtn">Start Game 2 — keep the session going</button>
+  <div class="shareRow">
+    <button id="shareBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#000"><path d="M12.06 2c2.6 0 4.7 1.9 4.86 4.6.03.5.02 1.2 0 1.85.3.16.74.1 1.13-.08.5-.24 1.2-.1 1.42.4.28.6-.1 1.06-.6 1.34-.5.3-1.3.5-1.44 1.06-.08.35.1.75.33 1.14.7 1.2 1.8 2.3 3.14 2.8.35.13.53.4.4.72-.25.6-1.3.9-2.1 1.06-.24.05-.4.15-.46.4-.05.2-.08.42-.15.62-.1.26-.3.36-.6.32-.5-.06-1.06-.2-1.7-.13-1.24.13-1.9 1.9-4.23 1.9s-3-1.77-4.24-1.9c-.63-.07-1.2.07-1.7.13-.3.04-.5-.06-.6-.32-.07-.2-.1-.43-.14-.62-.06-.25-.23-.35-.47-.4-.8-.15-1.85-.46-2.1-1.05-.13-.32.05-.6.4-.73 1.34-.5 2.45-1.6 3.14-2.8.23-.4.4-.8.33-1.14-.13-.57-.94-.77-1.44-1.06-.5-.28-.87-.75-.6-1.34.23-.5.93-.64 1.42-.4.4.18.84.24 1.13.08a26 26 0 0 1 0-1.85C7.36 3.9 9.46 2 12.06 2Z"/></svg>
+      Snapchat
+    </button>
+    <button id="fbBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>
+      FB Stories
+    </button>
+  </div>
+  <div class="ghosthint">Builds a story-size score card, then opens your share sheet — pick Snapchat or Facebook.</div>
+  <div class="saveRow">
+    <span>Session detail</span>
+    <div class="seg" id="saveSeg">
+      <button data-save="ANALYTICS" class="on">Full analytics</button>
+      <button data-save="SUMMARY_ONLY">Summary only</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast">STRIKE!</div>
+
+<div class="modal" id="nameModal">
+  <div class="card">
+    <h3 id="modalTitle">Add bowler</h3>
+    <input id="nameInput" maxlength="14" placeholder="Name" autocomplete="off">
+    <div class="btns">
+      <button class="cancel" id="modalCancel">Cancel</button>
+      <button class="ok" id="modalOk">Add</button>
+    </div>
+    <button id="modalRemove" class="removeBtn">Remove bowler</button>
+  </div>
+</div>
+
+<div class="recap" id="recap">
+  <div class="recapInner">
+    <div class="recapHead">
+      <div>
+        <div class="recapTitle">SERIES RECAP</div>
+        <div class="recapWho" id="recapWho"></div>
+      </div>
+      <button id="recapClose">✕ Close</button>
+    </div>
+    <div id="recapGames"></div>
+    <div class="recapStats" id="recapStats"></div>
+    <div class="recapCall" id="recapCall"></div>
+    <div class="recapStandings" id="recapStandings"></div>
+    <div class="shareRow" style="margin-top:14px">
+      <button id="recapSnap">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#000"><path d="M12.06 2c2.6 0 4.7 1.9 4.86 4.6.03.5.02 1.2 0 1.85.3.16.74.1 1.13-.08.5-.24 1.2-.1 1.42.4.28.6-.1 1.06-.6 1.34-.5.3-1.3.5-1.44 1.06-.08.35.1.75.33 1.14.7 1.2 1.8 2.3 3.14 2.8.35.13.53.4.4.72-.25.6-1.3.9-2.1 1.06-.24.05-.4.15-.46.4-.05.2-.08.42-.15.62-.1.26-.3.36-.6.32-.5-.06-1.06-.2-1.7-.13-1.24.13-1.9 1.9-4.23 1.9s-3-1.77-4.24-1.9c-.63-.07-1.2.07-1.7.13-.3.04-.5-.06-.6-.32-.07-.2-.1-.43-.14-.62-.06-.25-.23-.35-.47-.4-.8-.15-1.85-.46-2.1-1.05-.13-.32.05-.6.4-.73 1.34-.5 2.45-1.6 3.14-2.8.23-.4.4-.8.33-1.14-.13-.57-.94-.77-1.44-1.06-.5-.28-.87-.75-.6-1.34.23-.5.93-.64 1.42-.4.4.18.84.24 1.13.08a26 26 0 0 1 0-1.85C7.36 3.9 9.46 2 12.06 2Z"/></svg>
+        Snapchat
+      </button>
+      <button id="recapFb">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.4v7A10 10 0 0 0 22 12Z"/></svg>
+        FB Stories
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="recap" id="historyView">
+  <div class="recapInner">
+    <div class="recapHead">
+      <div>
+        <div class="recapTitle">HISTORY</div>
+        <div class="recapWho" id="histSub"></div>
+      </div>
+      <button id="histClose">✕ Close</button>
+    </div>
+    <div id="histHome">
+      <div class="histTabs">
+        <button id="htBowlers" class="on">Bowlers</button>
+        <button id="htSessions">Sessions</button>
+      </div>
+      <div id="histList"></div>
+      <div class="backupRow">
+        <button id="exportBtn">⬇ Save backup file</button>
+        <button id="importBtn">⬆ Load backup</button>
+        <input type="file" id="importFile" accept=".json,application/json" style="display:none">
+      </div>
+      <div class="ghosthint" id="backupHint">Backups are a single JSON file you own — drop it in iCloud or Drive to move between devices.</div>
+    </div>
+    <div id="histBowler" style="display:none"></div>
+    <div id="histSession" style="display:none"></div>
+  </div>
+</div>
+
+<div class="recap" id="startView">
+  <div class="recapInner">
+    <div class="startHero">
+      <div class="wordmark" style="font-size:34px">STRIKE<span>BOOK</span></div>
+      <div class="startTag">Score. Track. Improve.</div>
+    </div>
+    <div class="anaHead" style="margin-top:6px">WHO'S BOWLING TONIGHT?</div>
+    <div id="rosterChips" class="rosterChips"></div>
+    <div class="addRow">
+      <input id="newBowlerInput" maxlength="14" placeholder="Add a bowler…" autocomplete="off">
+      <button id="addBowlerBtn">＋</button>
+    </div>
+    <div class="anaHead">EVENT · LOCATION <span style="opacity:.5;letter-spacing:0;font-weight:600">(optional)</span></div>
+    <input id="startEvent" class="eventInput" maxlength="40" placeholder="e.g. Junior Gold · Minneapolis" autocomplete="off">
+    <button id="startBowlBtn">🎳 Let's bowl</button>
+    <div class="startAlt">
+      <button id="startHistBtn">📊 History &amp; analytics</button>
+      <button id="startSopBtn">📖 Owner's manual</button>
+    </div>
+    <button id="backupStatus" class="backupStatus"><i class="dot"></i><span>Checking backup status…</span></button>
+    <button id="startClose" class="startCloseBtn" style="display:none">↩ Back to current sheet</button>
+    <div class="appVersion" id="startVersion"></div>
+  </div>
+</div>
+
+<div class="recap" id="sopView">
+  <div class="recapInner">
+    <div class="recapHead">
+      <div><div class="recapTitle">OWNER'S MANUAL</div>
+      <div class="recapWho">Strikebook SOP · keep this app healthy</div>
+      <div class="appVersion" id="sopVersion" style="margin-top:4px"></div></div>
+      <button id="sopClose">✕ Close</button>
+    </div>
+    <div class="sop">
+      <h4>1 · What this is, where your data lives</h4>
+      <p>Strikebook is a single self-contained file. Everything — sessions, history, analytics — is stored <b>on this device, in this browser</b>. Nothing is uploaded anywhere. That means privacy by default, and it means <b>backups are your responsibility</b> (see §4).</p>
+
+      <h4>2 · Scoring: the daily drill</h4>
+      <p><b>Pin rack mode</b> (default): tap the pins <b>left standing</b> after each ball, then hit the big count button. Tap nothing = strike. This mode feeds all leave/spare analytics.<br>
+      <b>Keypad mode</b>: faster, counts only — those frames score perfectly but can't appear in the practice rack or spare ledger.<br>
+      <b>F</b> records a foul (scores zero, full rack respotted per rule). <b>↩</b> undoes the last ball. The announcer and share cards run themselves.</p>
+
+      <h4>3 · Sessions: finish, don't reset</h4>
+      <p>When the night's games are done, tap <b>🏁 Finish session</b>. That permanently banks everything into History and returns to the start screen. <b>Reset</b> is the destructive one — it discards the current session without saving. Rule of thumb: Finish always, Reset only for do-overs.</p>
+
+      <h4>4 · Backup SOP — do this after every tournament</h4>
+      <p><b>Auto-backup (desktop Chrome/Edge only):</b> on the start screen, tap the backup status pill and choose
+      a folder — ideally your synced Google Drive/iCloud/Dropbox folder. From then on, every <b>Finish session</b>
+      writes a dated backup file there automatically. This isn't available on iPhone or in most mobile browsers —
+      the pill will say so plainly rather than pretend it works.<br><br>
+      <b>Manual backup (works everywhere):</b> History → <b>⬇ Save backup file</b> → store the JSON in a cloud
+      folder you keep. To restore or move phones: open Strikebook on the new device → History → <b>⬆ Load
+      backup</b>. Imports merge safely — loading the same file twice never duplicates. <b>Why this matters:</b>
+      clearing browser data (or iOS storage housekeeping) can erase on-device history without warning. A backup
+      file — auto or manual — cannot be erased by a browser.</p>
+
+      <h4>5 · How the analytics compute</h4>
+      <p>Career stats group by a hidden bowler ID, so renaming a bowler never splits their history. Leave percentages count only pin-rack entries. A leave needs <b>4 attempts</b> before it's ranked (under that, it's held in the "keep bowling" note). <b>Splits are tracked separately</b> so they don't drag down the makeable-spare percentage. The drill list estimates ~11 pins of scoring cost per missed spare — an approximation, flagged as such.</p>
+
+      <h4>6 · Maintaining the app file</h4>
+      <p>Keep one <b>master copy</b> of strikebook.html in your cloud drive. Your data is keyed to <i>where the file lives</i> — browser storage belongs to the page's location. So: replacing the file at the <b>same location</b> with a newer version keeps all history; <b>moving</b> it (new folder, new host, new domain) orphans the old data. Before any move: export a backup, move, then import. To modify the app, give the current file to Claude and describe the change; test with a throwaway session before trusting a new version at a tournament.</p>
+
+      <h4>7 · Hosting &amp; home screen (GitHub Pages)</h4>
+      <p>Strikebook is hosted at a GitHub Pages URL and installed to the home screen from there — this gives iPhone and Android the same icon, fullscreen launch, and offline operation, with no app store involved.<br><br>
+      <b>To install on a phone:</b> open your Strikebook URL in Safari (iPhone) or Chrome (Android) → Share/menu → <b>Add to Home Screen</b>.<br><br>
+      <b>To publish an update:</b> in your GitHub repo, upload the new <i>index.html</i> and click <b>"Commit changes"</b> — same filename, same repo, so it replaces the old version at the same URL. That's what keeps everyone's on-device history intact (see §6): the URL never changes, only the file behind it does. Pages usually rebuilds within a minute; hard-refresh the phone to see the new version. <b>Never rename the repo or change the URL</b> once the team is using it — that's the "moving the file" scenario in §6, and it orphans history until everyone re-imports a backup.</p>
+
+      <h4>8 · Troubleshooting</h4>
+      <p><b>Share button does nothing:</b> some in-app browsers block the share sheet — the card downloads instead; share the PNG manually. <b>History looks empty:</b> you may have opened the file from a different location — import your latest backup. <b>Buttons unresponsive after an update:</b> fully close and reopen the browser tab. When in doubt: export a backup <i>first</i>, then investigate.</p>
+    </div>
+  </div>
+</div>
+
+<div class="recap" id="introView">
+  <div class="introInner">
+    <span class="onair introOnair"><i></i>ON AIR</span>
+    <div class="introQuote" id="introQuote"></div>
+    <div class="introSub" id="introSub"></div>
+    <div class="introBar"><i id="introBarFill"></i></div>
+    <button id="introSkip" class="introSkip">Skip ▸</button>
+  </div>
+</div>
+
+<div class="modal" id="backupModal">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <h3 style="margin:0">Auto-backup</h3>
+      <button id="bkX" class="bkXBtn">✕</button>
+    </div>
+    <div id="bkBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="confirmDlg">
+  <div class="card">
+    <h3>Are you sure?</h3>
+    <p class="confirmMsg" id="confirmMsg"></p>
+    <div class="btns">
+      <button class="cancel" id="confirmNo">Cancel</button>
+      <button class="ok danger" id="confirmYes">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<canvas id="shareCanvas" width="1080" height="1920" style="display:none"></canvas>
+
+<script>
+(function(){
+  'use strict';
+
+  // Bump this whenever a new version is deployed — shown on the start screen and
+  // in the Owner's Manual so anyone can confirm which build they're running.
+  const APP_VERSION = '1.1.0';
+  const APP_BUILD_DATE = '2026-07-17';
+
+  /* ---------- state ---------- */
+  let bowlers = [];           // {name, frames:[[rolls]...x10], past:[game totals...]}
+  let cur = 0;                // active bowler index
+  let history = [];           // [{b, f}] for undo
+  let gameNum = 1;            // game number within this session
+  let modalMode = 'add';
+  const STORE_KEY = 'strikebook_session_v2';
+  // legacy sessions stored rolls as bare numbers; upgrade them to the {p,f} contract
+  const migrateFrames = fr =>
+    (Array.isArray(fr) && fr.length===10 ? fr : Array.from({length:10},()=>[]))
+      .map(r => (r||[]).map(x => typeof x === 'number' ? {p:x, f:false} : x));
+
+  // Hidden stable bowler ID: analytics group by this, so renames and typos
+  // never split a bowler's history. Generated once, kept forever.
+  function genBid(){ return 'b' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function newBowler(name, bid){ return {name, bid: bid || genBid(), frames:Array.from({length:10},()=>[]), past:[]}; }
+
+  function saveSession(){
+    const payload = ()=>JSON.stringify({bowlers, cur, gameNum, lastCall, entryMode, saveMode, eventLabel});
+    try{ localStorage.setItem(STORE_KEY, payload()); return; }catch(e){}
+    // Storage quota fallback: degrade gracefully toward SUMMARY_ONLY.
+    // Tier 1 — strip pin-by-pin detail (d/s arrays) from banked games.
+    try{
+      bowlers.forEach(b=>b.past.forEach(p=>p.frames && p.frames.forEach(fr=>fr.forEach(rl=>{delete rl.d; delete rl.s;}))));
+      localStorage.setItem(STORE_KEY, payload()); return;
+    }catch(e){}
+    // Tier 2 — collapse banked games to summary integers only (final score kept).
+    try{
+      bowlers.forEach(b=>b.past.forEach(p=>{ p.frames = null; }));
+      localStorage.setItem(STORE_KEY, payload());
+    }catch(e){}
+  }
+  function loadSession(){
+    try{
+      const raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return false;
+      const s = JSON.parse(raw);
+      if (!Array.isArray(s.bowlers) || !s.bowlers.length) return false;
+      bowlers = s.bowlers.map(b=>({
+        name: String(b.name||'Bowler'),
+        bid: b.bid || genBid(),
+        frames: migrateFrames(b.frames),
+        past: Array.isArray(b.past)
+          ? b.past.map(p => typeof p === 'number'
+              ? {total:p, frames:null}
+              : {total:p.total, frames: p.frames ? migrateFrames(p.frames) : null})
+          : []
+      }));
+      cur = Math.min(s.cur||0, bowlers.length-1);
+      gameNum = s.gameNum || 1;
+      lastCall = s.lastCall || lastCall;
+      if (s.entryMode) entryMode = s.entryMode;
+      if (s.saveMode) saveMode = s.saveMode;
+      if (typeof s.eventLabel === 'string') eventLabel = s.eventLabel;
+      document.querySelectorAll('#entrySeg button').forEach(x=>x.classList.toggle('on', x.dataset.mode===entryMode));
+      document.querySelectorAll('#saveSeg button').forEach(x=>x.classList.toggle('on', x.dataset.save===saveMode));
+      return true;
+    }catch(e){ return false; }
+  }
+
+  function seriesTotal(b){ return b.past.reduce((a,p)=>a+p.total,0) + liveTotal(b); }
+
+  // best score still reachable this game: fill every remaining roll with the max legal pins
+  function maxPossible(b){
+    const sim = { frames: b.frames.map(r=>r.slice()) };
+    let ctx;
+    while ((ctx = rollContext(sim))) sim.frames[ctx.fi].push({p:ctx.max, f:false});
+    return cumScores(sim)[9];
+  }
+
+  function nextGame(){
+    bowlers.forEach(b=>{
+      // SUMMARY_ONLY purges frame/pin detail on bank; ANALYTICS keeps the full state tree
+      b.past.push({ total: liveTotal(b), frames: saveMode==='SUMMARY_ONLY' ? null : b.frames });
+      b.frames = Array.from({length:10},()=>[]);
+    });
+    gameNum++; cur = 0; history = [];
+    lastCall = `Game ${gameNum} — fresh racks, same session. Let's roll.`;
+    render();
+  }
+  function resetSession(){
+    bowlers = bowlers.length ? bowlers.map(b=>newBowler(b.name, b.bid)) : [newBowler('Wayne')];
+    cur = 0; history = []; gameNum = 1;
+    try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+    render();
+  }
+
+  /* ---------- scoring engine ----------
+     Roll contract: { p: pins_knocked_down (0-10), f: is_foul (bool) }
+     A foul scores 0 pins regardless of physical pinfall (p is forced to 0). */
+  const P = r => r ? r.p : undefined;          // pins for a roll, undefined if no roll
+  function frameComplete(fi, r){
+    if (fi < 9) return P(r[0]) === 10 || r.length === 2;
+    if (r.length < 2) return false;
+    if (r.length === 2) return P(r[0]) + P(r[1]) < 10 && P(r[0]) !== 10;
+    return true; // 3 rolls
+  }
+  function gameOver(b){ return frameComplete(9, b.frames[9]); }
+  function currentFrame(b){
+    for (let i=0;i<10;i++) if (!frameComplete(i, b.frames[i])) return i;
+    return -1;
+  }
+  // cumulative totals; null where not yet determinable
+  function cumScores(b){
+    const flat = [];
+    b.frames.forEach(fr => fr.forEach(r => flat.push(r.p)));
+    const out = Array(10).fill(null);
+    let total = 0, ri = 0;
+    for (let f=0; f<10; f++){
+      if (f < 9){
+        if (flat[ri] === undefined) break;
+        if (flat[ri] === 10){ // strike
+          if (flat[ri+1]===undefined || flat[ri+2]===undefined) break;
+          total += 10 + flat[ri+1] + flat[ri+2]; out[f]=total; ri += 1;
+        } else {
+          if (flat[ri+1]===undefined) break;
+          const s = flat[ri]+flat[ri+1];
+          if (s === 10){ // spare
+            if (flat[ri+2]===undefined) break;
+            total += 10 + flat[ri+2];
+          } else total += s;
+          out[f]=total; ri += 2;
+        }
+      } else {
+        if (!frameComplete(9, b.frames[9])) break;
+        total += b.frames[9].reduce((a,x)=>a+x.p,0); out[9]=total;
+      }
+    }
+    return out;
+  }
+  function liveTotal(b){
+    const c = cumScores(b);
+    for (let i=9;i>=0;i--) if (c[i]!==null) return c[i];
+    return 0;
+  }
+  function counts(b){
+    let x=0, sp=0, fouls=0, splits=0, splitConv=0, pinfall=0;
+    b.frames.forEach((r,fi)=>{
+      r.forEach(rl=>{ if (rl.f) fouls++; pinfall += rl.p; });
+      if (fi < 9){
+        if (P(r[0]) === 10) x++;
+        else if (r.length === 2 && P(r[0])+P(r[1]) === 10) sp++;
+        // split analytics require ball-1 pin data
+        if (r[0] && r[0].s && splitInfo(r[0].s)){
+          splits++;
+          if (r.length === 2 && P(r[0])+P(r[1]) === 10) splitConv++;
+        }
+      } else {
+        r.forEach((rl,i)=>{
+          const freshRack = i===0 || P(r[i-1])===10 ||
+            (i===2 && P(r[0])!==10 && P(r[0])+P(r[1])===10);
+          if (rl.p===10 && freshRack) x++;
+          if (rl.p!==10 && !freshRack && P(r[i-1])+rl.p===10) sp++;
+          if (freshRack && rl.p<10 && rl.s && splitInfo(rl.s)){
+            splits++;
+            if (r[i+1] && P(r[i+1]) === rl.s.length) splitConv++;
+          }
+        });
+      }
+    });
+    return {x, sp, fouls, splits, splitConv, pinfall};
+  }
+
+  /* ---------- pin-state matrix (1-10 mapping) ----------
+     Roll contract extension: rolls may carry
+       d: [pin ids knocked down by THIS ball]
+       s: [pin ids left standing after this ball]
+     Rolls entered on the number pad have no pin data (d/s undefined). */
+  const PIN_XY = {          // triangular rack, pin 1 at the front
+    1:[60,88], 2:[47,66], 3:[73,66], 4:[34,44], 5:[60,44],
+    6:[86,44], 7:[21,22], 8:[47,22], 9:[73,22], 10:[99,22]
+  };
+  const PIN_ADJ = {
+    1:[2,3], 2:[1,3,4,5], 3:[1,2,5,6], 4:[2,5,7,8], 5:[2,3,4,6,8,9],
+    6:[3,5,9,10], 7:[4,8], 8:[4,5,7,9], 9:[5,6,8,10], 10:[6,9]
+  };
+  const SPLIT_NAMES = {
+    '7,10':'BEDPOSTS — the dreaded 7-10',
+    '4,6,7,10':'the BIG FOUR',
+    '4,6,7,9,10':'the GREEK CHURCH',
+    '5,7,10':'the LILY',
+    '2,7':'a baby split', '3,10':'a baby split',
+    '5,10':'the WOOLWORTH', '5,7':'the WOOLWORTH',
+    '4,10':'a big-ears split', '6,7':'a big-ears split'
+  };
+  // A split: headpin down, 2+ pins standing in disconnected groups
+  function splitInfo(standing){
+    if (!standing || standing.length < 2 || standing.includes(1)) return null;
+    const set = new Set(standing), seen = new Set();
+    let groups = 0;
+    for (const p of standing){
+      if (seen.has(p)) continue;
+      groups++;
+      const q = [p];
+      while (q.length){
+        const c = q.pop();
+        if (seen.has(c)) continue;
+        seen.add(c);
+        PIN_ADJ[c].forEach(n=>{ if (set.has(n) && !seen.has(n)) q.push(n); });
+      }
+    }
+    if (groups < 2) return null;
+    const key = standing.slice().sort((a,b)=>a-b).join(',');
+    return { is_split:true, split_name: SPLIT_NAMES[key] || `a nasty ${key.replace(/,/g,'-')} split` };
+  }
+  /* Shot-2 diagram: assign each of the 10 pins one of four display states.
+     Returns null if the frame lacks pin data. */
+  const PSTATE = { CLEARED_BALL_1:'st-c1', TARGET_CONVERTED:'st-conv', TARGET_MISSED:'st-miss', UNTOUCHED:'st-un' };
+  function frameDiagram(r){
+    const b1 = r[0], b2 = r[1];
+    if (!b1 || !b1.d || !b1.s) return null;
+    if (P(b1) === 10) return Object.fromEntries([1,2,3,4,5,6,7,8,9,10].map(p=>[p, PSTATE.CLEARED_BALL_1]));
+    if (!b2) return null;
+    const out = {};
+    for (let p=1; p<=10; p++){
+      if (b1.d.includes(p)) out[p] = PSTATE.CLEARED_BALL_1;
+      else if (b2.f || !b2.d) out[p] = PSTATE.UNTOUCHED;          // foul/no data: initial flags stay
+      else if (b2.d.includes(p)) out[p] = PSTATE.TARGET_CONVERTED;
+      else out[p] = PSTATE.TARGET_MISSED;
+    }
+    return out;
+  }
+
+  /* ---------- achievement matrix ---------- */
+  // Was roll i of frame fi thrown at a freshly set rack?
+  function freshRackAt(fi, r, i){
+    if (i === 0) return true;
+    if (fi < 9) return false;
+    return P(r[i-1]) === 10 || r[i-1].f ||
+           (i === 2 && P(r[0]) !== 10 && P(r[0]) + P(r[1]) === 10);
+  }
+  function isStrikeFrame(r){ return P(r[0]) === 10; }
+  function isSpareFrame(fi, r){
+    if (fi < 9) return r.length===2 && P(r[0])!==10 && P(r[0])+P(r[1])===10;
+    return P(r[0])!==10 && r.length>=2 && P(r[0])+P(r[1])===10;
+  }
+  // Clean Game: EVERY frame 1-10 contains a strike or a spare (foul-caused opens break it)
+  function isCleanGame(b){
+    if (!gameOver(b)) return false;
+    return b.frames.every((r,fi)=> isStrikeFrame(r) || isSpareFrame(fi, r));
+  }
+  // The Wildcat: strike in every frame EXCEPT the first (10th must be struck out)
+  function isWildcat(b){
+    if (!gameOver(b)) return false;
+    if (isStrikeFrame(b.frames[0])) return false;
+    for (let fi=1; fi<9; fi++) if (!isStrikeFrame(b.frames[fi])) return false;
+    return b.frames[9].length===3 && b.frames[9].every(rl=>rl.p===10);
+  }
+
+  /* ---------- announcer engine ---------- */
+  let lastCall = 'Lace up — first ball of the game.';
+  function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+  function rollFlags(b){
+    const list = [];
+    b.frames.forEach((r,fi)=>{
+      r.forEach((rl,i)=>{
+        const v = rl.p;
+        let strike=false, spare=false;
+        if (fi < 9){
+          strike = i===0 && v===10;
+          spare  = i===1 && P(r[0])+v===10;
+        } else {
+          const fresh = i===0 || P(r[i-1])===10 ||
+            (i===2 && P(r[0])!==10 && P(r[0])+P(r[1])===10);
+          strike = fresh && v===10;
+          spare  = !fresh && P(r[i-1])+v===10;
+        }
+        list.push({v, strike, spare, foul: !!rl.f});
+      });
+    });
+    return list;
+  }
+  // named strike strings per spec: 2=Double, 3=Turkey, 4=Hambone, 5=Bratwurst, 6=Six-Pack/Wild Turkey
+  function announce(b){
+    const name = b.name;
+    const flags = rollFlags(b);
+    const last = flags[flags.length-1];
+    if (!last) return;
+
+    if (last.foul){
+      lastCall = pick([
+        `FOUL! ${name} crossed the line — no count on that ball.`,
+        `Red light! ${name} fouls — that delivery scores zero.`,
+        `Over the line! Nothing counts for ${name} there.`
+      ]);
+      return;
+    }
+
+    // pin-level calls: split conversions and split leaves
+    const lastRoll = lastRollOf(b);
+    if (last.spare && lastRoll && lastRoll.prev && lastRoll.prev.s){
+      const si = splitInfo(lastRoll.prev.s);
+      if (si){
+        lastCall = pick([
+          `NO WAY!! ${name} CONVERTS ${si.split_name}! Call the front desk!`,
+          `ARE YOU KIDDING?! ${si.split_name} — PICKED UP! Take a bow, ${name}!`
+        ]);
+        return;
+      }
+    }
+    if (!last.strike && !last.spare && lastRoll && lastRoll.roll.s && lastRoll.isFirst){
+      const si = splitInfo(lastRoll.roll.s);
+      if (si){
+        lastCall = `Uh oh… ${name} is staring down ${si.split_name}.`;
+        return;
+      }
+    }
+
+    if (last.strike){
+      let streak = 0;
+      for (let i=flags.length-1; i>=0 && flags[i].strike; i--) streak++;
+      const allStrikes = streak === flags.length;
+      if (streak === 12) { lastCall = `PERFECT GAME!! 300!! ${name} JUST WENT PERFECT!`; return; }
+      if (allStrikes && streak >= 7 && streak < 12){ lastCall = `THE FRONT ${streak}! The whole house is watching ${name}!`; return; }
+      const named = {
+        2:`Back-to-back! ${name} doubles up!`,
+        3:`Gobble gobble — that's a TURKEY for ${name}!`,
+        4:`FOUR-BAGGER! ${name} is cooking — that's a HAMBONE!`,
+        5:`BRATWURST! Five in a row — ${name} cannot miss right now!`,
+        6:`SIX-PACK! A WILD TURKEY for ${name} — somebody check on those pins!`
+      };
+      if (named[streak]) { lastCall = named[streak]; return; }
+      if (streak > 6){ lastCall = `That's ${streak} strikes in a row — ${name} is flirting with perfection!`; return; }
+      lastCall = pick([
+        `${name} buries it in the pocket — STRIKE!`,
+        `Nothing left standing! Strike for ${name}!`,
+        `${name} sends the rack flying — X on the sheet!`
+      ]);
+      return;
+    }
+    if (last.spare){
+      const first = 10 - last.v;
+      if (first <= 3){
+        lastCall = pick([
+          `WHAT a pickup! ${name} converts a tough ${last.v}-pin leave!`,
+          `Are you kidding?! ${name} spares ${last.v} pins like it's nothing!`
+        ]);
+      } else {
+        lastCall = pick([
+          `${name} cleans up the rest — spare!`,
+          `Good hands! ${name} converts the spare.`,
+          `${name} fills the frame — spare, mark it.`
+        ]);
+      }
+      return;
+    }
+    // non-mark rolls
+    const fi = flags.length ? currentFrameOfLastRoll(b) : 0;
+    const fr = b.frames[fi];
+    if (fr.length === 1){
+      if (last.v === 0){ lastCall = pick([`Ohh… gutter ball. Shake it off, ${name}.`, `The lane wins that one — gutter for ${name}.`]); return; }
+      if (last.v === 9){ lastCall = `Nine count! One pin has a guardian angel.`; return; }
+      lastCall = `${name} knocks down ${last.v} — ${10-last.v} still standing.`;
+      return;
+    }
+    // open frame
+    const left = 10 - fr.reduce((a,x)=>a+x.p,0);
+    lastCall = pick([
+      `It stays up — open frame for ${name}, ${left} left on the deck.`,
+      `${name} can't convert — open frame.`,
+      `No mark there — ${name} leaves ${left}.`
+    ]);
+  }
+  function currentFrameOfLastRoll(b){
+    for (let i=9;i>=0;i--) if (b.frames[i].length) return i;
+    return 0;
+  }
+  // the most recent roll, its predecessor in the same frame, and whether it was ball 1
+  function lastRollOf(b){
+    const fi = currentFrameOfLastRoll(b);
+    const r = b.frames[fi];
+    if (!r.length) return null;
+    return { roll: r[r.length-1], prev: r.length>1 ? r[r.length-2] : null, isFirst: r.length===1, fi };
+  }
+  function finishLine(b){
+    if (!gameOver(b)) return '';
+    const total = liveTotal(b);
+    if (total === 300) return `PERFECT GAME — history at the house tonight!`;
+    if (isWildcat(b)) return `THE WILDCAT! Struck every frame but the first — ${total}!`;
+    if (isCleanGame(b)) return `CLEAN GAME! A mark in every frame — ${total}!`;
+    if (counts(b).fouls) return `${b.name} finishes with ${total} — those fouls stung.`;
+    if (total >= 200) return `${b.name} cracks ${total} — big game at the lanes!`;
+    return `${b.name} closes the book at ${total}.`;
+  }
+
+
+  /* ---------- shared sheet rendering ---------- */
+  // A row of mini rack diagrams, one under each frame, showing the shot-2 states.
+  // Returns '' when the game has no pin-by-pin data at all.
+  function pinLeaveRowHTML(frames){
+    const dias = frames.map(r => r && r.length ? frameDiagram(r) : null);
+    if (!dias.some(d => d)) return '';
+    let out = '<div class="frames pinsRow">';
+    for (let fi=0; fi<10; fi++){
+      let cell = '';
+      if (dias[fi]){
+        let svg = '';
+        for (let p=1; p<=10; p++){
+          const [x,y] = PIN_XY[p];
+          svg += `<circle class="bpin ${dias[fi][p]}" cx="${x}" cy="${y}" r="9"></circle>`;
+        }
+        cell = `<svg viewBox="8 8 104 92">${svg}</svg>`;
+      }
+      out += `<div class="frame pf">${cell}</div>`;
+    }
+    return out + '</div>';
+  }
+
+  // games in this session that are finished (banked + current if complete)
+  function gamesForRecap(b){
+    const list = b.past.map(p=>({total:p.total, frames:p.frames}));
+    if (gameOver(b)) list.push({total: liveTotal(b), frames: b.frames});
+    return list;
+  }
+  function seriesStats(b){
+    const games = gamesForRecap(b);
+    if (!games.length) return null;
+    const totals = games.map(g=>g.total);
+    const series = totals.reduce((a,x)=>a+x,0);
+    let x=0, sp=0, clean=0, fouls=0, splits=0, splitConv=0, pinfall=0;
+    games.forEach(g=>{
+      if (!g.frames) return;
+      const c = counts({frames:g.frames});
+      x += c.x; sp += c.sp; fouls += c.fouls;
+      splits += c.splits; splitConv += c.splitConv; pinfall += c.pinfall;
+      if (isCleanGame({frames:g.frames})) clean++;
+    });
+    return {
+      games, series,
+      avg: Math.round(series/games.length),
+      high: Math.max(...totals),
+      low: Math.min(...totals),
+      strikes:x, spares:sp, clean, fouls, splits, splitConv, pinfall,
+      hasFrames: games.every(g=>g.frames)
+    };
+  }
+  function seriesCall(b){
+    const s = seriesStats(b);
+    if (!s) return '';
+    const n = s.games.length;
+    if (s.series >= 700) return `A ${s.series} SERIES! ${b.name} put on a clinic tonight!`;
+    if (s.high === 300) return `A perfect game in the set — ${b.name} will be telling this story for years.`;
+    if (n >= 2 && s.games[n-1].total > s.games[0].total + 30) return `${b.name} closed strong — finished ${s.games[n-1].total} after opening ${s.games[0].total}.`;
+    if (s.avg >= 200) return `${s.avg} average across ${n} games. ${b.name} was locked in.`;
+    if (s.clean) return `${s.clean} clean game${s.clean===1?'':'s'} in the set — ${b.name} kept the sheet filled.`;
+    return `${n} games, ${s.series} pins, high game of ${s.high}. That's the night for ${b.name}.`;
+  }
+
+  /* ---------- input rules ---------- */
+  // returns {fi, max, special:'X'|'/'} for the active bowler's next roll.
+  // Note: a foul scores 0 pins, so after a foul on ball 1 the max is 10-0 = 10 —
+  // which is exactly the spec's "full rack respotted" behaviour, and clearing all
+  // ten on ball 2 is notated as a spare (F /).
+  function rollContext(b){
+    const fi = currentFrame(b);
+    if (fi === -1) return null;
+    const r = b.frames[fi];
+    if (fi < 9){
+      if (r.length === 0) return {fi, max:10, special:'X'};
+      return {fi, max:10-P(r[0]), special:'/'};
+    }
+    // 10th frame
+    if (r.length === 0) return {fi, max:10, special:'X'};
+    if (r.length === 1){
+      if (P(r[0]) === 10) return {fi, max:10, special:'X'};
+      return {fi, max:10-P(r[0]), special:'/'};
+    }
+    // third ball
+    if (P(r[0]) === 10 && P(r[1]) === 10) return {fi, max:10, special:'X'};
+    if (P(r[0]) === 10) return {fi, max:10-P(r[1]), special:'/'};
+    return {fi, max:10, special:'X'}; // after a spare — fresh rack
+  }
+
+  function addRoll(v, foul, pins){
+    const b = bowlers[cur];
+    const ctx = rollContext(b);
+    if (!ctx) return;
+    const pinsDown = foul ? 0 : v;      // a foul scores 0 pins regardless of pinfall
+    if (pinsDown > ctx.max) return;
+    const roll = {p: pinsDown, f: !!foul};
+    if (pins){ roll.d = pins.d; roll.s = pins.s; }
+    b.frames[ctx.fi].push(roll);
+    history.push({b:cur, f:ctx.fi});
+    if (!foul){
+      if (pinsDown === ctx.max && ctx.special === '/') toast('SPARE!', true);
+      else if (pinsDown === 10 && ctx.special === 'X') toast('STRIKE!', false);
+    } else toast('FOUL!', false, true);
+    announce(b);
+    if (gameOver(b)) lastCall = finishLine(b);
+    if (allDone() && bowlers.length > 1){
+      const champ = bowlers.reduce((a,c)=> liveTotal(c) > liveTotal(a) ? c : a);
+      lastCall = `Final horn! ${champ.name} takes it with ${liveTotal(champ)}!`;
+    }
+    if (frameComplete(ctx.fi, b.frames[ctx.fi])) advanceBowler();
+    render();
+  }
+  function advanceBowler(){
+    if (bowlers.length === 1) return;
+    for (let step=1; step<=bowlers.length; step++){
+      const n = (cur+step) % bowlers.length;
+      if (!gameOver(bowlers[n])){ cur = n; return; }
+    }
+  }
+  function undo(){
+    const last = history.pop();
+    if (!last) return;
+    bowlers[last.b].frames[last.f].pop();
+    cur = last.b;
+    render();
+  }
+
+  /* ---------- pin entry ---------- */
+  let entryMode = 'pins';            // 'pins' | 'nums'
+  let saveMode = 'ANALYTICS';        // 'ANALYTICS' | 'SUMMARY_ONLY'
+  let eventLabel = '';               // tournament layer: "Junior Gold · Minneapolis"
+  let tapped = new Set();            // pins tapped as LEFT STANDING for the pending ball
+  let entryKey = '';                 // bowler|frame|ball — reset taps when it changes
+
+  // rack the bowler is shooting at: full for a fresh rack, else previous ball's leave (or null if unknown)
+  function targetRack(b, ctx){
+    const r = b.frames[ctx.fi];
+    const ALL = [1,2,3,4,5,6,7,8,9,10];
+    if (r.length === 0) return ALL;
+    if (ctx.fi < 9) return r[0].s || null;
+    // 10th frame fresh-rack cases
+    const i = r.length;
+    const fresh = P(r[i-1])===10 || (i===2 && P(r[0])!==10 && P(r[0])+P(r[1])===10);
+    if (fresh) return ALL;
+    return r[i-1].s || null;
+  }
+
+  function renderRack(b, ctx){
+    const rackEl = document.getElementById('rack');
+    const hint = document.getElementById('pinhint');
+    const target = targetRack(b, ctx);
+    const key = `${cur}|${ctx.fi}|${b.frames[ctx.fi].length}`;
+    if (key !== entryKey){ tapped = new Set(); entryKey = key; }
+
+    if (!target){ // previous ball had no pin data — can't draw the leave
+      rackEl.innerHTML = '';
+      hint.innerHTML = 'No pin data for the first ball — use the count pad for this one.';
+      numgrid.classList.remove('hide');
+      return false;
+    }
+    numgrid.classList.add('hide');
+    const tset = new Set(target);
+    let svg = '';
+    for (let p=1; p<=10; p++){
+      const [x,y] = PIN_XY[p];
+      const locked = !tset.has(p);
+      const up = tapped.has(p);
+      svg += `<g class="pin${locked?' locked':(up?'':' down')}" data-pin="${p}">
+        <circle cx="${x}" cy="${y}" r="10"></circle>
+        <text x="${x}" y="${y+3}" text-anchor="middle">${p}</text></g>`;
+    }
+    rackEl.innerHTML = svg;
+    rackEl.querySelectorAll('.pin:not(.locked)').forEach(g=>{
+      g.addEventListener('click', ()=>{
+        const p = +g.dataset.pin;
+        tapped.has(p) ? tapped.delete(p) : tapped.add(p);
+        render();
+      });
+    });
+    const down = target.length - tapped.size;
+    const si = splitInfo([...tapped]);
+    hint.innerHTML = tapped.size === 0
+      ? `All ${target.length} down — or tap the pins <b>left standing</b>.`
+      : `${down} down, ${tapped.size} standing` + (si ? ` — <b>${esc(si.split_name)}</b>!` : '');
+
+    // big button doubles as confirm in pin mode
+    const down10 = down === ctx.max;
+    if (down10 && ctx.special === 'X'){ specialBtn.textContent = 'STRIKE  ✕'; specialBtn.classList.remove('spare'); }
+    else if (down10 && ctx.special === '/'){ specialBtn.textContent = 'SPARE  ⁄'; specialBtn.classList.add('spare'); }
+    else { specialBtn.textContent = `COUNT ${down}`; specialBtn.classList.remove('spare'); }
+    specialBtn.disabled = false;
+    specialBtn.onclick = ()=>{
+      const downIds = target.filter(p=>!tapped.has(p));
+      addRoll(downIds.length, false, {d: downIds, s: [...tapped].sort((a,b2)=>a-b2)});
+    };
+    foulBtn.disabled = false;
+    foulBtn.onclick = ()=>addRoll(0, true, {d: [], s: target.slice()});
+    return true;
+  }
+
+  /* ---------- booth diagram: last completed frame with pin data ---------- */
+  function renderBoothRack(b){
+    const el = document.getElementById('boothRack');
+    let dia = null;
+    for (let fi=9; fi>=0; fi--){
+      const r = b.frames[fi];
+      if (r.length && frameComplete(fi, r)){ dia = frameDiagram(r); if (dia) break; }
+      if (r.length) break; // current frame in progress — show nothing newer
+    }
+    if (!dia){ el.style.display='none'; return; }
+    let svg = '';
+    for (let p=1; p<=10; p++){
+      const [x,y] = PIN_XY[p];
+      svg += `<circle class="bpin ${dia[p]}" cx="${x}" cy="${y}" r="9"></circle>`;
+    }
+    el.innerHTML = svg;
+    el.style.display = 'block';
+  }
+
+  /* ---------- mode toggles ---------- */
+  document.querySelectorAll('#entrySeg button').forEach(btn=>{
+    btn.onclick = ()=>{
+      entryMode = btn.dataset.mode;
+      document.querySelectorAll('#entrySeg button').forEach(x=>x.classList.toggle('on', x===btn));
+      tapped = new Set(); entryKey='';
+      render();
+    };
+  });
+  document.querySelectorAll('#saveSeg button').forEach(btn=>{
+    btn.onclick = ()=>{
+      saveMode = btn.dataset.save;
+      document.querySelectorAll('#saveSeg button').forEach(x=>x.classList.toggle('on', x===btn));
+      saveSession();
+    };
+  });
+
+  /* ---------- rendering ---------- */
+  const tabsEl = document.getElementById('tabs');
+  const framesEl = document.getElementById('framesEl');
+  const promptEl = document.getElementById('promptEl');
+  const numgrid = document.getElementById('numgrid');
+  const specialBtn = document.getElementById('specialBtn');
+  const foulBtn = document.getElementById('foulBtn');
+  const whoName = document.getElementById('whoName');
+  const whoStatus = document.getElementById('whoStatus');
+  const shareBtn = document.getElementById('shareBtn');
+  const fbBtn = document.getElementById('fbBtn');
+
+  function markFor(fi, r, i){
+    const rl = r[i], v = rl.p;
+    if (rl.f) return {t:'F', cls:'mark-f'};              // foul notation per spec
+    if (fi < 9){
+      if (i===0 && v===10) return {t:'', cls:''};        // strike shown in box 2
+      if (i===1 && P(r[0])===10) return {t:'X', cls:'mark-x'};
+      if (i===1 && P(r[0])+v===10) return {t:'/', cls:'mark-s'};
+      return {t: v===0?'–':String(v), cls:''};
+    }
+    // 10th frame marks
+    if (v===10) return {t:'X', cls:'mark-x'};
+    if (i>0 && P(r[i-1])!==10 && P(r[i-1])+v===10) return {t:'/', cls:'mark-s'};
+    return {t: v===0?'–':String(v), cls:''};
+  }
+
+  function framesHTML(frames, currentFi){
+    const cums = cumScores({frames});
+    let html = '';
+    for (let fi=0; fi<10; fi++){
+      const r = frames[fi] || [];
+      const nBalls = fi===9 ? 3 : 2;
+      let balls = '';
+      if (fi < 9 && P(r[0]) === 10){
+        // strike: by scoresheet convention the X sits in the second box
+        balls = `<div class="ball"></div><div class="ball mark-x">X</div>`;
+      } else {
+        for (let i=0;i<nBalls;i++){
+          if (i < r.length){
+            const m = markFor(fi, r, i);
+            balls += `<div class="ball ${m.cls}">${m.t}</div>`;
+          } else balls += `<div class="ball"></div>`;
+        }
+      }
+      html += `<div class="frame${fi===currentFi?' current':''}">
+        <div class="num">${fi+1}</div><div class="balls">${balls}</div>
+        <div class="cum">${cums[fi]===null?'':cums[fi]}</div></div>`;
+    }
+    return html;
+  }
+
+  function setNumericHandlers(ctx){
+    if (ctx.special === 'X'){
+      specialBtn.textContent = 'STRIKE  ✕'; specialBtn.classList.remove('spare'); specialBtn.disabled=false;
+      specialBtn.onclick = ()=>addRoll(10);
+    } else {
+      specialBtn.textContent = 'SPARE  ⁄'; specialBtn.classList.add('spare'); specialBtn.disabled=false;
+      specialBtn.onclick = ()=>addRoll(ctx.max);
+    }
+    foulBtn.disabled = false;
+    foulBtn.onclick = ()=>addRoll(0, true);
+  }
+
+  function render(){
+    const b = bowlers[cur];
+    // tabs
+    tabsEl.innerHTML = '';
+    bowlers.forEach((bw,i)=>{
+      const t = document.createElement('button');
+      t.className = 'tab' + (i===cur?' active':'');
+      t.innerHTML = `<span>${esc(bw.name)}</span><span class="tot">${liveTotal(bw)}</span>` +
+        (i===cur && bowlers.length>1 ? `<span class="x" title="Remove bowler">✕</span>` : '');
+      t.onclick = ()=>{ cur=i; render(); };
+      const x = t.querySelector('.x');
+      if (x) x.onclick = (e)=>{ e.stopPropagation(); removeBowler(i); };
+      tabsEl.appendChild(t);
+    });
+    if (bowlers.length < 6){
+      const add = document.createElement('button');
+      add.className = 'tab addTab'; add.textContent = '+ Bowler';
+      add.onclick = ()=>openModal('add');
+      tabsEl.appendChild(add);
+    }
+
+    // sheet
+    whoName.textContent = b.name;
+    whoName.style.cursor = 'pointer';
+    whoName.onclick = ()=>openModal('rename');
+    const over = gameOver(b);
+    whoStatus.textContent = `Game ${gameNum} · ` + (over ? 'Final' : 'Frame ' + (currentFrame(b)+1));
+
+    // max possible strip
+    const maxEl = document.getElementById('maxLine');
+    const mx = maxPossible(b);
+    maxEl.classList.toggle('finalState', over);
+    maxEl.classList.toggle('perfectAlive', !over && mx === 300);
+    maxEl.innerHTML = over
+      ? `<span>FINAL SCORE</span><span class="mx">${liveTotal(b)}</span>`
+      : `<span>MAX POSSIBLE${mx===300 ? ' — PERFECT GAME ALIVE' : ''}</span><span class="mx">${mx}</span>`;
+
+    // session line: past games + series
+    const sl = document.getElementById('sessionLine');
+    if (b.past.length){
+      const games = b.past.map((p,i)=>`G${i+1}: ${p.total}`).join('  ·  ') + `  ·  G${gameNum}: ${liveTotal(b)}${over?'':'…'}`;
+      sl.style.display = 'flex';
+      sl.innerHTML = `<span>${games}</span><span class="series">Series ${seriesTotal(b)}</span>`;
+    } else sl.style.display = 'none';
+
+    const cums = cumScores(b);
+    const cf = currentFrame(b);
+    framesEl.innerHTML = framesHTML(b.frames, cf);
+
+    // prompt + pad
+    const ctx = rollContext(b);
+    numgrid.innerHTML = '';
+    if (!ctx){
+      promptEl.innerHTML = `<b>${esc(b.name)}</b> finished with <b>${liveTotal(b)}</b>${allDone()?' — game complete! Share it. 🎳':''}`;
+      for (let v=0; v<=9; v++){
+        const btn = document.createElement('button'); btn.textContent=v; btn.disabled=true; numgrid.appendChild(btn);
+      }
+      specialBtn.disabled = true; specialBtn.textContent='STRIKE'; specialBtn.classList.remove('spare');
+      foulBtn.disabled = true;
+      document.getElementById('pinstage').classList.remove('show');
+      numgrid.classList.remove('hide');
+    } else {
+      const ballNo = b.frames[ctx.fi].length + 1;
+      promptEl.innerHTML = `<b>${esc(b.name)}</b> · Frame ${ctx.fi+1}, Ball ${ballNo}` +
+        (entryMode==='pins' ? ' — tap the pins left standing' : ' — how many pins?');
+      for (let v=0; v<=9; v++){
+        const btn = document.createElement('button');
+        btn.textContent = v===0?'–':v;
+        // the max value (strike or spare) is always entered via the big special button
+        btn.disabled = v >= ctx.max;
+        btn.onclick = ()=>addRoll(v);
+        numgrid.appendChild(btn);
+      }
+      if (entryMode === 'pins'){
+        document.getElementById('pinstage').classList.add('show');
+        if (!renderRack(b, ctx)) setNumericHandlers(ctx);   // fallback when leave data is missing
+      } else {
+        document.getElementById('pinstage').classList.remove('show');
+        numgrid.classList.remove('hide');
+        setNumericHandlers(ctx);
+      }
+    }
+    renderBoothRack(b);
+    const callEl = document.getElementById('callText');
+    if (callEl.textContent !== lastCall){
+      callEl.textContent = lastCall;
+      callEl.classList.remove('fresh'); void callEl.offsetWidth; callEl.classList.add('fresh');
+    }
+    shareBtn.classList.toggle('pulse', allDone());
+    fbBtn.classList.toggle('pulse', allDone());
+    const ng = document.getElementById('nextGameBtn');
+    ng.classList.toggle('show', allDone());
+    ng.textContent = `Start Game ${gameNum+1} — keep the session going`;
+    document.getElementById('recapBtn').classList.toggle('show',
+      bowlers[cur].past.length > 0 || allDone());
+    document.getElementById('finishBtn').classList.toggle('show',
+      bowlers.some(b=>gamesForRecap(b).length > 0));
+    saveSession();
+  }
+  function allDone(){ return bowlers.every(gameOver); }
+  function esc(s){ return s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  /* ---------- toast ---------- */
+  const toastEl = document.getElementById('toast');
+  let toastTimer;
+  function toast(msg, teal, foul){
+    toastEl.textContent = msg;
+    toastEl.classList.toggle('tealTone', !!teal);
+    toastEl.classList.toggle('foulTone', !!foul);
+    toastEl.classList.remove('show');
+    void toastEl.offsetWidth;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 950);
+  }
+
+  /* ---------- name modal ---------- */
+  const modal = document.getElementById('nameModal');
+  const nameInput = document.getElementById('nameInput');
+  function openModal(mode){
+    modalMode = mode;
+    const titles = {add:'Add bowler', rename:'Rename bowler', event:'Event / location'};
+    document.getElementById('modalTitle').textContent = titles[mode];
+    document.getElementById('modalOk').textContent = mode==='add' ? 'Add' : 'Save';
+    document.getElementById('modalRemove').classList.toggle('show', mode==='rename' && bowlers.length > 1);
+    nameInput.maxLength = mode==='event' ? 40 : 14;
+    nameInput.placeholder = mode==='event' ? 'e.g. Junior Gold · Minneapolis' : 'Name';
+    nameInput.value = mode==='rename' ? bowlers[cur].name : (mode==='event' ? eventLabel : '');
+    modal.classList.add('open');
+    setTimeout(()=>nameInput.focus(), 50);
+  }
+  /* ---------- in-app confirm (window.confirm is blocked in some webviews) ---------- */
+  const confirmDlg = document.getElementById('confirmDlg');
+  let confirmResolve = null;
+  function askConfirm(msg, okLabel){
+    document.getElementById('confirmMsg').textContent = msg;
+    document.getElementById('confirmYes').textContent = okLabel || 'Confirm';
+    confirmDlg.classList.add('open');
+    return new Promise(res=>{ confirmResolve = res; });
+  }
+  function settleConfirm(v){
+    confirmDlg.classList.remove('open');
+    if (confirmResolve){ confirmResolve(v); confirmResolve = null; }
+  }
+  document.getElementById('confirmYes').onclick = ()=>settleConfirm(true);
+  document.getElementById('confirmNo').onclick  = ()=>settleConfirm(false);
+
+  async function removeBowler(i){
+    if (bowlers.length <= 1) return;
+    const b = bowlers[i];
+    modal.classList.remove('open'); // close rename modal if open
+    if (!await askConfirm(`Remove ${b.name} and their scores from this session?`, 'Remove')) return;
+    bowlers.splice(i, 1);
+    history = history.filter(h => h.b !== i)
+                     .map(h => h.b > i ? {b:h.b-1, f:h.f} : h);
+    if (cur >= bowlers.length) cur = bowlers.length - 1;
+    else if (cur > i) cur--;
+    render();
+  }
+  document.getElementById('modalRemove').onclick = ()=>removeBowler(cur);
+  document.getElementById('modalCancel').onclick = ()=>modal.classList.remove('open');
+  document.getElementById('modalOk').onclick = confirmModal;
+  nameInput.addEventListener('keydown', e=>{ if(e.key==='Enter') confirmModal(); });
+  function confirmModal(){
+    const n = nameInput.value.trim();
+    if (modalMode==='event'){
+      eventLabel = n;                       // empty clears the label
+      modal.classList.remove('open');
+      render();
+      if (recapEl.classList.contains('open')) openRecap();
+      return;
+    }
+    if (!n) return;
+    if (modalMode==='add'){ bowlers.push(newBowler(n)); cur = bowlers.length-1; }
+    else bowlers[cur].name = n;
+    modal.classList.remove('open');
+    render();
+  }
+
+  /* ---------- share card (1080x1920 Snapchat story) ---------- */
+  async function buildCard(){
+    await document.fonts.load('80px "Bowlby One SC"');
+    await document.fonts.load('700 60px "Barlow Semi Condensed"');
+    const b = bowlers[cur];
+    const c = document.getElementById('shareCanvas');
+    const g = c.getContext('2d');
+    const W=1080, H=1920;
+
+    // background
+    g.fillStyle = '#10141F'; g.fillRect(0,0,W,H);
+    // lane arrow chevrons
+    g.save();
+    g.strokeStyle = 'rgba(227,155,45,.10)'; g.lineWidth = 26; g.lineCap='round';
+    for (let i=0;i<7;i++){
+      const y = 320 + i*230, s = 130;
+      g.beginPath();
+      g.moveTo(W/2 - s, y + s); g.lineTo(W/2, y); g.lineTo(W/2 + s, y + s);
+      g.stroke();
+    }
+    g.restore();
+
+    // wordmark
+    g.textAlign='center';
+    g.font = '52px "Bowlby One SC"';
+    g.fillStyle = '#E39B2D';
+    g.fillText('STRIKEBOOK', W/2, 140);
+    g.fillStyle = 'rgba(245,239,224,.55)';
+    g.font = '600 34px "Barlow Semi Condensed"';
+    const d = new Date();
+    g.fillText(d.toLocaleDateString(undefined,{month:'long', day:'numeric', year:'numeric'}), W/2, 195);
+
+    // name
+    g.fillStyle = '#F5EFE0';
+    g.font = '92px "Bowlby One SC"';
+    g.fillText(fitText(g, b.name.toUpperCase(), 960), W/2, 460);
+
+    // giant score
+    const total = liveTotal(b);
+    g.font = '420px "Bowlby One SC"';
+    g.fillStyle = '#E39B2D';
+    g.shadowColor='rgba(0,0,0,.55)'; g.shadowOffsetY=14;
+    g.fillText(String(total), W/2, 950);
+    g.shadowColor='transparent'; g.shadowOffsetY=0;
+    g.fillStyle='rgba(245,239,224,.55)';
+    g.font='600 40px "Barlow Semi Condensed"';
+    g.fillText(gameOver(b)?'FINAL SCORE':'SCORE SO FAR', W/2, 1030);
+    if (!gameOver(b)){
+      g.fillStyle='rgba(227,155,45,.85)';
+      g.font='600 34px "Barlow Semi Condensed"';
+      g.fillText(`max possible: ${maxPossible(b)}`, W/2, 1078);
+    }
+
+    // strike / spare counts
+    const ct = counts(b);
+    g.font='700 54px "Barlow Semi Condensed"';
+    g.fillStyle='#DE4A2E'; g.fillText(`✕ ${ct.x} strike${ct.x===1?'':'s'}`, W/2 - 220, 1140);
+    g.fillStyle='#2E8FA3'; g.fillText(`⁄ ${ct.sp} spare${ct.sp===1?'':'s'}`, W/2 + 220, 1140);
+
+    // other bowlers line
+    if (bowlers.length > 1){
+      const others = bowlers.filter((_,i)=>i!==cur).map(o=>`${o.name} ${liveTotal(o)}`).join('  ·  ');
+      g.fillStyle='rgba(245,239,224,.6)';
+      g.font='600 36px "Barlow Semi Condensed"';
+      g.fillText(fitText(g, 'vs  ' + others, 980), W/2, 1215);
+    }
+
+    // announcer's call
+    const call = finishLine(b);
+    if (call){
+      g.fillStyle='#E39B2D';
+      g.font='italic 600 36px "Barlow Semi Condensed"';
+      g.fillText(fitText(g, '🎙 “' + call + '”', 980), W/2, bowlers.length > 1 ? 1275 : 1215);
+    }
+
+    // scoresheet strip on cream
+    const sy = 1330, sh = 300, sx = 50, sw = W-100;
+    roundRect(g, sx, sy, sw, sh, 18);
+    g.fillStyle = '#F5EFE0'; g.fill();
+    g.strokeStyle = 'rgba(34,27,18,.25)'; g.lineWidth=3; g.stroke();
+
+    const cums = cumScores(b);
+    const fw = (sw-40)/10;
+    g.textAlign='center';
+    for (let fi=0; fi<10; fi++){
+      const fx = sx+20+fi*fw;
+      // frame number
+      g.fillStyle='#6E5B33'; g.font='700 26px "Barlow Semi Condensed"';
+      g.fillText(String(fi+1), fx+fw/2, sy+44);
+      // divider
+      if (fi>0){ g.strokeStyle='rgba(34,27,18,.2)'; g.lineWidth=2;
+        g.beginPath(); g.moveTo(fx, sy+16); g.lineTo(fx, sy+sh-16); g.stroke(); }
+      // ball marks
+      const r = b.frames[fi];
+      let marks = [];
+      for (let i=0;i<r.length;i++){ marks.push(markFor(fi, r, i)); }
+      if (fi<9 && P(r[0])===10) marks = [{t:'X', cls:'mark-x'}];
+      g.font='700 40px "Barlow Semi Condensed"';
+      const mtxt = marks.map(m=>m.t).join(' ');
+      g.fillStyle = marks.some(m=>m.cls==='mark-x') ? '#DE4A2E' :
+                    marks.some(m=>m.cls==='mark-s') ? '#2E8FA3' : '#221B12';
+      g.fillText(mtxt || '', fx+fw/2, sy+128);
+      // cumulative
+      g.fillStyle='#221B12'; g.font='700 44px "Barlow Semi Condensed"';
+      g.fillText(cums[fi]===null?'':String(cums[fi]), fx+fw/2, sy+230);
+    }
+
+    // session / series line
+    if (b.past.length){
+      g.fillStyle='rgba(245,239,224,.6)';
+      g.font='600 36px "Barlow Semi Condensed"';
+      g.fillText(`Game ${gameNum}  ·  Session series: ${seriesTotal(b)}`, W/2, 1755);
+    }
+
+    // footer
+    g.fillStyle='rgba(245,239,224,.4)';
+    g.font='600 32px "Barlow Semi Condensed"';
+    g.fillText('scored on Strikebook 🎳', W/2, 1815);
+
+    return c;
+  }
+  function roundRect(g,x,y,w,h,r){
+    g.beginPath();
+    g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r);
+    g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath();
+  }
+  function fitText(g, txt, maxW){
+    while (g.measureText(txt).width > maxW && txt.length > 4) txt = txt.slice(0,-2)+'…';
+    return txt;
+  }
+
+  async function buildSeriesCard(){
+    await document.fonts.load('80px "Bowlby One SC"');
+    await document.fonts.load('700 60px "Barlow Semi Condensed"');
+    const b = bowlers[cur];
+    const s = seriesStats(b);
+    const c = document.getElementById('shareCanvas');
+    const g = c.getContext('2d');
+    const W=1080, H=1920;
+
+    g.fillStyle = '#10141F'; g.fillRect(0,0,W,H);
+    g.save();
+    g.strokeStyle='rgba(227,155,45,.09)'; g.lineWidth=26; g.lineCap='round';
+    for (let i=0;i<7;i++){ const y=320+i*230, sz=130;
+      g.beginPath(); g.moveTo(W/2-sz,y+sz); g.lineTo(W/2,y); g.lineTo(W/2+sz,y+sz); g.stroke(); }
+    g.restore();
+
+    g.textAlign='center';
+    g.font='46px "Bowlby One SC"'; g.fillStyle='#E39B2D';
+    g.fillText('SERIES RECAP', W/2, 120);
+    g.font='600 32px "Barlow Semi Condensed"'; g.fillStyle='rgba(245,239,224,.55)';
+    g.fillText(fitText(g,
+      (eventLabel ? eventLabel.toUpperCase() + '  ·  ' : '') +
+      `${b.name.toUpperCase()}  ·  ${s.games.length} GAMES  ·  ` +
+      new Date().toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}), 980), W/2, 168);
+
+    // hero series total
+    g.font='260px "Bowlby One SC"'; g.fillStyle='#E39B2D';
+    g.shadowColor='rgba(0,0,0,.55)'; g.shadowOffsetY=12;
+    g.fillText(String(s.series), W/2, 400);
+    g.shadowColor='transparent'; g.shadowOffsetY=0;
+    g.font='600 36px "Barlow Semi Condensed"'; g.fillStyle='rgba(245,239,224,.55)';
+    g.fillText('SERIES TOTAL', W/2, 450);
+
+    // stat row
+    const stats = [['AVG', s.avg], ['HIGH', s.high], ['✕', s.strikes], ['⁄', s.spares]];
+    stats.forEach((st,i)=>{
+      const x = 175 + i*243;
+      g.fillStyle='rgba(245,239,224,.5)'; g.font='600 26px "Barlow Semi Condensed"';
+      g.fillText(st[0], x, 520);
+      g.fillStyle='#F5EFE0'; g.font='52px "Bowlby One SC"';
+      g.fillText(String(st[1]), x, 578);
+    });
+
+    // stacked game sheets
+    const top = 640, avail = 1080, n = s.games.length;
+    const rowH = Math.min(200, (avail - (n-1)*16) / n);
+    s.games.forEach((gm,i)=>{
+      const y = top + i*(rowH+16);
+      const sx=50, sw=W-100;
+      roundRect(g, sx, y, sw, rowH, 14);
+      g.fillStyle='#F5EFE0'; g.fill();
+
+      // game label + total
+      g.textAlign='left'; g.fillStyle='#6E5B33'; g.font='700 26px "Barlow Semi Condensed"';
+      g.fillText(`GAME ${i+1}`, sx+18, y+34);
+      g.textAlign='right';
+      g.fillStyle = gm.total===s.high && n>1 ? '#1E8A3C' : '#DE4A2E';
+      g.font='38px "Bowlby One SC"';
+      g.fillText(String(gm.total), sx+sw-18, y+36);
+      g.textAlign='center';
+
+      if (!gm.frames) drawNoSheet(g, sx, sw, y, rowH);
+      else drawMiniSheet(g, gm.frames, sx+14, y+48, sw-28, rowH-62);
+    });
+
+    // announcer call
+    g.textAlign='center';
+    g.fillStyle='#E39B2D'; g.font='italic 600 34px "Barlow Semi Condensed"';
+    g.fillText(fitText(g, '🎙 “' + seriesCall(b) + '”', 980), W/2, 1810);
+    g.fillStyle='rgba(245,239,224,.4)'; g.font='600 30px "Barlow Semi Condensed"';
+    g.fillText('scored on Strikebook 🎳', W/2, 1865);
+    return c;
+  }
+  function drawNoSheet(g, sx, sw, y, rowH){
+    g.fillStyle='#6E5B33'; g.font='600 26px "Barlow Semi Condensed"';
+    g.fillText('scoresheet not archived', sx+sw/2, y+rowH/2+20);
+  }
+  function drawMiniSheet(g, frames, x, y, w, h){
+    const cums = cumScores({frames});
+    const fw = w/10;
+    for (let fi=0; fi<10; fi++){
+      const fx = x + fi*fw;
+      if (fi>0){ g.strokeStyle='rgba(34,27,18,.18)'; g.lineWidth=2;
+        g.beginPath(); g.moveTo(fx, y); g.lineTo(fx, y+h); g.stroke(); }
+      const r = frames[fi] || [];
+      let marks;
+      if (fi<9 && P(r[0])===10) marks = [{t:'X', cls:'mark-x'}];
+      else marks = r.map((_,i)=>markFor(fi, r, i));
+      const txt = marks.map(m=>m.t).join(' ');
+      g.fillStyle = marks.some(m=>m.cls==='mark-x') ? '#DE4A2E'
+                  : marks.some(m=>m.cls==='mark-s') ? '#2E8FA3' : '#221B12';
+      g.font='700 30px "Barlow Semi Condensed"';
+      g.fillText(txt, fx+fw/2, y+30);
+      g.fillStyle='#221B12'; g.font='700 32px "Barlow Semi Condensed"';
+      g.fillText(cums[fi]===null?'':String(cums[fi]), fx+fw/2, y+h-4);
+    }
+  }
+
+  async function shareCard(title, series){
+    try{
+      const canvas = series ? await buildSeriesCard() : await buildCard();
+      const blob = await new Promise(res=>canvas.toBlob(res,'image/png'));
+      const file = new File([blob], 'strikebook-score.png', {type:'image/png'});
+      if (navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], title});
+      } else {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'strikebook-score.png';
+        a.click();
+        setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+      }
+    } catch(e){ /* user cancelled share sheet — fine */ }
+  }
+  shareBtn.addEventListener('click', ()=>shareCard('My bowling score'));
+  fbBtn.addEventListener('click', ()=>shareCard('My bowling score'));
+
+  /* ---------- series recap ---------- */
+  const recapEl = document.getElementById('recap');
+  function openRecap(){
+    const b = bowlers[cur];
+    const s = seriesStats(b);
+    if (!s) return;
+
+    document.getElementById('recapWho').innerHTML =
+      (eventLabel ? `<b>${esc(eventLabel)}</b> · ` : '') +
+      `${esc(b.name)} · ${s.games.length} game${s.games.length===1?'':'s'} · ` +
+      new Date().toLocaleDateString(undefined,{month:'short', day:'numeric', year:'numeric'}) +
+      ` <button id="eventEdit" class="eventEdit">✎ event</button>`;
+    document.getElementById('eventEdit').onclick = ()=>openModal('event');
+
+    // stacked game sheets
+    const gw = document.getElementById('recapGames');
+    gw.innerHTML = s.games.map((g,i)=>{
+      const best = g.total === s.high && s.games.length > 1;
+      const head = `<div class="gh"><b>Game ${i+1}</b><span class="gt${best?' best':''}">${g.total}</span></div>`;
+      if (!g.frames) return `<div class="gameCard">${head}<div class="noframes">Summary only — sheet not archived</div></div>`;
+      return `<div class="gameCard">${head}<div class="sheetScroll"><div class="frames">${framesHTML(g.frames, -1)}</div>${pinLeaveRowHTML(g.frames)}</div></div>`;
+    }).join('');
+
+    // stats — split analytics appear once any pin-by-pin data exists
+    const splitTiles = s.splits > 0
+      ? `<div class="stat"><div class="k">SPLITS LEFT</div><div class="v">${s.splits}</div></div>
+         <div class="stat"><div class="k">SPLITS MADE</div><div class="v">${s.splitConv}</div></div>
+         <div class="stat"><div class="k">PINFALL</div><div class="v">${s.pinfall}</div></div>`
+      : `<div class="stat"><div class="k">PINFALL</div><div class="v">${s.pinfall}</div></div>`;
+    document.getElementById('recapStats').innerHTML = `
+      <div class="stat hero"><div class="k">SERIES TOTAL</div><div class="v">${s.series}</div></div>
+      <div class="stat"><div class="k">AVERAGE</div><div class="v">${s.avg}</div></div>
+      <div class="stat"><div class="k">HIGH GAME</div><div class="v">${s.high}</div></div>
+      <div class="stat"><div class="k">LOW GAME</div><div class="v">${s.low}</div></div>
+      <div class="stat"><div class="k">STRIKES</div><div class="v">${s.strikes}</div></div>
+      <div class="stat"><div class="k">SPARES</div><div class="v">${s.spares}</div></div>
+      <div class="stat"><div class="k">CLEAN GAMES</div><div class="v">${s.clean}</div></div>
+      ${splitTiles}`;
+
+    document.getElementById('recapCall').textContent = '🎙 ' + seriesCall(b);
+
+    // standings
+    const st = document.getElementById('recapStandings');
+    if (bowlers.length > 1){
+      const rows = bowlers.map(bw=>({bw, s:seriesStats(bw)}))
+                          .filter(r=>r.s)
+                          .sort((a,b2)=>b2.s.series - a.s.series);
+      st.innerHTML = `<div class="sh">SESSION STANDINGS</div>` + rows.map((r,i)=>`
+        <div class="standRow${i===0?' win':''}">
+          <span class="pos">${i===0?'🏆':'#'+(i+1)}</span>
+          <span class="nm">${esc(r.bw.name)}</span>
+          <span class="gs">${r.s.games.map(g=>g.total).join(' · ')}</span>
+          <span class="sr">${r.s.series}</span>
+        </div>`).join('');
+      st.style.display = 'block';
+    } else st.style.display = 'none';
+
+    recapEl.classList.add('open');
+    recapEl.scrollTop = 0;
+  }
+  document.getElementById('recapBtn').onclick = openRecap;
+  document.getElementById('recapClose').onclick = ()=>recapEl.classList.remove('open');
+  document.getElementById('recapSnap').onclick = ()=>shareCard('My bowling series', true);
+  document.getElementById('recapFb').onclick = ()=>shareCard('My bowling series', true);
+
+  document.getElementById('nextGameBtn').onclick = nextGame;
+  document.getElementById('undoBtn').onclick = ()=>{
+    lastCall = 'Scratch that — re-mark the ball.';
+    undo();
+  };
+  document.getElementById('newGame').onclick = async ()=>{
+    if (await askConfirm('Reset the whole session WITHOUT saving? All games, scores, and series totals will be discarded. (Use Finish session to save instead.)', 'Discard')){
+      lastCall = 'Fresh session — lace up, first ball of the game.';
+      resetSession();
+      openStart();
+    }
+  };
+
+  /* ================= HISTORY: archive, analytics, views ================= */
+
+  /* ---------- archive adapter: IndexedDB, localStorage fallback ---------- */
+  const ARCHIVE_LS_KEY = 'strikebook_archive_v1';
+  function idbOpen(){
+    return new Promise((res, rej)=>{
+      if (!window.indexedDB) return rej(new Error('no idb'));
+      const r = indexedDB.open('strikebook', 2);
+      r.onupgradeneeded = ()=>{
+        const db = r.result;
+        if (!db.objectStoreNames.contains('sessions')) db.createObjectStore('sessions', {keyPath:'id'});
+        if (!db.objectStoreNames.contains('kv')) db.createObjectStore('kv', {keyPath:'k'});
+      };
+      r.onsuccess = ()=>res(r.result);
+      r.onerror = ()=>rej(r.error);
+    });
+  }
+  function lsArchive(){ try{ return JSON.parse(localStorage.getItem(ARCHIVE_LS_KEY)) || []; }catch(e){ return []; } }
+  function lsArchiveWrite(a){ try{ localStorage.setItem(ARCHIVE_LS_KEY, JSON.stringify(a)); }catch(e){} }
+  async function archivePut(sess){
+    try{
+      const db = await idbOpen();
+      await new Promise((res, rej)=>{
+        const tx = db.transaction('sessions','readwrite');
+        tx.objectStore('sessions').put(sess);
+        tx.oncomplete = res; tx.onerror = ()=>rej(tx.error);
+      });
+    }catch(e){
+      const a = lsArchive().filter(s=>s.id!==sess.id); a.push(sess); lsArchiveWrite(a);
+    }
+  }
+  async function archiveAll(){
+    try{
+      const db = await idbOpen();
+      return await new Promise((res, rej)=>{
+        const rq = db.transaction('sessions').objectStore('sessions').getAll();
+        rq.onsuccess = ()=>res(rq.result || []); rq.onerror = ()=>rej(rq.error);
+      });
+    }catch(e){ return lsArchive(); }
+  }
+  async function archiveDel(id){
+    try{
+      const db = await idbOpen();
+      await new Promise((res, rej)=>{
+        const tx = db.transaction('sessions','readwrite');
+        tx.objectStore('sessions').delete(id);
+        tx.oncomplete = res; tx.onerror = ()=>rej(tx.error);
+      });
+    }catch(e){ lsArchiveWrite(lsArchive().filter(s=>s.id!==id)); }
+  }
+  // tiny key/value slot in the same DB, used only for the backup-folder handle + status
+  async function kvGet(key){
+    try{
+      const db = await idbOpen();
+      return await new Promise((res, rej)=>{
+        const rq = db.transaction('kv').objectStore('kv').get(key);
+        rq.onsuccess = ()=>res(rq.result ? rq.result.v : null);
+        rq.onerror = ()=>rej(rq.error);
+      });
+    }catch(e){ return null; }
+  }
+  async function kvSet(key, v){
+    try{
+      const db = await idbOpen();
+      await new Promise((res, rej)=>{
+        const tx = db.transaction('kv','readwrite');
+        tx.objectStore('kv').put({k:key, v});
+        tx.oncomplete = res; tx.onerror = ()=>rej(tx.error);
+      });
+    }catch(e){}
+  }
+
+  /* ---------- auto-backup: a user-chosen folder, written on every Finish ----------
+     Uses the File System Access API — desktop Chrome/Edge only. Safari and iOS have
+     no equivalent, so this is an addition to manual backup, never a replacement:
+     the Save/Load buttons in History keep working everywhere regardless. */
+  const FSA_SUPPORTED = typeof window !== 'undefined' && 'showDirectoryPicker' in window;
+
+  async function getBackupHandle(){
+    if (!FSA_SUPPORTED) return null;
+    try{ return await kvGet('backupDir'); }catch(e){ return null; }
+  }
+  async function backupPermission(handle){
+    if (!handle) return 'none';
+    try{ return await handle.queryPermission({mode:'readwrite'}); }catch(e){ return 'denied'; }
+  }
+  async function chooseBackupFolder(){
+    if (!FSA_SUPPORTED) return false;
+    try{
+      const handle = await window.showDirectoryPicker({id:'strikebook-backups', mode:'readwrite'});
+      const perm = await handle.requestPermission({mode:'readwrite'});
+      if (perm !== 'granted') return false;
+      await kvSet('backupDir', handle);
+      await kvSet('lastBackupOk', true);
+      return true;
+    }catch(e){ return false; }   // picker cancelled, or denied — not an error to surface
+  }
+  async function clearBackupFolder(){ await kvSet('backupDir', null); }
+  async function writeAutoBackup(dataObj){
+    try{
+      const handle = await getBackupHandle();
+      if (!handle) return {ok:false, reason:'not-configured'};
+      let perm = await backupPermission(handle);
+      if (perm !== 'granted'){
+        try{ perm = await handle.requestPermission({mode:'readwrite'}); }catch(e){ perm = 'denied'; }
+      }
+      if (perm !== 'granted'){ await kvSet('lastBackupOk', false); return {ok:false, reason:'permission'}; }
+      const stamp = new Date();
+      const fname = `strikebook-backup-${stamp.toISOString().slice(0,10)}-${String(stamp.getHours()).padStart(2,'0')}${String(stamp.getMinutes()).padStart(2,'0')}.json`;
+      const fh = await handle.getFileHandle(fname, {create:true});
+      const w = await fh.createWritable();
+      await w.write(JSON.stringify(dataObj));
+      await w.close();
+      await kvSet('lastBackupOk', true);
+      await kvSet('lastBackupAt', stamp.toISOString());
+      return {ok:true, name:fname, folder:handle.name};
+    }catch(e){ await kvSet('lastBackupOk', false); return {ok:false, reason:'write-failed'}; }
+  }
+  async function computeBackupStatus(){
+    if (!FSA_SUPPORTED) return {state:'unsupported'};
+    const handle = await getBackupHandle();
+    if (!handle) return {state:'off'};
+    const perm = await backupPermission(handle);
+    if (perm !== 'granted') return {state:'needs-permission', folder:handle.name};
+    return {state:'on', folder:handle.name, lastOk: await kvGet('lastBackupOk'), lastAt: await kvGet('lastBackupAt')};
+  }
+
+  /* ---------- finish session: bank the whole outing into history ---------- */
+  function sessionSnapshot(){
+    return {
+      id: String(Date.now()),
+      date: new Date().toISOString(),
+      event: eventLabel,
+      bowlers: bowlers.map(b=>({
+        name: b.name,
+        bid: b.bid,
+        games: gamesForRecap(b).map(g=>({total:g.total, frames:g.frames}))
+      })).filter(b=>b.games.length)
+    };
+  }
+  async function finishSession(){
+    const snap = sessionSnapshot();
+    if (!snap.bowlers.length) return;
+    const games = snap.bowlers.reduce((a,b)=>a+b.games.length,0);
+    if (!await askConfirm(`Save this session (${games} game${games===1?'':'s'}) to history and start fresh?`, 'Finish & save')) return;
+    await archivePut(snap);
+
+    let backupNote = '';
+    const handle = await getBackupHandle();
+    if (handle){
+      const res = await writeAutoBackup({ kind:'strikebook-backup', version:1,
+        exported:new Date().toISOString(), sessions: await archiveAll(), live:null });
+      backupNote = res.ok ? ` Backed up to "${res.folder}".`
+                           : ' (Backup folder needs reconnecting — check the status on this screen.)';
+    }
+
+    bowlers = bowlers.map(b=>newBowler(b.name, b.bid));
+    cur = 0; history = []; gameNum = 1; eventLabel = '';
+    lastCall = 'In the books! Session saved to history.' + backupNote;
+    render();
+    openStart();
+  }
+
+  /* ---------- leave analytics engine ---------- */
+  const normName = n => n.trim().toLowerCase();
+  // Identity rule: if both sides carry a bid, the bids decide (two different Aidens
+  // stay separate). If either side predates bids, fall back to name matching so
+  // legacy sessions still attach to the right person.
+  function sameBowler(b, ident){
+    if (b.bid && ident.bid) return b.bid === ident.bid;
+    return normName(b.name) === ident.nameKey;
+  }
+  // Union of every bowler across archive + live roster, merged by identity.
+  // Returns [{bid, nameKey, name, lastSeen}] with the most recent spelling.
+  function knownBowlers(sessions){
+    const map = {};
+    const fold = (b, ts)=>{
+      if (!b || !b.name) return;
+      const nk = normName(b.name);
+      let e = b.bid ? map['id:'+b.bid] : null;
+      if (!e && b.bid && map['nm:'+nk]){            // legacy entry upgrades to id
+        e = map['nm:'+nk]; delete map['nm:'+nk];
+        e.bid = b.bid; map['id:'+b.bid] = e;
+      }
+      if (!e && !b.bid) e = Object.values(map).find(x=>x.nameKey===nk);
+      if (!e){ e = {bid:b.bid||null, nameKey:nk, name:b.name, lastSeen:0}; map[b.bid?'id:'+b.bid:'nm:'+nk] = e; }
+      if (ts >= e.lastSeen){ e.name = b.name; e.nameKey = nk; e.lastSeen = ts; }
+    };
+    sessions.slice().sort((a,b)=>a.id.localeCompare(b.id))
+      .forEach(s=>s.bowlers.forEach(b=>fold(b, Number(s.id)||0)));
+    bowlers.forEach(b=>fold(b, Infinity));
+    return Object.values(map).sort((a,b)=>b.lastSeen-a.lastSeen);
+  }
+  // games: [{frames}] -> per-leave conversion stats + frame-end pin heat
+  function leaveStats(games){
+    const leaves = {};                 // key -> {att, made, pins, split}
+    const pinHeat = Array(11).fill(0); // frame-end standing counts per pin id
+    let opens = 0, gamesWithPin = 0;
+    games.forEach(g=>{
+      if (!g.frames) return;
+      let anyPin = false;
+      g.frames.forEach((r,fi)=>{
+        r.forEach((rl,i)=>{
+          if (!freshRackAt(fi, r, i) || rl.f || rl.p===10 || !rl.s || !rl.s.length) return;
+          anyPin = true;
+          const pins = rl.s.slice().sort((a,b)=>a-b);
+          const key = pins.join(',');
+          const st = leaves[key] || (leaves[key] = {att:0, made:0, pins, split: !!splitInfo(pins)});
+          st.att++;
+          const nx = r[i+1];
+          if (nx && !nx.f && P(nx) === pins.length) st.made++;
+          else if (nx && nx.s){ opens++; nx.s.forEach(p=>pinHeat[p]++); }
+        });
+      });
+      if (anyPin) gamesWithPin++;
+    });
+    return {leaves, pinHeat, opens, gamesWithPin};
+  }
+  // aggregate a bowler's games across sessions for a scope
+  function bowlerGames(ident, sessions, scope){
+    let list = sessions.slice().sort((a,b)=>b.id.localeCompare(a.id));
+    if (scope === 'last5') list = list.slice(0,5);
+    if (scope === 'tonight') list = [];
+    const games = [];
+    list.forEach(s=>s.bowlers.forEach(b=>{
+      if (sameBowler(b, ident)) b.games.forEach(g=>games.push(g));
+    }));
+    // current live session always counts (it's part of "career" and "tonight")
+    if (scope !== 'last5' || list.length < 5){
+      bowlers.forEach(b=>{
+        if (sameBowler(b, ident)) gamesForRecap(b).forEach(g=>games.push(g));
+      });
+    }
+    return games;
+  }
+  function careerLine(games){
+    const totals = games.map(g=>g.total);
+    const n = totals.length;
+    if (!n) return null;
+    let x=0, sp=0, spOpp=0;
+    games.forEach(g=>{
+      if (!g.frames) return;
+      const c = counts({frames:g.frames});
+      x += c.x; sp += c.sp;
+      g.frames.forEach((r,fi)=>{
+        if (fi<9){ if (P(r[0])!==undefined && P(r[0])!==10 && r.length===2) spOpp++; }
+      });
+    });
+    return {
+      n, avg: Math.round(totals.reduce((a,t)=>a+t,0)/n),
+      high: Math.max(...totals), strikes:x, spares:sp,
+      sparePct: spOpp ? Math.round(100*sp/spOpp) : null
+    };
+  }
+
+  /* ---------- history view rendering ---------- */
+  const historyView = document.getElementById('historyView');
+  let histTab = 'bowlers', histSessions = [];
+  function leaveSVG(pins, w){
+    let s = '';
+    for (let p=1; p<=10; p++){
+      const [x,y] = PIN_XY[p];
+      s += `<circle cx="${x}" cy="${y}" r="9" fill="${pins.includes(p)?'#DE4A2E':'#2c3247'}"/>`;
+    }
+    return `<svg viewBox="8 8 104 92" style="width:${w}px;height:${Math.round(w*.85)}px;flex:none">${s}</svg>`;
+  }
+  function heatColor(t){ // 0..1 -> navy slate to red
+    const a=[44,50,71], b=[222,74,46];
+    const c = a.map((v,i)=>Math.round(v+(b[i]-v)*t));
+    return `rgb(${c[0]},${c[1]},${c[2]})`;
+  }
+  function leaveLabel(pins){
+    const si = splitInfo(pins);
+    const nums = pins.join('–');
+    if (si) return `${nums} · ${si.split_name.replace(/^the /i,'').replace(/^a /i,'')}`;
+    return pins.length===1 ? `${nums} pin` : nums;
+  }
+  async function openHistory(){
+    histSessions = await archiveAll();
+    showHistPane('home');
+    renderHistHome();
+    historyView.classList.add('open');
+    historyView.scrollTop = 0;
+  }
+  function showHistPane(which){
+    document.getElementById('histHome').style.display    = which==='home' ? 'block':'none';
+    document.getElementById('histBowler').style.display  = which==='bowler' ? 'block':'none';
+    document.getElementById('histSession').style.display = which==='session' ? 'block':'none';
+  }
+  function renderHistHome(){
+    const nSess = histSessions.length;
+    document.getElementById('histSub').textContent =
+      nSess ? `${nSess} saved session${nSess===1?'':'s'} on this device` : 'No saved sessions yet';
+    document.getElementById('htBowlers').classList.toggle('on', histTab==='bowlers');
+    document.getElementById('htSessions').classList.toggle('on', histTab==='sessions');
+    const list = document.getElementById('histList');
+    if (histTab === 'bowlers'){
+      const roster = knownBowlers(histSessions)
+        .filter(id => bowlerGames(id, histSessions, 'career').length ||
+                      bowlers.some(b=>sameBowler(b, id) && gamesForRecap(b).length));
+      if (!roster.length){
+        list.innerHTML = `<div class="noData">Nothing here yet. Bowl a session and tap <b>Finish session</b> to start your history.</div>`;
+        return;
+      }
+      list.innerHTML = roster.map((id,i)=>{
+        const games = bowlerGames(id, histSessions, 'career');
+        const c = careerLine(games);
+        if (!c) return '';
+        const sessCount = histSessions.filter(s=>s.bowlers.some(b=>sameBowler(b, id))).length;
+        return `<button class="bCard" data-i="${i}">
+          <div><div class="bn">${esc(id.name)}</div>
+          <div class="bs">${sessCount} session${sessCount===1?'':'s'} · ${c.n} game${c.n===1?'':'s'} · high ${c.high}${c.sparePct!==null?` · ${c.sparePct}% spares`:''}</div></div>
+          <div class="avg"><div class="n">${c.avg}</div><div class="l">AVG</div></div>
+        </button>`;
+      }).join('');
+      list.querySelectorAll('.bCard').forEach(el=>el.onclick = ()=>openBowlerPage(roster[Number(el.dataset.i)]));
+    } else {
+      if (!histSessions.length){
+        list.innerHTML = `<div class="noData">No saved sessions yet. Finish a session and it will show up here.</div>`;
+        return;
+      }
+      const sorted = histSessions.slice().sort((a,b)=>b.id.localeCompare(a.id));
+      list.innerHTML = sorted.map(s=>{
+        const d = new Date(s.date);
+        const games = s.bowlers.reduce((a,b)=>a+b.games.length,0);
+        const line = s.bowlers.map(b=>`${b.name} ${b.games.reduce((a,g)=>a+g.total,0)}`).join(' · ');
+        return `<button class="sessRow" data-s="${s.id}">
+          <div class="st">${esc(s.event || 'Session')} · ${d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</div>
+          <div class="sd">${games} game${games===1?'':'s'} · ${esc(line)}</div>
+        </button>`;
+      }).join('');
+      list.querySelectorAll('.sessRow').forEach(el=>el.onclick = ()=>openSessionPage(el.dataset.s));
+    }
+  }
+
+  /* ---------- bowler analytics page: practice rack + spare ledger ---------- */
+  let anaScope = 'career';
+  function openBowlerPage(ident){
+    const pane = document.getElementById('histBowler');
+    const games = bowlerGames(ident, histSessions, anaScope);
+    const c = careerLine(games);
+    const displayName = ident.name;
+    if (!c){
+      pane.innerHTML = `<button class="histBack" id="histBack1">← All bowlers</button>
+        <div class="noData">No games for ${esc(displayName)} in this scope.</div>`;
+      document.getElementById('histBack1').onclick = ()=>{ showHistPane('home'); renderHistHome(); };
+      showHistPane('bowler');
+      return;
+    }
+    const {leaves, pinHeat, gamesWithPin} = leaveStats(games);
+    const entries = Object.values(leaves);
+    const pct = st => Math.round(100*st.made/st.att);
+    const spares = entries.filter(e=>!e.split), splits = entries.filter(e=>e.split);
+    const MIN = 4;
+    const need = spares.filter(e=>e.att>=MIN && pct(e)<60).sort((a,b)=>pct(a)-pct(b));
+    const work = spares.filter(e=>e.att>=MIN && pct(e)>=60 && pct(e)<80).sort((a,b)=>pct(a)-pct(b));
+    const money = spares.filter(e=>e.att>=MIN && pct(e)>=80).sort((a,b)=>pct(b)-pct(a));
+    const thin = spares.filter(e=>e.att<MIN);
+    const row = (e, color) => `<div class="ledgerRow">${leaveSVG(e.pins, 32)}
+      <div class="lr"><div class="lt"><span class="nm">${esc(leaveLabel(e.pins))}</span>
+      <span class="pc" style="color:${color}">${pct(e)}% · ${e.made}/${e.att}</span></div>
+      <div class="bar"><i style="width:${Math.max(pct(e),2)}%;background:${color}"></i></div></div></div>`;
+
+    // practice rack heat
+    const maxHeat = Math.max(1, ...pinHeat);
+    let rack = '';
+    for (let p=1; p<=10; p++){
+      const [x,y] = PIN_XY[p];
+      const t = pinHeat[p]/maxHeat;
+      rack += `<circle cx="${x}" cy="${y}" r="10" fill="${pinHeat[p]?heatColor(t):'#2c3247'}"></circle>
+        <text x="${x}" y="${y+3.5}" text-anchor="middle" font-size="9" font-weight="700"
+        fill="${t>.45?'#F5EFE0':'#8a8878'}">${p}</text>`;
+    }
+    // drill list: worst leaves by misses, honest cost estimate (~11 pins per missed spare)
+    const drills = spares.concat(splits.filter(s=>!s.split || s.pins.length<3))
+      .map(e=>({e, miss:e.att-e.made}))
+      .filter(d=>d.miss>0 && d.e.att>=MIN)
+      .sort((a,b)=>b.miss-a.miss).slice(0,3);
+
+    // this bowler's own sessions, most recent first, so their scoresheets are one tap away
+    const mySessions = histSessions
+      .filter(s => s.bowlers.some(b => sameBowler(b, ident)))
+      .sort((a,b) => b.id.localeCompare(a.id));
+
+    pane.innerHTML = `
+      <button class="histBack" id="histBack1">← All bowlers</button>
+      <div class="recapTitle" style="font-size:17px;margin-bottom:2px">${esc(displayName.toUpperCase())}</div>
+      <div class="recapWho" style="margin-bottom:12px">${c.n} games in scope</div>
+      <div class="scopeSeg">
+        <button data-sc="career"${anaScope==='career'?' class="on"':''}>Career</button>
+        <button data-sc="last5"${anaScope==='last5'?' class="on"':''}>Last 5 sessions</button>
+        <button data-sc="tonight"${anaScope==='tonight'?' class="on"':''}>Tonight</button>
+      </div>
+      <div class="mchips">
+        <div class="mchip"><div class="k">AVG</div><div class="v">${c.avg}</div></div>
+        <div class="mchip"><div class="k">HIGH</div><div class="v">${c.high}</div></div>
+        <div class="mchip"><div class="k">STRIKES</div><div class="v">${c.strikes}</div></div>
+        <div class="mchip"><div class="k">SPARE %</div><div class="v">${c.sparePct===null?'–':c.sparePct}</div></div>
+      </div>
+      ${gamesWithPin ? `
+        <div class="anaHead">PRACTICE RACK — HOW OFTEN EACH PIN SURVIVES THE FRAME</div>
+        <div class="heatWrap"><svg viewBox="0 0 120 104">${rack}</svg>
+          <div class="heatLegend"><span><i style="background:#2c3247"></i>rarely left</span>
+          <span><i style="background:#DE4A2E"></i>often left</span></div></div>
+        ${drills.length ? `<div class="anaHead red">DRILL LIST</div>` + drills.map(d=>
+          `<div class="drillRow"><span class="dn">${esc(leaveLabel(d.e.pins))}</span>
+           <span class="dc">missed ${d.miss}× · ≈${Math.round(d.miss*11/Math.max(gamesWithPin,1))} pins/game</span></div>`).join('') : ''}
+        ${need.length ? `<div class="anaHead red">NEEDS PRACTICE · UNDER 60% · MIN ${MIN} TRIES</div>` + need.map(e=>row(e,'#DE4A2E')).join('') : ''}
+        ${work.length ? `<div class="anaHead">WORKING ON IT · 60–79%</div>` + work.map(e=>row(e,'#E39B2D')).join('') : ''}
+        ${money.length ? `<div class="anaHead green">MONEY LEAVES · 80%+</div>` + money.map(e=>row(e,'#5DCAA5')).join('') : ''}
+        ${splits.length ? `<div class="anaHead">SPLITS · TRACKED SEPARATELY</div>` + splits.sort((a,b)=>b.att-a.att).map(e=>row(e, e.made?'#5DCAA5':'#DE4A2E')).join('') : ''}
+        ${thin.length ? `<div class="recapWho" style="margin-top:10px">…plus ${thin.length} leave${thin.length===1?'':'s'} with under ${MIN} attempts — keep bowling to unlock them.</div>` : ''}
+      ` : `<div class="noData">No pin-by-pin data in this scope yet. Score with the <b>pin rack</b> (not the keypad) and every leave gets tracked here automatically.</div>`}
+      ${mySessions.length ? `
+        <div class="anaHead">SESSIONS · TAP TO SEE THE SCORESHEET</div>
+        ${mySessions.map(s=>{
+          const mine = s.bowlers.find(b=>sameBowler(b, ident));
+          const total = mine.games.reduce((a,g)=>a+g.total,0);
+          const d = new Date(s.date);
+          return `<button class="sessRow" data-sid="${s.id}">
+            <div class="st">${esc(s.event || 'Session')} · ${d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</div>
+            <div class="sd">${mine.games.length} game${mine.games.length===1?'':'s'} · series ${total}</div>
+          </button>`;
+        }).join('')}
+      ` : ''}
+    `;
+    document.getElementById('histBack1').onclick = ()=>{ showHistPane('home'); renderHistHome(); };
+    pane.querySelectorAll('.scopeSeg button').forEach(btn=>btn.onclick = ()=>{
+      anaScope = btn.dataset.sc; openBowlerPage(ident);
+    });
+    pane.querySelectorAll('.sessRow').forEach(el=>el.onclick = ()=>openSessionPage(el.dataset.sid, {back:'bowler', ident}));
+    showHistPane('bowler');
+    historyView.scrollTop = 0;
+  }
+
+  /* ---------- archived session detail ---------- */
+  function openSessionPage(id, returnCtx){
+    const s = histSessions.find(x=>x.id===id);
+    if (!s) return;
+    const pane = document.getElementById('histSession');
+    const d = new Date(s.date);
+    const backLabel = returnCtx && returnCtx.back==='bowler' ? `← ${esc(returnCtx.ident.name)}` : '← All sessions';
+    pane.innerHTML = `
+      <button class="histBack" id="histBack2">${backLabel}</button>
+      <div class="recapTitle" style="font-size:17px">${esc(s.event || 'SESSION')}</div>
+      <div class="recapWho" style="margin-bottom:12px">${d.toLocaleDateString(undefined,{weekday:'short',month:'long',day:'numeric',year:'numeric'})}</div>
+      ${s.bowlers.map(b=>{
+        const series = b.games.reduce((a,g)=>a+g.total,0);
+        return `<div class="recapWho" style="margin:14px 0 6px"><b>${esc(b.name)}</b> · series ${series}</div>` +
+          b.games.map((g,i)=>{
+            const head = `<div class="gh"><b>Game ${i+1}</b><span class="gt">${g.total}</span></div>`;
+            if (!g.frames) return `<div class="gameCard">${head}<div class="noframes">Summary only</div></div>`;
+            return `<div class="gameCard">${head}<div class="sheetScroll"><div class="frames">${framesHTML(g.frames,-1)}</div>${pinLeaveRowHTML(g.frames)}</div></div>`;
+          }).join('');
+      }).join('')}
+      <button class="removeBtn show" id="delSess" style="margin-top:14px">Delete this session from history</button>
+    `;
+    const goBack = ()=>{
+      if (returnCtx && returnCtx.back==='bowler') openBowlerPage(returnCtx.ident);
+      else { histTab='sessions'; showHistPane('home'); renderHistHome(); }
+    };
+    document.getElementById('histBack2').onclick = goBack;
+    document.getElementById('delSess').onclick = async ()=>{
+      if (!await askConfirm('Delete this session from history? This cannot be undone.', 'Delete')) return;
+      await archiveDel(id);
+      histSessions = histSessions.filter(x=>x.id!==id);
+      goBack();
+    };
+    showHistPane('session');
+    historyView.scrollTop = 0;
+  }
+
+  /* ---------- backup file: export / import ---------- */
+  async function exportBackup(){
+    const data = { kind:'strikebook-backup', version:1,
+      exported: new Date().toISOString(),
+      sessions: await archiveAll(), live: sessionSnapshot() };
+    const blob = new Blob([JSON.stringify(data)], {type:'application/json'});
+    const file = new File([blob], `strikebook-backup-${new Date().toISOString().slice(0,10)}.json`, {type:'application/json'});
+    if (navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file], title:'Strikebook backup'}); return; }catch(e){}
+    }
+    try{
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = file.name; a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+    }catch(e){
+      document.getElementById('backupHint').textContent = "This browser can't download files — try the share option on your phone.";
+    }
+  }
+  async function importBackup(fileObj){
+    try{
+      const data = JSON.parse(await fileObj.text());
+      if (data.kind !== 'strikebook-backup' || !Array.isArray(data.sessions)) throw new Error('bad file');
+      const existing = new Set((await archiveAll()).map(s=>s.id));
+      const fresh = data.sessions.filter(s=>s && s.id && !existing.has(s.id));
+      if (!fresh.length){
+        document.getElementById('backupHint').textContent = 'Backup loaded — no new sessions (everything was already here).';
+        return;
+      }
+      if (!await askConfirm(`Add ${fresh.length} session${fresh.length===1?'':'s'} from this backup to your history?`, 'Import')) return;
+      for (const s of fresh){
+        s.bowlers.forEach(b=>b.games.forEach(g=>{ if (g.frames) g.frames = migrateFrames(g.frames); }));
+        await archivePut(s);
+      }
+      histSessions = await archiveAll();
+      renderHistHome();
+      document.getElementById('backupHint').textContent = `Imported ${fresh.length} session${fresh.length===1?'':'s'}.`;
+    }catch(e){
+      document.getElementById('backupHint').textContent = "Couldn't read that file — it doesn't look like a Strikebook backup.";
+    }
+  }
+
+  /* ---------- history wiring ---------- */
+  document.getElementById('historyBtn').onclick = openHistory;
+  document.getElementById('histClose').onclick = ()=>historyView.classList.remove('open');
+  document.getElementById('htBowlers').onclick = ()=>{ histTab='bowlers'; renderHistHome(); };
+  document.getElementById('htSessions').onclick = ()=>{ histTab='sessions'; renderHistHome(); };
+  document.getElementById('finishBtn').onclick = finishSession;
+  document.getElementById('exportBtn').onclick = exportBackup;
+  document.getElementById('importBtn').onclick = ()=>document.getElementById('importFile').click();
+  document.getElementById('importFile').addEventListener('change', e=>{
+    if (e.target.files && e.target.files[0]) importBackup(e.target.files[0]);
+    e.target.value = '';
+  });
+
+  /* ---------- backup status pill + setup modal ---------- */
+  function fmtWhen(iso){
+    if (!iso) return 'not yet';
+    return new Date(iso).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});
+  }
+  async function renderBackupPill(){
+    const el = document.getElementById('backupStatus');
+    const s = await computeBackupStatus();
+    el.className = 'backupStatus ' + s.state;
+    const label = el.querySelector('span');
+    if (s.state === 'unsupported')
+      label.textContent = 'Auto-backup isn\u2019t available in this browser — tap for the manual option';
+    else if (s.state === 'off')
+      label.textContent = 'No backup folder set — tap to choose one';
+    else if (s.state === 'needs-permission')
+      label.textContent = `Backup folder "${s.folder}" needs permission — tap to reconnect`;
+    else
+      label.textContent = `Backing up to "${s.folder}" — last saved ${fmtWhen(s.lastAt)}`;
+  }
+  async function renderBackupModal(){
+    const s = await computeBackupStatus();
+    const body = document.getElementById('bkBody');
+    const btn = (id, cls, label) => `<button class="${cls}" id="${id}" style="flex:1">${label}</button>`;
+    if (s.state === 'unsupported'){
+      body.innerHTML = `<p class="bkTxt">Auto-backup to a folder needs a desktop browser with file system
+        access — Chrome or Edge on a computer. It isn't available on iPhone, or inside most in-app browsers.</p>
+        <p class="bkTxt">Everywhere else, use <b>Save backup file</b> in History — one tap after each session,
+        then drop the file in your cloud folder. Same data, no setup required.</p>
+        <div class="btns">${btn('bkClose1','ok','Got it')}</div>`;
+      document.getElementById('bkClose1').onclick = closeBackupModal;
+    } else if (s.state === 'off'){
+      body.innerHTML = `<p class="bkTxt">Pick a folder on this device — your synced Google Drive, iCloud Drive,
+        or Dropbox folder works well. Strikebook will save a backup file there automatically every time you
+        finish a session.</p>
+        <div class="btns">${btn('bkCancel','cancel','Not now')}${btn('bkChoose','ok','Choose folder')}</div>`;
+      document.getElementById('bkCancel').onclick = closeBackupModal;
+      document.getElementById('bkChoose').onclick = async ()=>{
+        if (await chooseBackupFolder()) await renderBackupPill();
+        await renderBackupModal();
+      };
+    } else if (s.state === 'needs-permission'){
+      body.innerHTML = `<p class="bkTxt">Strikebook lost write access to <b>"${esc(s.folder)}"</b> — browsers
+        ask again periodically to keep you in control. Reconnect to keep auto-backup running.</p>
+        <div class="btns">${btn('bkChange','cancel','Change folder')}${btn('bkReconnect','ok','Reconnect')}</div>
+        <button class="removeBtn show" id="bkOff" style="margin-top:8px">Turn off auto-backup</button>`;
+      document.getElementById('bkChange').onclick = async ()=>{
+        if (await chooseBackupFolder()) await renderBackupPill();
+        await renderBackupModal();
+      };
+      document.getElementById('bkReconnect').onclick = async ()=>{
+        const handle = await getBackupHandle();
+        if (handle){ try{ await handle.requestPermission({mode:'readwrite'}); }catch(e){} }
+        await renderBackupPill(); await renderBackupModal();
+      };
+      document.getElementById('bkOff').onclick = async ()=>{
+        if (!await askConfirm('Turn off auto-backup? Your saved history stays on this device either way.', 'Turn off')) return;
+        await clearBackupFolder(); await renderBackupPill(); await renderBackupModal();
+      };
+    } else {
+      body.innerHTML = `<p class="bkTxt">Backing up to <b>"${esc(s.folder)}"</b> automatically whenever you
+        finish a session.</p>
+        <div class="bkMeta">Last backup: ${fmtWhen(s.lastAt)}${s.lastOk===false?' — last attempt failed':''}</div>
+        <div class="btns">${btn('bkChange','cancel','Change folder')}${btn('bkNow','ok','Back up now')}</div>
+        <button class="removeBtn show" id="bkOff" style="margin-top:8px">Turn off auto-backup</button>`;
+      document.getElementById('bkChange').onclick = async ()=>{
+        if (await chooseBackupFolder()) await renderBackupPill();
+        await renderBackupModal();
+      };
+      document.getElementById('bkNow').onclick = async ()=>{
+        await writeAutoBackup({ kind:'strikebook-backup', version:1, exported:new Date().toISOString(),
+          sessions: await archiveAll(), live: sessionLive() ? sessionSnapshot() : null });
+        await renderBackupPill(); await renderBackupModal();
+      };
+      document.getElementById('bkOff').onclick = async ()=>{
+        if (!await askConfirm('Turn off auto-backup? Your saved history stays on this device either way.', 'Turn off')) return;
+        await clearBackupFolder(); await renderBackupPill(); await renderBackupModal();
+      };
+    }
+  }
+  function closeBackupModal(){ document.getElementById('backupModal').classList.remove('open'); }
+  document.getElementById('backupStatus').onclick = async ()=>{
+    await renderBackupModal();
+    document.getElementById('backupModal').classList.add('open');
+  };
+  document.getElementById('bkX').onclick = closeBackupModal;
+
+  /* ---------- announcer intro: plays before the scoresheet on every session start ---------- */
+  function introLine(names, evt){
+    const n = names.length;
+    const list = n <= 1 ? names[0]
+      : n === 2 ? `${names[0]} and ${names[1]}`
+      : names.slice(0,-1).join(', ') + `, and ${names[names.length-1]}`;
+    const where = evt ? ` at <b>${esc(evt)}</b>` : '';
+    const openers = n <= 1 ? [
+      `Ladies and gentlemen — <b>${esc(list)}</b> steps up to the line${where}!`,
+      `Good evening, bowling fans. Tonight it's all <b>${esc(list)}</b>${where}.`,
+      `Lights are up, the approach is clean — <b>${esc(list)}</b> is ready to go${where}.`
+    ] : [
+      `Ladies and gentlemen, welcome to the house${where} — tonight's lineup: <b>${esc(list)}</b>!`,
+      `It's a full squad tonight${where}: <b>${esc(list)}</b> — let's see what they've got.`,
+      `The pins are set and the lane's oiled${where}. On the approach: <b>${esc(list)}</b>.`
+    ];
+    return pick(openers);
+  }
+  const introSubLines = [
+    'Strikebook is on the call tonight.',
+    'Every frame, every mark — we\u2019re tracking it all.',
+    'Lace up. First ball coming right up.',
+    'Let\u2019s see some pins fly.'
+  ];
+  let introTimer = null;
+  function showIntro(){
+    document.getElementById('introQuote').innerHTML = introLine(bowlers.map(b=>b.name), eventLabel);
+    document.getElementById('introSub').textContent = pick(introSubLines);
+    const fill = document.getElementById('introBarFill');
+    fill.classList.remove('run'); void fill.offsetWidth; // restart the CSS transition
+    introView.classList.add('open');
+    requestAnimationFrame(()=>fill.classList.add('run'));
+    clearTimeout(introTimer);
+    introTimer = setTimeout(dismissIntro, 10000);
+  }
+  function dismissIntro(){
+    clearTimeout(introTimer);
+    introView.classList.remove('open');
+  }
+  document.getElementById('introSkip').onclick = dismissIntro;
+
+  /* ---------- start screen ---------- */
+  const startView = document.getElementById('startView');
+  const introView = document.getElementById('introView');
+  const sopView = document.getElementById('sopView');
+  let startSel = [];   // [{bid, name}] chosen for the next session
+
+  function sessionLive(){
+    return gameNum > 1 || bowlers.some(b => b.past.length || b.frames.some(fr => fr.length));
+  }
+  async function openStart(){
+    // preselect the current roster, then union with everyone from history
+    startSel = bowlers.map(b=>({bid:b.bid, name:b.name}));
+    const sessions = await archiveAll();
+    const known = knownBowlers(sessions);
+    // ensure preselected roster members appear even if new tonight
+    startSel.forEach(s=>{
+      if (!known.some(k => (k.bid && k.bid===s.bid) || (!k.bid && normName(k.name)===normName(s.name))))
+        known.unshift({bid:s.bid, nameKey:normName(s.name), name:s.name, lastSeen:Infinity});
+    });
+    renderRoster(known);
+    document.getElementById('startEvent').value = eventLabel;
+    document.getElementById('startClose').style.display = sessionLive() ? 'block' : 'none';
+    renderBackupPill();
+    startView.classList.add('open');
+    startView.scrollTop = 0;
+  }
+  function isSelected(k){
+    return startSel.some(s => (s.bid && k.bid && s.bid===k.bid) || normName(s.name)===normName(k.name));
+  }
+  function renderRoster(known){
+    const wrap = document.getElementById('rosterChips');
+    if (!known.length){
+      wrap.innerHTML = `<div class="recapWho">No bowlers yet — add the first one below.</div>`;
+      updateStartBtn(); return;
+    }
+    wrap.innerHTML = known.map((k,i)=>
+      `<button class="rchip${isSelected(k)?' sel':''}" data-i="${i}">${esc(k.name)}</button>`).join('');
+    wrap.querySelectorAll('.rchip').forEach(el=>el.onclick = ()=>{
+      const k = known[Number(el.dataset.i)];
+      if (isSelected(k)) startSel = startSel.filter(s => !((s.bid && k.bid && s.bid===k.bid) || normName(s.name)===normName(k.name)));
+      else if (startSel.length < 6) startSel.push({bid: k.bid || genBid(), name: k.name});
+      renderRoster(known);
+    });
+    updateStartBtn();
+  }
+  function updateStartBtn(){
+    document.getElementById('startBowlBtn').disabled = startSel.length === 0;
+  }
+  function addRosterName(){
+    const inp = document.getElementById('newBowlerInput');
+    const n = inp.value.trim();
+    if (!n || startSel.length >= 6) return;
+    if (!startSel.some(s=>normName(s.name)===normName(n)))
+      startSel.push({bid: genBid(), name: n});
+    inp.value = '';
+    openStartRefreshChips();
+  }
+  async function openStartRefreshChips(){
+    const sessions = await archiveAll();
+    const known = knownBowlers(sessions);
+    startSel.forEach(s=>{
+      if (!known.some(k => (k.bid && k.bid===s.bid) || (!k.bid && normName(k.name)===normName(s.name))))
+        known.unshift({bid:s.bid, nameKey:normName(s.name), name:s.name, lastSeen:Infinity});
+    });
+    renderRoster(known);
+  }
+  function beginSession(){
+    if (!startSel.length) return;
+    bowlers = startSel.map(s=>newBowler(s.name, s.bid));
+    cur = 0; history = []; gameNum = 1;
+    eventLabel = document.getElementById('startEvent').value.trim();
+    lastCall = 'Lace up — first ball of the game.';
+    startView.classList.remove('open');
+    render();
+    showIntro();
+  }
+  document.getElementById('startBowlBtn').onclick = beginSession;
+  document.getElementById('addBowlerBtn').onclick = addRosterName;
+  document.getElementById('newBowlerInput').addEventListener('keydown', e=>{ if (e.key==='Enter') addRosterName(); });
+  document.getElementById('startHistBtn').onclick = ()=>openHistory();
+  document.getElementById('startSopBtn').onclick = ()=>{ sopView.classList.add('open'); sopView.scrollTop = 0; };
+  document.getElementById('sopClose').onclick = ()=>sopView.classList.remove('open');
+  document.getElementById('startClose').onclick = ()=>startView.classList.remove('open');
+
+  const versionText = 'Strikebook v' + APP_VERSION + ' · built ' +
+    new Date(APP_BUILD_DATE + 'T00:00:00').toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'});
+  document.getElementById('startVersion').textContent = versionText;
+  document.getElementById('sopVersion').textContent = versionText;
+
+  if (!loadSession()) resetSession(); else render();
+  if (!sessionLive()) openStart();
+})();
+</script>
+</body>
+</html>
