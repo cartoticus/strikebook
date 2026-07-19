@@ -324,6 +324,16 @@
   .mchip{background:var(--navy-2);border:1.5px solid rgba(245,239,224,.12);border-radius:9px;padding:8px 4px;text-align:center}
   .mchip .k{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--cream-dim);opacity:.75}
   .mchip .v{font-family:'Bowlby One SC',cursive;font-size:17px;color:var(--cream);margin-top:2px}
+  .craftGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .craftGrid .mchip{padding:10px 8px}
+  .mchip .ck{font-size:10px;color:var(--cream-dim);opacity:.7;margin-top:4px;line-height:1.35}
+  .nemesis{
+    display:flex;align-items:center;gap:12px;margin-top:10px;
+    background:rgba(222,74,46,.09);border:1.5px solid rgba(222,74,46,.4);
+    border-radius:10px;padding:10px 13px;
+  }
+  .nemesis .nk{font-size:9.5px;font-weight:700;letter-spacing:1.2px;color:var(--red)}
+  .nemesis .nv{font-size:14px;font-weight:600;color:var(--cream);margin-top:3px}
   .anaHead{font-size:11px;font-weight:700;letter-spacing:1.4px;color:var(--cream-dim);opacity:.8;margin:18px 0 8px}
   .anaHead.red{color:var(--red);opacity:1}
   .anaHead.green{color:#5DCAA5;opacity:1}
@@ -738,7 +748,7 @@
       file — auto or manual — cannot be erased by a browser.</p>
 
       <h4>5 · How the analytics compute</h4>
-      <p>Career stats group by a hidden bowler ID, so renaming a bowler never splits their history. Leave percentages count only pin-rack entries. A leave needs <b>4 attempts</b> before it's ranked (under that, it's held in the "keep bowling" note). <b>Splits are tracked separately</b> so they don't drag down the makeable-spare percentage. The drill list estimates ~11 pins of scoring cost per missed spare — an approximation, flagged as such.</p>
+      <p>Career stats group by a hidden bowler ID, so renaming a bowler never splits their history. Leave percentages count only pin-rack entries. A leave needs <b>4 attempts</b> before it's ranked (under that, it's held in the "keep bowling" note). <b>Splits are tracked separately</b> so they don't drag down the makeable-spare percentage. The drill list estimates ~11 pins of scoring cost per missed spare — an approximation, flagged as such. <b>Game Craft</b> adds Clean Frame % (marks per frame, works even for keypad games) and Bounce-Back % (how often a mark follows an open). <b>Spare Classes</b> rolls every leave into three difficulty tiers — singles, makeable multi-pin, splits — and the <b>Nemesis Pin</b> is simply the single-pin leave you see most.</p>
 
       <h4>6 · Maintaining the app file</h4>
       <p>Keep one <b>master copy</b> of strikebook.html in your cloud drive. Your data is keyed to <i>where the file lives</i> — browser storage belongs to the page's location. So: replacing the file at the <b>same location</b> with a newer version keeps all history; <b>moving</b> it (new folder, new host, new domain) orphans the old data. Before any move: export a backup, move, then import. To modify the app, give the current file to Claude and describe the change; test with a throwaway session before trusting a new version at a tournament.</p>
@@ -793,7 +803,7 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.1.0';
+  const APP_VERSION = '1.2.0';
   const APP_BUILD_DATE = '2026-07-17';
 
   /* ---------- state ---------- */
@@ -2220,6 +2230,51 @@
     }
     return games;
   }
+  /* ---------- game craft analytics: clean frames, bounce-back, spare classes ---------- */
+  // Works on ANY completed frame data, keypad or pin-rack — no pin detail required.
+  function craftStats(games){
+    let frames=0, clean=0, bounceOpp=0, bounceMade=0;
+    games.forEach(g=>{
+      if (!g.frames) return;
+      g.frames.forEach((r,fi)=>{
+        if (!r.length || !frameComplete(fi, r)) return;
+        frames++;
+        const mark = isStrikeFrame(r) || isSpareFrame(fi, r);
+        if (mark) clean++;
+        // bounce-back: a mark in the frame immediately after an open frame (same game)
+        if (fi > 0){
+          const prev = g.frames[fi-1];
+          const prevOpen = prev.length && frameComplete(fi-1, prev) &&
+                           !isStrikeFrame(prev) && !isSpareFrame(fi-1, prev);
+          if (prevOpen){ bounceOpp++; if (mark) bounceMade++; }
+        }
+      });
+    });
+    return {
+      frames, clean, bounceOpp, bounceMade,
+      cleanPct:  frames    ? Math.round(100*clean/frames)         : null,
+      bouncePct: bounceOpp ? Math.round(100*bounceMade/bounceOpp) : null
+    };
+  }
+  // Aggregate per-leave stats into the three spare classes (needs pin-rack data)
+  function spareClasses(leaves){
+    const cls = {single:{att:0,made:0}, multi:{att:0,made:0}, split:{att:0,made:0}};
+    Object.values(leaves).forEach(e=>{
+      const k = e.split ? 'split' : (e.pins.length===1 ? 'single' : 'multi');
+      cls[k].att += e.att; cls[k].made += e.made;
+    });
+    return cls;
+  }
+  // Most frequent single-pin leave = the nemesis pin
+  function nemesisPin(leaves){
+    let best = null;
+    Object.values(leaves).forEach(e=>{
+      if (e.pins.length !== 1) return;
+      if (!best || e.att > best.att) best = e;
+    });
+    return best;
+  }
+
   function careerLine(games){
     const totals = games.map(g=>g.total);
     const n = totals.length;
@@ -2240,7 +2295,6 @@
     };
   }
 
-  /* ---------- history view rendering ---------- */
   const historyView = document.getElementById('historyView');
   let histTab = 'bowlers', histSessions = [];
   function leaveSVG(pins, w){
@@ -2335,6 +2389,36 @@
       return;
     }
     const {leaves, pinHeat, gamesWithPin} = leaveStats(games);
+    const craft = craftStats(games);
+    const sc = spareClasses(leaves);
+    const nem = nemesisPin(leaves);
+    const clsRow = (label, d, hint) => {
+      if (!d.att) return '';
+      const pct = Math.round(100*d.made/d.att);
+      const color = pct>=80?'#5DCAA5':pct>=60?'#E39B2D':'#DE4A2E';
+      return `<div class="ledgerRow"><div class="lr">
+        <div class="lt"><span class="nm">${label} <span style="opacity:.55;font-weight:500">· ${hint}</span></span>
+        <span class="pc" style="color:${color}">${pct}% · ${d.made}/${d.att}</span></div>
+        <div class="bar"><i style="width:${Math.max(pct,2)}%;background:${color}"></i></div></div></div>`;
+    };
+    const craftBlock = craft.frames ? `
+      <div class="anaHead">GAME CRAFT</div>
+      <div class="craftGrid">
+        <div class="mchip"><div class="k">CLEAN FRAMES</div><div class="v">${craft.cleanPct}%</div>
+          <div class="ck">${craft.clean}/${craft.frames} frames marked</div></div>
+        <div class="mchip"><div class="k">BOUNCE-BACK</div>
+          <div class="v">${craft.bouncePct===null?'–':craft.bouncePct+'%'}</div>
+          <div class="ck">${craft.bounceOpp? `mark after an open · ${craft.bounceMade}/${craft.bounceOpp}` : 'no opens yet — nothing to bounce back from'}</div></div>
+      </div>` : '';
+    const nemBlock = nem ? `
+      <div class="nemesis">${leaveSVG(nem.pins, 40)}
+        <div><div class="nk">NEMESIS PIN — YOUR MOST COMMON SINGLE-PIN LEAVE</div>
+        <div class="nv">The ${nem.pins[0]} pin · left ${nem.att}× · converted ${Math.round(100*nem.made/nem.att)}%</div></div></div>` : '';
+    const classBlock = (sc.single.att || sc.multi.att || sc.split.att) ? `
+      <div class="anaHead">SPARE CLASSES — CONVERSION BY DIFFICULTY</div>
+      ${clsRow('Single pins', sc.single, 'one pin standing')}
+      ${clsRow('Multi-pin clusters', sc.multi, 'makeable combos')}
+      ${clsRow('Splits', sc.split, 'the hard ones')}` : '';
     const entries = Object.values(leaves);
     const pct = st => Math.round(100*st.made/st.att);
     const spares = entries.filter(e=>!e.split), splits = entries.filter(e=>e.split);
@@ -2384,6 +2468,9 @@
         <div class="mchip"><div class="k">STRIKES</div><div class="v">${c.strikes}</div></div>
         <div class="mchip"><div class="k">SPARE %</div><div class="v">${c.sparePct===null?'–':c.sparePct}</div></div>
       </div>
+      ${craftBlock}
+      ${nemBlock}
+      ${classBlock}
       ${gamesWithPin ? `
         <div class="anaHead">PRACTICE RACK — HOW OFTEN EACH PIN SURVIVES THE FRAME</div>
         <div class="heatWrap"><svg viewBox="0 0 120 104">${rack}</svg>
