@@ -181,6 +181,101 @@
   .actions{padding:8px 14px calc(14px + env(safe-area-inset-bottom))}
   /* Start screen + SOP */
   #startView{z-index:69}
+  #feedbackView{z-index:76}
+  .feedbackBtn{
+    width:100%;margin-top:10px;padding:11px 13px;border-radius:10px;cursor:pointer;
+    background:none;border:1.5px solid rgba(46,143,163,.45);color:var(--teal);
+    font-family:inherit;font-weight:600;font-size:13px;
+  }
+  .feedbackBtn:active{opacity:.75}
+  .fbSelect{
+    width:100%;background:var(--navy-2);border:1.5px solid rgba(245,239,224,.25);border-radius:10px;
+    color:var(--cream);font-family:inherit;font-size:15px;font-weight:600;padding:11px 12px;outline:none;
+    -webkit-appearance:none;appearance:none;
+    background-image:linear-gradient(45deg,transparent 50%,var(--cream-dim) 50%),linear-gradient(135deg,var(--cream-dim) 50%,transparent 50%);
+    background-position:calc(100% - 18px) 20px, calc(100% - 13px) 20px;
+    background-size:5px 5px, 5px 5px;background-repeat:no-repeat;
+  }
+  .fbSelect:focus{border-color:var(--amber)}
+  .fbTextarea{
+    width:100%;min-height:120px;resize:vertical;
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.25);border-radius:10px;
+    color:var(--cream);font-family:inherit;font-size:15px;line-height:1.45;padding:11px 12px;outline:none;
+  }
+  .fbTextarea:focus{border-color:var(--amber)}
+  .fbCheck{display:flex;align-items:flex-start;gap:9px;margin-top:14px;font-size:12.5px;color:var(--cream-dim);line-height:1.4;cursor:pointer}
+  .fbCheck input{margin-top:2px;accent-color:var(--amber);width:16px;height:16px;flex:none}
+  .fbSendBtn{
+    width:100%;height:54px;margin-top:16px;border:none;border-radius:12px;cursor:pointer;
+    font-family:'Bowlby One SC',cursive;font-size:16px;letter-spacing:.5px;
+    background:var(--amber);color:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.45);
+  }
+  .fbSendBtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.45)}
+  .fbSendBtn:disabled{opacity:.35;box-shadow:none;pointer-events:none}
+  .fbCopyBtn{
+    width:100%;height:46px;margin-top:9px;background:none;border:1.5px solid rgba(245,239,224,.28);
+    color:var(--cream-dim);border-radius:10px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;
+  }
+  .fbHint{font-size:12px;color:var(--cream-dim);opacity:.8;margin-top:12px;line-height:1.45;text-align:center;min-height:18px}
+  #whatsNewView{z-index:82;display:none}
+  #whatsNewView.open{display:block}
+  .wnHero{text-align:center;padding:22px 0 14px}
+  .wnBadge{
+    display:inline-block;background:var(--green);color:var(--ink);
+    font-family:'Bowlby One SC',cursive;font-size:11px;letter-spacing:1.5px;
+    padding:4px 12px;border-radius:999px;
+  }
+  .wnTitle{font-family:'Bowlby One SC',cursive;font-size:30px;color:var(--cream);margin-top:10px;letter-spacing:.5px}
+  .wnSub{font-size:13.5px;color:var(--cream-dim);margin-top:6px;line-height:1.45}
+  .wnDoneBtn{
+    width:100%;height:54px;margin-top:18px;border:none;border-radius:12px;cursor:pointer;
+    font-family:'Bowlby One SC',cursive;font-size:16px;letter-spacing:.5px;
+    background:var(--amber);color:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.45);
+  }
+  .wnDoneBtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.45)}
+  .wnFoot{text-align:center;font-size:11.5px;color:var(--cream-dim);opacity:.6;margin-top:12px}
+  #drillView{z-index:74}
+  .drillStartBtn{
+    width:100%;height:50px;margin:6px 0 8px;border:none;border-radius:12px;cursor:pointer;
+    font-family:'Bowlby One SC',cursive;font-size:15px;letter-spacing:.5px;
+    background:var(--teal);color:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.4);
+  }
+  .bowlerActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0 8px}
+  .bowlerActions .drillStartBtn{margin:0}
+  .reportBtn{
+    height:50px;border:none;border-radius:12px;cursor:pointer;
+    font-family:'Bowlby One SC',cursive;font-size:14px;letter-spacing:.4px;
+    background:var(--amber);color:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.4);
+  }
+  .reportBtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.4)}
+  .dataActions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .sendDataBtn{
+    height:48px;border:1.5px solid var(--teal);background:none;color:var(--teal);
+    border-radius:11px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;
+  }
+  .removeDataBtn{
+    height:48px;border:1.5px solid rgba(222,74,46,.5);background:none;color:var(--red);
+    border-radius:11px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;
+  }
+  .dataHint{font-size:11.5px;color:var(--cream-dim);opacity:.7;line-height:1.45;margin-top:8px}
+  .drillStartBtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.4)}
+  .drillCard{background:var(--navy-2);border:1.5px solid rgba(245,239,224,.15);border-radius:16px;
+    padding:20px;text-align:center;margin-bottom:14px}
+  .drillTarget{display:flex;justify-content:center;margin-bottom:8px}
+  .drillName{font-family:'Bowlby One SC',cursive;font-size:20px;color:var(--cream)}
+  .drillHint{font-size:13px;color:var(--cream-dim);margin:6px 0 16px}
+  .drillBtns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .drillMade,.drillMiss{height:54px;border:none;border-radius:12px;font-family:'Bowlby One SC',cursive;
+    font-size:15px;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.4)}
+  .drillMade{background:var(--green);color:var(--ink)}
+  .drillMiss{background:var(--red);color:var(--cream)}
+  .drillMade:active,.drillMiss:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.4)}
+  .drillScore{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}
+  .drillScore .ds{background:var(--navy-2);border:1.5px solid rgba(245,239,224,.12);border-radius:10px;padding:10px 4px;text-align:center}
+  .drillScore .dv{font-family:'Bowlby One SC',cursive;font-size:19px;color:var(--amber)}
+  .drillScore .dl{font-size:9px;font-weight:700;letter-spacing:.6px;color:var(--cream-dim);opacity:.75;margin-top:3px}
+  .drillSkip{width:100%;height:42px;background:none;border:1.5px solid rgba(245,239,224,.25);
+    color:var(--cream-dim);border-radius:10px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer}
   #introView{z-index:80;display:none}
   #introView.open{display:block}
   .introInner{
@@ -214,6 +309,12 @@
   .rchip.sel{border-color:var(--amber);color:var(--cream);background:#241f14}
   .rchip.sel::before{content:'✓';color:var(--amber);font-weight:700}
   .addRow{display:flex;gap:8px;margin-top:10px}
+  .typeSeg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:4px}
+  .typeSeg button{
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.2);color:var(--cream-dim);
+    border-radius:9px;padding:9px 0;font-family:inherit;font-weight:600;font-size:12px;cursor:pointer;
+  }
+  .typeSeg button.on{border-color:var(--amber);color:var(--amber);background:#241f14}
   .addRow input, .eventInput{
     flex:1;width:100%;background:var(--navy-2);border:1.5px solid rgba(245,239,224,.25);border-radius:10px;
     color:var(--cream);font-family:inherit;font-size:15px;font-weight:600;padding:10px 12px;outline:none;
@@ -269,6 +370,11 @@
   .sop p{font-size:13.5px;color:var(--cream-dim);line-height:1.55}
   .sop p b{color:var(--cream)}
   .sop p i{color:var(--cream)}
+  .changelog{margin-top:8px}
+  .clog{display:flex;gap:10px;padding:9px 0;border-top:1px solid rgba(245,239,224,.1)}
+  .clog:first-child{border-top:none}
+  .clog .cv{flex:0 0 42px;font-family:'Bowlby One SC',cursive;font-size:13px;color:var(--amber);line-height:1.3}
+  .clog .cd{font-size:12.5px;color:var(--cream-dim);line-height:1.45}
   .hdrBtn{
     background:none;border:1.5px solid rgba(227,155,45,.6);color:var(--amber);
     font-family:inherit;font-weight:600;font-size:13px;letter-spacing:.5px;
@@ -325,6 +431,16 @@
   .mchip .k{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--cream-dim);opacity:.75}
   .mchip .v{font-family:'Bowlby One SC',cursive;font-size:17px;color:var(--cream);margin-top:2px}
   .craftGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .recGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:6px}
+  .recCard{background:linear-gradient(180deg,#1E2436,#181E2E);border:1.5px solid rgba(227,155,45,.3);
+    border-radius:10px;padding:10px 4px;text-align:center}
+  .recCard .rv{font-family:'Bowlby One SC',cursive;font-size:20px;color:var(--amber)}
+  .recCard .rk{font-size:8.5px;font-weight:700;letter-spacing:.6px;color:var(--cream-dim);opacity:.75;margin-top:3px}
+  .posBars{display:flex;flex-direction:column;gap:6px}
+  .posBar{display:flex;align-items:center;justify-content:space-between;
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.12);border-radius:9px;padding:9px 13px}
+  .posBar .pl{font-size:13px;color:var(--cream-dim);font-weight:600}
+  .posBar .pv{font-family:'Bowlby One SC',cursive;font-size:18px;color:var(--cream)}
   .craftGrid .mchip{padding:10px 8px}
   .mchip .ck{font-size:10px;color:var(--cream-dim);opacity:.7;margin-top:4px;line-height:1.35}
   .nemesis{
@@ -392,6 +508,30 @@
   .gameCard .gh .gt{font-family:'Bowlby One SC',cursive;font-size:20px;color:var(--red)}
   .gameCard .gh .gt.best{color:#1E8A3C}
   .gameCard.noframes{padding:12px;font-size:13px;font-weight:600;color:#6E5B33;text-align:center}
+  .bakerOwners{border-top:none !important;background:#EDE6D4 !important}
+  .bakerOwners .frame{border-right:1.5px solid var(--line);min-height:20px;display:flex;align-items:center;justify-content:center}
+  .bakerOwners .ownerTag{font-size:9px;font-weight:800;letter-spacing:.4px;color:#8A6D2E;text-transform:uppercase}
+  .sessNote{
+    background:var(--navy-2);border:1.5px solid rgba(227,155,45,.28);border-radius:10px;
+    padding:10px 13px;font-size:13px;color:var(--cream-dim);line-height:1.45;margin-bottom:12px;
+  }
+  .editLabelBtn{
+    background:none;border:1.5px solid rgba(245,239,224,.25);color:var(--cream-dim);
+    border-radius:8px;padding:6px 12px;font-family:inherit;font-weight:600;font-size:12px;
+    cursor:pointer;margin-bottom:12px;
+  }
+  .kegelLink{
+    display:inline-block;color:var(--teal);font-size:12.5px;font-weight:600;text-decoration:none;
+    border-bottom:1px solid rgba(46,143,163,.4);margin:0 0 12px;line-height:1.4;
+  }
+  .kegelLink:active{opacity:.7}
+  .labelEditor{
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.15);border-radius:12px;
+    padding:14px;margin-bottom:14px;
+  }
+  .labelEditor .anaHead{margin-top:10px}
+  .labelEditor .anaHead:first-child{margin-top:0}
+  .editLabelActions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
   .recapStats{
     display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;
   }
@@ -681,10 +821,10 @@
       <div id="histList"></div>
       <div class="backupRow">
         <button id="exportBtn">⬇ Save backup file</button>
-        <button id="importBtn">⬆ Load backup</button>
+        <button id="importBtn">⬆ Load / import</button>
         <input type="file" id="importFile" accept=".json,application/json" style="display:none">
       </div>
-      <div class="ghosthint" id="backupHint">Backups are a single JSON file you own — drop it in iCloud or Drive to move between devices.</div>
+      <div class="ghosthint" id="backupHint">Backups hold everyone. To bring in one bowler's data they sent you, tap <b>Load / import</b> — it detects the file type and merges by bowler.</div>
     </div>
     <div id="histBowler" style="display:none"></div>
     <div id="histSession" style="display:none"></div>
@@ -703,6 +843,23 @@
       <input id="newBowlerInput" maxlength="14" placeholder="Add a bowler…" autocomplete="off">
       <button id="addBowlerBtn">＋</button>
     </div>
+    <div class="anaHead">SESSION TYPE</div>
+    <div class="typeSeg" id="startTypeSeg">
+      <button data-type="Practice" class="on">Practice</button>
+      <button data-type="League">League</button>
+      <button data-type="Tournament">Tournament</button>
+      <button data-type="Baker">Baker</button>
+    </div>
+    <div class="anaHead">LANE CONDITION <span style="opacity:.5;letter-spacing:0;font-weight:600">(optional)</span></div>
+    <div class="typeSeg" id="startOilSeg">
+      <button data-oil="" class="on">—</button>
+      <button data-oil="House">House</button>
+      <button data-oil="Sport">Sport</button>
+      <button data-oil="Challenge">Challenge</button>
+    </div>
+    <input id="startOilPattern" class="eventInput" list="oilPatternList" maxlength="40" placeholder="Pattern name (optional) — pick or type" autocomplete="off" style="margin-top:8px;display:none">
+    <datalist id="oilPatternList"></datalist>
+    <a id="startKegelLink" class="kegelLink" href="https://patternlibrary.kegel.net/" target="_blank" rel="noopener" style="display:none;margin-top:6px">🔍 Browse the Kegel pattern library ↗</a>
     <div class="anaHead">EVENT · LOCATION <span style="opacity:.5;letter-spacing:0;font-weight:600">(optional)</span></div>
     <input id="startEvent" class="eventInput" maxlength="40" placeholder="e.g. Junior Gold · Minneapolis" autocomplete="off">
     <button id="startBowlBtn">🎳 Let's bowl</button>
@@ -711,6 +868,7 @@
       <button id="startSopBtn">📖 Owner's manual</button>
     </div>
     <button id="backupStatus" class="backupStatus"><i class="dot"></i><span>Checking backup status…</span></button>
+    <button id="feedbackBtn" class="feedbackBtn">💬 Send feedback or request a feature</button>
     <button id="startClose" class="startCloseBtn" style="display:none">↩ Back to current sheet</button>
     <div class="appVersion" id="startVersion"></div>
   </div>
@@ -748,19 +906,129 @@
       file — auto or manual — cannot be erased by a browser.</p>
 
       <h4>5 · How the analytics compute</h4>
-      <p>Career stats group by a hidden bowler ID, so renaming a bowler never splits their history. Leave percentages count only pin-rack entries. A leave needs <b>4 attempts</b> before it's ranked (under that, it's held in the "keep bowling" note). <b>Splits are tracked separately</b> so they don't drag down the makeable-spare percentage. The drill list estimates ~11 pins of scoring cost per missed spare — an approximation, flagged as such. <b>Game Craft</b> adds Clean Frame % (marks per frame, works even for keypad games) and Bounce-Back % (how often a mark follows an open). <b>Spare Classes</b> rolls every leave into three difficulty tiers — singles, makeable multi-pin, splits — and the <b>Nemesis Pin</b> is simply the single-pin leave you see most.</p>
+      <p>Career stats group by a hidden bowler ID, so renaming a bowler never splits their history. Leave percentages count only pin-rack entries. A leave needs <b>4 attempts</b> before it's ranked (under that, it's held in the "keep bowling" note). <b>Splits are tracked separately</b> so they don't drag down the makeable-spare percentage. The drill list estimates ~11 pins of scoring cost per missed spare — an approximation, flagged as such. <b>Game Craft</b> adds Clean Frame % (marks per frame, works even for keypad games) and Bounce-Back % (how often a mark follows an open). <b>Spare Classes</b> rolls every leave into three difficulty tiers — singles, makeable multi-pin, splits — and the <b>Nemesis Pin</b> is simply the single-pin leave you see most. The <b>Ball-by-Ball</b> block adds first-ball average (the strongest predictor of scoring), strike rate, double rate (strikes that follow strikes), clean-10th %, and a consistency figure (± your game-to-game swing). <b>Game-Position Average</b> compares your 1st vs 2nd vs 3rd game to reveal warm-up or fatigue patterns; it needs a few multi-game sessions before it appears. <b>Lane condition</b> (House / Sport / Challenge, plus an optional pattern name) can be set on the start screen or added later by editing any session's label — it's stored so future analytics can compare how a bowler scores across easy house shots vs tough sport patterns. You can pick a known pattern from the list or free-type any name, which matters because tournament patterns like Junior Gold are kept secret until after the block. When a pattern name is set, the session page shows a <b>🔍 Look up in the Kegel pattern library</b> link that opens Kegel's official library (and copies the name so you can paste it into their search) — handy for pulling the actual pattern sheet before practice.</p>
 
-      <h4>6 · Maintaining the app file</h4>
+      <h4>6 · Baker mode, drills &amp; report cards</h4>
+      <p><b>Baker mode:</b> pick "Baker" as the session type on the start screen with 2+ bowlers. You'll score one shared sheet where bowlers alternate frames (lead-off throws frames 1, 6; second throws 2, 7; and so on). The app shows whose turn it is on every ball. Baker games don't produce individual game scores, but each frame's pin leaves are still credited to the bowler who threw it — so a kid's spare practice data keeps building even from Baker play.<br><br>
+      <b>Spare drill:</b> on any bowler's page, tap <b>🎯 Start spare drill</b>. The app deals target leaves weighted toward that bowler's weakest spares, you set them up (or shoot them on a full rack) and tap made/missed. Drill results are stored separately from match play, so they don't inflate real game stats.<br><br>
+      <b>Coach report card:</b> tap <b>📋 Coach report card</b> to generate a one-page image of a bowler's key stats — perfect for texting a parent or printing for a practice folder. It uses the phone's share sheet, or downloads if sharing isn't available.</p>
+
+      <h4>7 · Sharing a bowler's data (handoff)</h4>
+      <p>Score a kid on your phone, then hand off <i>just their</i> games so they land on the kid's own device — separate from the all-in backup. On any bowler's page, at the bottom, tap <b>📤 Send [name]'s data</b>. That produces a small file with only that bowler's sessions; send it however you like (text, AirDrop, email). On their phone, they open History → <b>⬆ Load / import</b> and pick the file. Strikebook detects it's a single-bowler file and asks whether to <b>merge into their existing history</b> or <b>import as new</b> — always a confirmation, never automatic. Sessions already on their phone are skipped, so sending the same file twice never duplicates anything. After the first merge, both devices share that bowler's hidden ID, so future handoffs line up automatically.<br><br>
+      <b>Remove from this device:</b> the red button beside it deletes only that bowler's data from <i>your</i> phone — useful once you've handed a kid off and don't need to carry them anymore. It never touches their copy. If the bowler shared a session with others, only their part is removed and the rest stays.<br><br>
+      <b>Backup vs handoff — the difference:</b> <b>Save backup file</b> is everyone at once, for protecting <i>your</i> data. <b>Send [name]'s data</b> is one person, for giving it to <i>them</i>. Load / import accepts either kind.</p>
+
+      <h4>8 · Maintaining the app file</h4>
       <p>Keep one <b>master copy</b> of strikebook.html in your cloud drive. Your data is keyed to <i>where the file lives</i> — browser storage belongs to the page's location. So: replacing the file at the <b>same location</b> with a newer version keeps all history; <b>moving</b> it (new folder, new host, new domain) orphans the old data. Before any move: export a backup, move, then import. To modify the app, give the current file to Claude and describe the change; test with a throwaway session before trusting a new version at a tournament.</p>
 
-      <h4>7 · Hosting &amp; home screen (GitHub Pages)</h4>
-      <p>Strikebook is hosted at a GitHub Pages URL and installed to the home screen from there — this gives iPhone and Android the same icon, fullscreen launch, and offline operation, with no app store involved.<br><br>
-      <b>To install on a phone:</b> open your Strikebook URL in Safari (iPhone) or Chrome (Android) → Share/menu → <b>Add to Home Screen</b>.<br><br>
-      <b>To publish an update:</b> in your GitHub repo, upload the new <i>index.html</i> and click <b>"Commit changes"</b> — same filename, same repo, so it replaces the old version at the same URL. That's what keeps everyone's on-device history intact (see §6): the URL never changes, only the file behind it does. Pages usually rebuilds within a minute; hard-refresh the phone to see the new version. <b>Never rename the repo or change the URL</b> once the team is using it — that's the "moving the file" scenario in §6, and it orphans history until everyone re-imports a backup.</p>
+      <h4>9 · Installing on a phone (iPhone &amp; Android)</h4>
+      <p>Strikebook lives at a web address, so there's no app store and no download — you "install" it by saving the page to your home screen. It then opens fullscreen with its own icon, works offline, and stores history right on the device. Send your team the Strikebook URL and these steps.<br><br>
 
-      <h4>8 · Troubleshooting</h4>
+      <b>iPhone / iPad (must use Safari):</b><br>
+      1. Open the Strikebook link in <b>Safari</b> — not Chrome, not the in-app browser inside Messages or Instagram. If it opened somewhere else, copy the link and paste it into Safari's address bar. This step matters most on iPhone: only Safari can add to the home screen, and home-screen apps get more durable storage than a regular tab.<br>
+      2. Tap the <b>Share</b> button (the square with an up-arrow, at the bottom or top of Safari).<br>
+      3. Scroll down the share list and tap <b>Add to Home Screen</b>.<br>
+      4. Tap <b>Add</b> in the top corner. The bowling-pin icon appears on the home screen — open it from there from now on, not from Safari.<br><br>
+
+      <b>Android (Chrome):</b><br>
+      1. Open the Strikebook link in <b>Chrome</b>.<br>
+      2. Tap the <b>⋮</b> menu (three dots, top-right).<br>
+      3. Tap <b>Add to Home screen</b> (on some phones it reads <b>Install app</b>).<br>
+      4. Confirm with <b>Add</b> / <b>Install</b>. The icon lands on the home screen; some phones may pop up a one-time "install" banner you can just accept.<br><br>
+
+      <b>Why bother installing vs. just bookmarking:</b> the home-screen version launches fullscreen with no browser bar, works with no signal (handy in an alley with bad wifi), and — on iPhone especially — its saved history is far less likely to be cleared by the browser's storage housekeeping. A plain Safari tab can lose data after a week of not being opened; a home-screen app doesn't.<br><br>
+
+      <b>First-launch note:</b> because the app runs from a web address, the very first open needs a connection (after that it works offline). If nothing loads at an alley, it's almost always wifi — try again on cell data.</p>
+
+      <h4>10 · Hosting &amp; updates (GitHub Pages)</h4>
+      <p>Strikebook is hosted at a GitHub Pages URL — that's the address you send people to install (§9).<br><br>
+      <b>To publish an update:</b> in your GitHub repo, upload the new <i>index.html</i> and click <b>"Commit changes"</b> — same filename, same repo, so it replaces the old version at the same URL. That's what keeps everyone's on-device history intact (see §8): the URL never changes, only the file behind it does. Pages usually rebuilds within a minute; hard-refresh the phone to see the new version. <b>Never rename the repo or change the URL</b> once the team is using it — that's the "moving the file" scenario in §8, and it orphans history until everyone re-imports a backup.</p>
+
+      <h4>11 · Troubleshooting</h4>
       <p><b>Share button does nothing:</b> some in-app browsers block the share sheet — the card downloads instead; share the PNG manually. <b>History looks empty:</b> you may have opened the file from a different location — import your latest backup. <b>Buttons unresponsive after an update:</b> fully close and reopen the browser tab. When in doubt: export a backup <i>first</i>, then investigate.</p>
+
+      <h4>12 · Sending feedback</h4>
+      <p>On the start screen, <b>💬 Send feedback or request a feature</b> opens a short form: pick the area it's about (scoring, analytics, Baker mode, and so on — or <i>Feature request</i>), mark it as a bug, idea, praise, or question, and write your message. Leaving the <b>include app version &amp; device info</b> box ticked attaches the version, phone type, browser, and whether it's running as a home-screen app — that context solves most bug reports without a round of questions. Untick it if you'd rather not send it.<br><br>
+      <b>Where it goes:</b> tapping <b>Send</b> opens your mail app (or a feedback form) with everything filled in. If that doesn't work on your device — some phones have no mail app set up — tap <b>📋 Copy instead</b> and paste it into a text message. Copy always works, including with no signal.<br><br>
+      <b>For the coach (setup):</b> the destination is two lines near the top of the app file — <i>FEEDBACK_EMAIL</i> and <i>FEEDBACK_FORM</i>. Put your email in the first for mail, or a Google Form URL in the second to collect responses in a spreadsheet (the form takes priority if both are set). While both are empty, the Send button hides and only Copy is offered, so nothing breaks either way.</p>
+
+      <h4>13 · Version history</h4>
+      <p>The version you're running shows at the bottom of the start screen. To confirm everyone's current, have them check that number against the top of this list. After an update, the first launch shows a <b>What's New</b> screen listing only what changed since the version that device was on — so nobody has to read the whole history to catch up. A brand-new install skips it.</p>
+      <div class="changelog" id="changelogList"></div>
+      <p style="margin-top:10px;opacity:.7">Older layout and reliability fixes were folded into 1.0.0 and aren't listed separately.</p>
     </div>
+  </div>
+</div>
+
+<div class="recap" id="feedbackView">
+  <div class="recapInner">
+    <div class="recapHead">
+      <div><div class="recapTitle">FEEDBACK</div>
+      <div class="recapWho">Tell the coach what's working — or what isn't</div></div>
+      <button id="fbClose">✕ Close</button>
+    </div>
+
+    <div class="anaHead">WHAT'S THIS ABOUT?</div>
+    <select id="fbTopic" class="fbSelect">
+      <option value="Scoring &amp; pin rack">Scoring &amp; pin rack</option>
+      <option value="Analytics &amp; stats">Analytics &amp; stats</option>
+      <option value="Baker mode">Baker mode</option>
+      <option value="Spare drill">Spare drill</option>
+      <option value="Coach report card">Coach report card</option>
+      <option value="History &amp; sessions">History &amp; sessions</option>
+      <option value="Backup &amp; sharing data">Backup &amp; sharing data</option>
+      <option value="Lane conditions &amp; patterns">Lane conditions &amp; patterns</option>
+      <option value="Installing or updating">Installing or updating</option>
+      <option value="Announcer &amp; share cards">Announcer &amp; share cards</option>
+      <option value="Something looks wrong on my phone">Something looks wrong on my phone</option>
+      <option value="Feature request">💡 Feature request</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <div class="anaHead">HOW'S IT GOING?</div>
+    <div class="typeSeg" id="fbMood">
+      <button data-mood="🐞 Bug">🐞 Bug</button>
+      <button data-mood="💡 Idea" class="on">💡 Idea</button>
+      <button data-mood="👍 Praise">👍 Praise</button>
+      <button data-mood="❓ Question">❓ Question</button>
+    </div>
+
+    <div class="anaHead">YOUR MESSAGE</div>
+    <textarea id="fbMessage" class="fbTextarea" maxlength="1200" placeholder="What happened, or what would you like to see? The more detail the better — which screen, which bowler, what you tapped."></textarea>
+
+    <div class="anaHead">YOUR NAME <span style="opacity:.5;letter-spacing:0;font-weight:600">(optional)</span></div>
+    <input id="fbName" class="eventInput" maxlength="30" placeholder="So the coach knows who to follow up with" autocomplete="off">
+
+    <label class="fbCheck"><input type="checkbox" id="fbDiag" checked>
+      <span>Include app version &amp; device info (helps fix bugs)</span></label>
+
+    <button id="fbSend" class="fbSendBtn">Send feedback</button>
+    <button id="fbCopy" class="fbCopyBtn">📋 Copy instead (paste into a text)</button>
+    <div class="fbHint" id="fbHint"></div>
+  </div>
+</div>
+
+<div class="recap" id="whatsNewView">
+  <div class="recapInner">
+    <div class="wnHero">
+      <div class="wnBadge">UPDATED</div>
+      <div class="wnTitle">WHAT'S NEW</div>
+      <div class="wnSub" id="wnSub"></div>
+    </div>
+    <div class="changelog" id="wnList"></div>
+    <button id="wnDone" class="wnDoneBtn">Got it — let's bowl 🎳</button>
+    <div class="wnFoot">You can always find the full history in the Owner's Manual.</div>
+  </div>
+</div>
+
+<div class="recap" id="drillView">
+  <div class="recapInner">
+    <div class="recapHead">
+      <div><div class="recapTitle">SPARE DRILL</div>
+      <div class="recapWho" id="drillWho">Practice mode</div></div>
+      <button id="drillClose">✕ Done</button>
+    </div>
+    <div id="drillBody"></div>
   </div>
 </div>
 
@@ -803,8 +1071,38 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.2.0';
-  const APP_BUILD_DATE = '2026-07-17';
+  const APP_VERSION = '1.8.0';  // Single source of truth for the version history: renders BOTH the manual's
+  // section 12 and the "what's new" overlay shown after an update.
+  const CHANGELOG = [
+    {v:'1.8.0', d:'A feedback button on the start screen \u2014 pick the area it\u2019s about (or request a feature), add a note, and send it by mail, form, or copy-paste. Optionally attaches version and device info to help with bug reports.'},
+    {v:'1.7.0', d:"A \u201cwhat\u2019s new\u201d screen the first time you open an updated version, listing everything added since the version you were on."},
+    {v:'1.6.0', d:'Added this version history to the manual.'},
+    {v:'1.5.1', d:'Links to the Kegel pattern library from the start screen and any session with a named pattern (copies the name to paste into their search).'},
+    {v:'1.5.0', d:"Lane condition tracking: House / Sport / Challenge plus an optional pattern name, pickable from a known list or free-typed. Settable when starting a session or added later by editing a session's label."},
+    {v:'1.4.0', d:"Per-bowler data handoff \u2014 send one bowler's games as a file for them to merge into their own device, with a confirmation step and automatic de-duping. Remove a single bowler from this device. Edit a past session's type, event, and note."},
+    {v:'1.3.0', d:'Baker mode (one shared sheet, bowlers rotate by frame, leaves still credited per bowler). Spare drill mode. Coach report card export. Session types (Practice / League / Tournament / Baker) and notes. Deep stats: first-ball average, strike rate, double rate, clean-10th, consistency, headpin %, game-position averages, and a personal records card.'},
+    {v:'1.2.0', d:'Casual analytics: Clean Frame %, Bounce-Back Rate, Nemesis Pin, and Spare Class conversion tiers.'},
+    {v:'1.1.0', d:'Bowler pages list their own sessions and open straight to the scoresheet.'},
+    {v:'1.0.0', d:'First deployable release: pin-rack scoring, multi-bowler sessions, history and analytics, practice rack, spare ledger, series recap, share cards, auto-backup, start screen, hidden bowler IDs, this manual, and home-screen install with its icon.'}
+  ];
+  // -1 / 0 / 1 semver-ish compare on dot-separated numbers
+  function cmpVersion(a, b){
+    const pa = String(a).split('.').map(Number), pb = String(b).split('.').map(Number);
+    for (let i=0; i<Math.max(pa.length, pb.length); i++){
+      const x = pa[i]||0, y = pb[i]||0;
+      if (x !== y) return x < y ? -1 : 1;
+    }
+    return 0;
+  }
+  const APP_BUILD_DATE = '2026-07-20';
+
+  /* ---------- FEEDBACK DESTINATION — edit these two lines to change where feedback goes ----------
+     FEEDBACK_EMAIL : your email address. Leave as '' to disable the email option.
+     FEEDBACK_FORM  : a Google Form (or any form) URL. If set, it takes priority over email
+                      and opens the form instead. Leave as '' to use email.
+     If BOTH are empty, the Send button hides and only "Copy" is offered — which always works. */
+  const FEEDBACK_EMAIL = '';
+  const FEEDBACK_FORM  = '';
 
   /* ---------- state ---------- */
   let bowlers = [];           // {name, frames:[[rolls]...x10], past:[game totals...]}
@@ -824,7 +1122,7 @@
   function newBowler(name, bid){ return {name, bid: bid || genBid(), frames:Array.from({length:10},()=>[]), past:[]}; }
 
   function saveSession(){
-    const payload = ()=>JSON.stringify({bowlers, cur, gameNum, lastCall, entryMode, saveMode, eventLabel});
+    const payload = ()=>JSON.stringify({bowlers, cur, gameNum, lastCall, entryMode, saveMode, eventLabel, sessionType, oilCategory, oilPattern});
     try{ localStorage.setItem(STORE_KEY, payload()); return; }catch(e){}
     // Storage quota fallback: degrade gracefully toward SUMMARY_ONLY.
     // Tier 1 — strip pin-by-pin detail (d/s arrays) from banked games.
@@ -860,6 +1158,9 @@
       if (s.entryMode) entryMode = s.entryMode;
       if (s.saveMode) saveMode = s.saveMode;
       if (typeof s.eventLabel === 'string') eventLabel = s.eventLabel;
+      if (typeof s.sessionType === 'string') sessionType = s.sessionType;
+      if (typeof s.oilCategory === 'string') oilCategory = s.oilCategory;
+      if (typeof s.oilPattern === 'string') oilPattern = s.oilPattern;
       document.querySelectorAll('#entrySeg button').forEach(x=>x.classList.toggle('on', x.dataset.mode===entryMode));
       document.querySelectorAll('#saveSeg button').forEach(x=>x.classList.toggle('on', x.dataset.save===saveMode));
       return true;
@@ -887,6 +1188,7 @@
     render();
   }
   function resetSession(){
+    bakerRoster = [];
     bowlers = bowlers.length ? bowlers.map(b=>newBowler(b.name, b.bid)) : [newBowler('Wayne')];
     cur = 0; history = []; gameNum = 1;
     try{ localStorage.removeItem(STORE_KEY); }catch(e){}
@@ -1294,8 +1596,10 @@
       else if (pinsDown === 10 && ctx.special === 'X') toast('STRIKE!', false);
     } else toast('FOUL!', false, true);
     announce(b);
-    if (gameOver(b)) lastCall = finishLine(b);
-    if (allDone() && bowlers.length > 1){
+    if (gameOver(b)) lastCall = bakerActive()
+      ? `Baker game complete — ${liveTotal(b)}! Nice teamwork. 🎳`
+      : finishLine(b);
+    if (!bakerActive() && allDone() && bowlers.length > 1){
       const champ = bowlers.reduce((a,c)=> liveTotal(c) > liveTotal(a) ? c : a);
       lastCall = `Final horn! ${champ.name} takes it with ${liveTotal(champ)}!`;
     }
@@ -1321,6 +1625,22 @@
   let entryMode = 'pins';            // 'pins' | 'nums'
   let saveMode = 'ANALYTICS';        // 'ANALYTICS' | 'SUMMARY_ONLY'
   let eventLabel = '';               // tournament layer: "Junior Gold · Minneapolis"
+  let sessionType = 'Practice';      // Practice | League | Tournament | Baker
+  let sessionNote = '';              // free-text coach note attached at Finish
+  let oilCategory = '';              // '' | House | Sport | Challenge
+  let oilPattern = '';              // optional specific pattern name
+  let bakerRoster = [];              // Baker: ordered team [{bid,name}], or empty when not in Baker mode
+
+  // Known oil patterns grouped by difficulty (Kegel Navigation/Landmark + common house).
+  // Used to populate a pick list; a free-type field always lets the user enter anything,
+  // which matters because Junior Gold patterns are kept secret until after the block.
+  const OIL_PATTERNS = {
+    House: ['House Shot', 'Stonehenge', 'Main Street', 'High Street', 'Wall Street', 'Bourbon Street', 'Easy Street', 'Stone Street', 'Great Wall of China', 'Gateway Arch', 'Big Ben'],
+    Challenge: ['Route 66', 'Middle Road', 'Sunset Strip', 'Beaten Path', 'Broadway', 'Abbey Road', 'Statue of Liberty', 'Taj Mahal', 'Tower of Pisa', 'Chichen Itza'],
+    Sport: ['Turnpike', 'Winding Road', "Dead Man's Curve", 'Boardwalk', 'Autobahn', 'Highway to Hell', 'Alcatraz', 'Sphinx', 'Red Square', 'Eiffel Tower', 'US Open', 'USBC Masters', 'Junior Gold', 'Team USA Trials']
+  };
+  function bakerActive(){ return bakerRoster.length > 0; }
+  function bakerOwner(fi){ return bakerRoster[fi % bakerRoster.length]; }
   let tapped = new Set();            // pins tapped as LEFT STANDING for the pending ball
   let entryKey = '';                 // bowler|frame|ball — reset taps when it changes
 
@@ -1553,7 +1873,8 @@
       numgrid.classList.remove('hide');
     } else {
       const ballNo = b.frames[ctx.fi].length + 1;
-      promptEl.innerHTML = `<b>${esc(b.name)}</b> · Frame ${ctx.fi+1}, Ball ${ballNo}` +
+      const bakerWho = bakerActive() ? `<b style="color:var(--amber)">${esc(bakerOwner(ctx.fi).name)}</b> up · ` : `<b>${esc(b.name)}</b> · `;
+      promptEl.innerHTML = bakerWho + `Frame ${ctx.fi+1}, Ball ${ballNo}` +
         (entryMode==='pins' ? ' — tap the pins left standing' : ' — how many pins?');
       for (let v=0; v<=9; v++){
         const btn = document.createElement('button');
@@ -2124,10 +2445,36 @@
 
   /* ---------- finish session: bank the whole outing into history ---------- */
   function sessionSnapshot(){
+    if (bakerActive()){
+      // Baker: the single team sheet is stored whole (for replay), and each frame's
+      // pin data is attributed to its owning bowler so leave analytics credit the right kid.
+      const teamGames = gamesForRecap(bowlers[0]);   // the shared Baker sheets
+      const perBowler = bakerRoster.map(t=>({ name:t.name, bid:t.bid, games:[], baker:true }));
+      teamGames.forEach(g=>{
+        if (!g.frames) return;
+        // build a per-bowler pseudo-game holding only their owned frames (for leave stats)
+        const slots = bakerRoster.map(()=> ({ frames:Array.from({length:10},()=>[]), total:0, partial:true }));
+        g.frames.forEach((fr,fi)=>{
+          const owner = fi % bakerRoster.length;
+          slots[owner].frames[fi] = fr;
+        });
+        slots.forEach((s,idx)=> perBowler[idx].games.push({ total:null, frames:s.frames, bakerPartial:true }));
+      });
+      return {
+        id: String(Date.now()), date: new Date().toISOString(),
+        event: eventLabel, type:'Baker', note: sessionNote,
+        oilCategory, oilPattern,
+        baker: { team: bakerRoster.map(t=>({...t})), games: teamGames.map(g=>({total:g.total, frames:g.frames})) },
+        bowlers: perBowler.filter(b=>b.games.length)
+      };
+    }
     return {
       id: String(Date.now()),
       date: new Date().toISOString(),
       event: eventLabel,
+      type: sessionType,
+      note: sessionNote,
+      oilCategory, oilPattern,
       bowlers: bowlers.map(b=>({
         name: b.name,
         bid: b.bid,
@@ -2137,9 +2484,11 @@
   }
   async function finishSession(){
     const snap = sessionSnapshot();
-    if (!snap.bowlers.length) return;
-    const games = snap.bowlers.reduce((a,b)=>a+b.games.length,0);
-    if (!await askConfirm(`Save this session (${games} game${games===1?'':'s'}) to history and start fresh?`, 'Finish & save')) return;
+    const hasContent = bakerActive() ? (snap.baker && snap.baker.games.length) : snap.bowlers.length;
+    if (!hasContent) return;
+    const games = bakerActive() ? snap.baker.games.length : snap.bowlers.reduce((a,b)=>a+b.games.length,0);
+    const label = bakerActive() ? `Baker session (${games} game${games===1?'':'s'})` : `this session (${games} game${games===1?'':'s'})`;
+    if (!await askConfirm(`Save ${label} to history and start fresh?`, 'Finish & save')) return;
     await archivePut(snap);
 
     let backupNote = '';
@@ -2151,8 +2500,9 @@
                            : ' (Backup folder needs reconnecting — check the status on this screen.)';
     }
 
+    bakerRoster = [];
     bowlers = bowlers.map(b=>newBowler(b.name, b.bid));
-    cur = 0; history = []; gameNum = 1; eventLabel = '';
+    cur = 0; history = []; gameNum = 1; eventLabel = ''; sessionNote = ''; oilCategory=''; oilPattern='';
     lastCall = 'In the books! Session saved to history.' + backupNote;
     render();
     openStart();
@@ -2276,23 +2626,153 @@
   }
 
   function careerLine(games){
-    const totals = games.map(g=>g.total);
-    const n = totals.length;
-    if (!n) return null;
+    // Baker "partial" games have null totals — they credit leaves but not game scores.
+    const scored = games.filter(g=>typeof g.total === 'number');
+    const withFrames = games.filter(g=>g.frames);
+    if (!games.length) return null;
+    const totals = scored.map(g=>g.total);
     let x=0, sp=0, spOpp=0;
-    games.forEach(g=>{
-      if (!g.frames) return;
+    withFrames.forEach(g=>{
       const c = counts({frames:g.frames});
       x += c.x; sp += c.sp;
       g.frames.forEach((r,fi)=>{
         if (fi<9){ if (P(r[0])!==undefined && P(r[0])!==10 && r.length===2) spOpp++; }
       });
     });
+    // A bowler with only Baker games has no game scores — still a valid, showable record.
+    if (!totals.length){
+      return { n:0, bakerOnly:true, avg:null, high:null, strikes:x, spares:sp,
+        sparePct: spOpp ? Math.round(100*sp/spOpp) : null };
+    }
+    const n = totals.length;
     return {
       n, avg: Math.round(totals.reduce((a,t)=>a+t,0)/n),
       high: Math.max(...totals), strikes:x, spares:sp,
       sparePct: spOpp ? Math.round(100*sp/spOpp) : null
     };
+  }
+
+  /* ---------- deep stats (Tier 1): all derivable from existing roll data ---------- */
+  // Returns the pins knocked down on a given roll index within a frame (respects fouls).
+  function deepStats(games, sessionsForRecords){
+    const played = games.filter(g=>g.frames);
+    if (!played.length) return null;
+    const scored = played.filter(g=>typeof g.total === 'number');  // exclude Baker partials from scores
+    let fbSum=0, fbCount=0;              // first-ball pinfall
+    let strikes=0, firstBalls=0, strikeOpps=0;         // strike rate
+    let doubleOpp=0, doubleHit=0;        // P(strike | prev strike)
+    let tenthMark=0, tenthPlayed=0;      // clean 10th
+    let headpinHit=0, headpinOpp=0;      // headpin contact (needs pin data)
+    let washouts=0;                      // headpin-standing leaves (needs pin data)
+    let earlySum=0, earlyN=0, lateSum=0, lateN=0; // frames 1-5 vs 6-10 avg first-ball
+    let bestStreak=0, turkeys=0;
+
+    played.forEach(g=>{
+      // strike streak walk across the whole game (first-ball strikes in 1-9, plus 10th balls)
+      let streak=0;
+      g.frames.forEach((r,fi)=>{
+        if (!frameComplete(fi, r)) return;
+        // first ball of the frame
+        const fb = P(r[0]);
+        if (fb !== undefined && !r[0].f){
+          fbSum += fb; fbCount++;
+          firstBalls++;
+        }
+        // early/late first-ball pinfall (frames 1-9 only; 10th is special)
+        if (fi < 9 && r[0] && !r[0].f){
+          if (fi < 5){ earlySum += r[0].p; earlyN++; }
+          else { lateSum += r[0].p; lateN++; }
+        }
+        // strike accounting — keep numerator and denominator on the same basis
+        if (fi < 9){
+          strikeOpps++;
+          if (P(r[0]) === 10){ strikes++; streak++; if (streak>bestStreak) bestStreak=streak; if (streak===3) turkeys++; }
+          else streak = 0;
+        } else {
+          // 10th frame: each fresh-rack ball is a strike opportunity
+          r.forEach((rl,i)=>{
+            const fresh = freshRackAt(9, r, i);
+            if (fresh){
+              strikeOpps++;
+              if (rl.p===10){ strikes++; streak++; if(streak>bestStreak) bestStreak=streak; if(streak===3) turkeys++; }
+              else streak = 0;
+            }
+          });
+        }
+        // headpin contact + washout (pin data only)
+        if (r[0] && r[0].s){
+          headpinOpp++;
+          if (!r[0].s.includes(1)) headpinHit++;
+          else if (r[0].s.length >= 2) washouts++;   // headpin standing with company = washout
+        }
+      });
+      // double opportunities: consecutive first balls in frames 1-9
+      for (let fi=1; fi<9; fi++){
+        if (frameComplete(fi-1,g.frames[fi-1]) && frameComplete(fi,g.frames[fi]) &&
+            P(g.frames[fi-1][0])===10){
+          doubleOpp++; if (P(g.frames[fi][0])===10) doubleHit++;
+        }
+      }
+      // clean 10th
+      if (frameComplete(9, g.frames[9])){
+        tenthPlayed++;
+        if (isStrikeFrame(g.frames[9]) || isSpareFrame(9, g.frames[9])) tenthMark++;
+      }
+    });
+
+    // score-based metrics use only fully-scored games (Baker partials excluded)
+    const totals = scored.map(g=>g.total);
+    const mean = totals.length ? totals.reduce((a,t)=>a+t,0)/totals.length : 0;
+    const variance = totals.length ? totals.reduce((a,t)=>a+(t-mean)**2,0)/totals.length : 0;
+    const sigma = totals.length ? Math.round(Math.sqrt(variance)) : null;
+
+    return {
+      firstBallAvg: fbCount ? (fbSum/fbCount).toFixed(1) : null,
+      strikeRate: strikeOpps ? Math.round(100*strikes/strikeOpps) : null,
+      doubleRate: doubleOpp ? Math.round(100*doubleHit/doubleOpp) : null,
+      clean10Pct: tenthPlayed ? Math.round(100*tenthMark/tenthPlayed) : null,
+      headpinPct: headpinOpp ? Math.round(100*headpinHit/headpinOpp) : null,
+      washouts, hasPinData: headpinOpp>0,
+      earlyAvg: earlyN ? (earlySum/earlyN).toFixed(1) : null,
+      lateAvg:  lateN ? (lateSum/lateN).toFixed(1) : null,
+      bestStreak, turkeys, sigma,
+      high: totals.length ? Math.max(...totals) : null,
+      low: totals.length ? Math.min(...totals) : null
+    };
+  }
+
+  // Per-session game-position averages: game 1 vs 2 vs 3+ across a bowler's sessions
+  function positionAverages(ident, sessions){
+    const buckets = [[],[],[]]; // G1, G2, G3+
+    sessions.forEach(s=>s.bowlers.forEach(b=>{
+      if (!sameBowler(b, ident)) return;
+      b.games.forEach((g,i)=>{ buckets[Math.min(i,2)].push(g.total); });
+    }));
+    // include the live session too
+    bowlers.forEach(b=>{ if (sameBowler(b, ident)) gamesForRecap(b).forEach((g,i)=>buckets[Math.min(i,2)].push(g.total)); });
+    return buckets.map(arr => arr.length ? Math.round(arr.reduce((a,t)=>a+t,0)/arr.length) : null);
+  }
+
+  // Career records across ALL of a bowler's history (ignores scope)
+  function bowlerRecords(ident, sessions){
+    let highGame=0, highSeries=0, mostStrikes=0, bestClean=0, cleanForBest=0;
+    const allGames = [];
+    sessions.forEach(s=>s.bowlers.forEach(b=>{ if (sameBowler(b,ident)){
+      const series = b.games.reduce((a,g)=>a+g.total,0);
+      if (series>highSeries) highSeries=series;
+      b.games.forEach(g=>{ allGames.push(g); if (g.total>highGame) highGame=g.total;
+        if (g.frames){ const c=counts({frames:g.frames}); if (c.x>mostStrikes) mostStrikes=c.x;
+          const cs=craftStats([g]); if (cs.cleanPct!==null && cs.cleanPct>bestClean) bestClean=cs.cleanPct; } });
+    }}));
+    bowlers.forEach(b=>{ if (sameBowler(b,ident)){
+      const gs = gamesForRecap(b);
+      const series = gs.reduce((a,g)=>a+g.total,0);
+      if (series>highSeries) highSeries=series;
+      gs.forEach(g=>{ if (g.total>highGame) highGame=g.total;
+        if (g.frames){ const c=counts({frames:g.frames}); if (c.x>mostStrikes) mostStrikes=c.x;
+          const cs=craftStats([g]); if (cs.cleanPct!==null && cs.cleanPct>bestClean) bestClean=cs.cleanPct; } });
+    }});
+    return { highGame, highSeries, mostStrikes, bestClean };
   }
 
   const historyView = document.getElementById('historyView');
@@ -2348,10 +2828,13 @@
         const c = careerLine(games);
         if (!c) return '';
         const sessCount = histSessions.filter(s=>s.bowlers.some(b=>sameBowler(b, id))).length;
+        const sub = c.bakerOnly
+          ? `${sessCount} session${sessCount===1?'':'s'} · Baker only`
+          : `${sessCount} session${sessCount===1?'':'s'} · ${c.n} game${c.n===1?'':'s'} · high ${c.high}${c.sparePct!==null?` · ${c.sparePct}% spares`:''}`;
         return `<button class="bCard" data-i="${i}">
           <div><div class="bn">${esc(id.name)}</div>
-          <div class="bs">${sessCount} session${sessCount===1?'':'s'} · ${c.n} game${c.n===1?'':'s'} · high ${c.high}${c.sparePct!==null?` · ${c.sparePct}% spares`:''}</div></div>
-          <div class="avg"><div class="n">${c.avg}</div><div class="l">AVG</div></div>
+          <div class="bs">${sub}</div></div>
+          <div class="avg"><div class="n">${c.avg===null?'—':c.avg}</div><div class="l">AVG</div></div>
         </button>`;
       }).join('');
       list.querySelectorAll('.bCard').forEach(el=>el.onclick = ()=>openBowlerPage(roster[Number(el.dataset.i)]));
@@ -2453,22 +2936,63 @@
       .filter(s => s.bowlers.some(b => sameBowler(b, ident)))
       .sort((a,b) => b.id.localeCompare(a.id));
 
+    // deep stats (Tier 1)
+    const ds = deepStats(games);
+    const pos = positionAverages(ident, histSessions);
+    const rec = bowlerRecords(ident, histSessions);
+    const posValid = pos.filter(x=>x!==null).length >= 2;
+    const deepBlock = ds ? `
+      <div class="anaHead">BALL-BY-BALL</div>
+      <div class="mchips">
+        <div class="mchip"><div class="k">1ST BALL AVG</div><div class="v">${ds.firstBallAvg??'–'}</div></div>
+        <div class="mchip"><div class="k">STRIKE RATE</div><div class="v">${ds.strikeRate===null?'–':ds.strikeRate+'%'}</div></div>
+        <div class="mchip"><div class="k">DOUBLE RATE</div><div class="v">${ds.doubleRate===null?'–':ds.doubleRate+'%'}</div></div>
+        <div class="mchip"><div class="k">CLEAN 10TH</div><div class="v">${ds.clean10Pct===null?'–':ds.clean10Pct+'%'}</div></div>
+        <div class="mchip"><div class="k">CONSISTENCY ±</div><div class="v">${ds.sigma}</div></div>
+        <div class="mchip"><div class="k">BEST STRING</div><div class="v">${ds.bestStreak}</div></div>
+        ${ds.hasPinData ? `<div class="mchip"><div class="k">HEADPIN %</div><div class="v">${ds.headpinPct}%</div></div>
+        <div class="mchip"><div class="k">WASHOUTS</div><div class="v">${ds.washouts}</div></div>` : ''}
+        <div class="mchip"><div class="k">EARLY→LATE</div><div class="v" style="font-size:14px">${ds.earlyAvg??'–'}→${ds.lateAvg??'–'}</div></div>
+      </div>
+      ${posValid ? `
+      <div class="anaHead">GAME-POSITION AVERAGE</div>
+      <div class="posBars">
+        ${['1st game','2nd game','3rd+ game'].map((lbl,i)=> pos[i]===null ? '' :
+          `<div class="posBar"><span class="pl">${lbl}</span>
+           <span class="pv">${pos[i]}</span></div>`).join('')}
+      </div>` : ''}
+    ` : '';
+    const recBlock = (rec.highGame || rec.highSeries) ? `
+      <div class="anaHead green">PERSONAL RECORDS · ALL TIME</div>
+      <div class="recGrid">
+        <div class="recCard"><div class="rv">${rec.highGame}</div><div class="rk">HIGH GAME</div></div>
+        <div class="recCard"><div class="rv">${rec.highSeries}</div><div class="rk">HIGH SERIES</div></div>
+        <div class="recCard"><div class="rv">${rec.mostStrikes}</div><div class="rk">MOST X / GAME</div></div>
+        <div class="recCard"><div class="rv">${rec.bestClean}%</div><div class="rk">BEST CLEAN %</div></div>
+      </div>` : '';
+
     pane.innerHTML = `
       <button class="histBack" id="histBack1">← All bowlers</button>
       <div class="recapTitle" style="font-size:17px;margin-bottom:2px">${esc(displayName.toUpperCase())}</div>
-      <div class="recapWho" style="margin-bottom:12px">${c.n} games in scope</div>
+      <div class="recapWho" style="margin-bottom:12px">${c.bakerOnly ? 'Baker games — leaves tracked, no game scores' : c.n + ' games in scope'}</div>
       <div class="scopeSeg">
         <button data-sc="career"${anaScope==='career'?' class="on"':''}>Career</button>
         <button data-sc="last5"${anaScope==='last5'?' class="on"':''}>Last 5 sessions</button>
         <button data-sc="tonight"${anaScope==='tonight'?' class="on"':''}>Tonight</button>
       </div>
       <div class="mchips">
-        <div class="mchip"><div class="k">AVG</div><div class="v">${c.avg}</div></div>
-        <div class="mchip"><div class="k">HIGH</div><div class="v">${c.high}</div></div>
+        <div class="mchip"><div class="k">AVG</div><div class="v">${c.avg===null?'—':c.avg}</div></div>
+        <div class="mchip"><div class="k">HIGH</div><div class="v">${c.high===null?'—':c.high}</div></div>
         <div class="mchip"><div class="k">STRIKES</div><div class="v">${c.strikes}</div></div>
         <div class="mchip"><div class="k">SPARE %</div><div class="v">${c.sparePct===null?'–':c.sparePct}</div></div>
       </div>
+      <div class="bowlerActions">
+        <button class="drillStartBtn" id="drillStartBtn">🎯 Start spare drill</button>
+        <button class="reportBtn" id="reportBtn">📋 Coach report card</button>
+      </div>
+      ${recBlock}
       ${craftBlock}
+      ${deepBlock}
       ${nemBlock}
       ${classBlock}
       ${gamesWithPin ? `
@@ -2489,16 +3013,33 @@
         <div class="anaHead">SESSIONS · TAP TO SEE THE SCORESHEET</div>
         ${mySessions.map(s=>{
           const mine = s.bowlers.find(b=>sameBowler(b, ident));
-          const total = mine.games.reduce((a,g)=>a+g.total,0);
+          const scored = mine.games.filter(g=>typeof g.total==='number');
+          const total = scored.reduce((a,g)=>a+g.total,0);
           const d = new Date(s.date);
+          const label = scored.length ? `${mine.games.length} game${mine.games.length===1?'':'s'} · series ${total}`
+                                      : `Baker · ${mine.games.length} frame set${mine.games.length===1?'':'s'}`;
           return `<button class="sessRow" data-sid="${s.id}">
-            <div class="st">${esc(s.event || 'Session')} · ${d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</div>
-            <div class="sd">${mine.games.length} game${mine.games.length===1?'':'s'} · series ${total}</div>
+            <div class="st">${esc(s.event || (s.type==='Baker'?'Baker session':'Session'))} · ${d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</div>
+            <div class="sd">${label}</div>
           </button>`;
         }).join('')}
       ` : ''}
+      <div class="anaHead">DATA · ${esc(displayName.toUpperCase())}</div>
+      <div class="dataActions">
+        <button class="sendDataBtn" id="sendDataBtn">📤 Send ${esc(displayName.split(' ')[0])}'s data</button>
+        <button class="removeDataBtn" id="removeDataBtn">🗑 Remove from this device</button>
+      </div>
+      <div class="dataHint">Sends only ${esc(displayName.split(' ')[0])}'s games as a file to share — they import it into their own Strikebook and it merges with their history. Removing affects only this phone.</div>
     `;
     document.getElementById('histBack1').onclick = ()=>{ showHistPane('home'); renderHistHome(); };
+    const dsb = document.getElementById('drillStartBtn');
+    if (dsb) dsb.onclick = ()=>openDrill(ident);
+    const rpt = document.getElementById('reportBtn');
+    if (rpt) rpt.onclick = ()=>shareReportCard(ident);
+    const sendB = document.getElementById('sendDataBtn');
+    if (sendB) sendB.onclick = ()=>exportBowler(ident);
+    const remB = document.getElementById('removeDataBtn');
+    if (remB) remB.onclick = ()=>removeBowler(ident);
     pane.querySelectorAll('.scopeSeg button').forEach(btn=>btn.onclick = ()=>{
       anaScope = btn.dataset.sc; openBowlerPage(ident);
     });
@@ -2514,19 +3055,57 @@
     const pane = document.getElementById('histSession');
     const d = new Date(s.date);
     const backLabel = returnCtx && returnCtx.back==='bowler' ? `← ${esc(returnCtx.ident.name)}` : '← All sessions';
+    const isBaker = s.type === 'Baker' && s.baker;
+    const bodyHTML = isBaker
+      ? `<div class="recapWho" style="margin:6px 0 10px">🎳 <b>Baker format</b> · ${s.baker.team.map(t=>esc(t.name)).join(' → ')}</div>` +
+        s.baker.games.map((g,i)=>{
+          const head = `<div class="gh"><b>Baker Game ${i+1}</b><span class="gt">${g.total}</span></div>`;
+          if (!g.frames) return `<div class="gameCard">${head}<div class="noframes">Summary only</div></div>`;
+          // owner initials under each frame
+          const ownerRow = `<div class="frames bakerOwners">` +
+            g.frames.map((_,fi)=>`<div class="frame pf"><span class="ownerTag">${esc((s.baker.team[fi % s.baker.team.length].name||'?').slice(0,3))}</span></div>`).join('') + `</div>`;
+          return `<div class="gameCard">${head}<div class="sheetScroll"><div class="frames">${framesHTML(g.frames,-1)}</div>${ownerRow}${pinLeaveRowHTML(g.frames)}</div></div>`;
+        }).join('')
+      : s.bowlers.map(b=>{
+          const series = b.games.reduce((a,g)=>a+(g.total||0),0);
+          const scored = b.games.filter(g=>typeof g.total==='number');
+          return `<div class="recapWho" style="margin:14px 0 6px"><b>${esc(b.name)}</b>${scored.length?` · series ${series}`:''}</div>` +
+            b.games.map((g,i)=>{
+              const head = `<div class="gh"><b>Game ${i+1}</b><span class="gt">${g.total===null?'—':g.total}</span></div>`;
+              if (!g.frames) return `<div class="gameCard">${head}<div class="noframes">Summary only</div></div>`;
+              return `<div class="gameCard">${head}<div class="sheetScroll"><div class="frames">${framesHTML(g.frames,-1)}</div>${pinLeaveRowHTML(g.frames)}</div></div>`;
+            }).join('');
+        }).join('');
     pane.innerHTML = `
       <button class="histBack" id="histBack2">${backLabel}</button>
-      <div class="recapTitle" style="font-size:17px">${esc(s.event || 'SESSION')}</div>
-      <div class="recapWho" style="margin-bottom:12px">${d.toLocaleDateString(undefined,{weekday:'short',month:'long',day:'numeric',year:'numeric'})}</div>
-      ${s.bowlers.map(b=>{
-        const series = b.games.reduce((a,g)=>a+g.total,0);
-        return `<div class="recapWho" style="margin:14px 0 6px"><b>${esc(b.name)}</b> · series ${series}</div>` +
-          b.games.map((g,i)=>{
-            const head = `<div class="gh"><b>Game ${i+1}</b><span class="gt">${g.total}</span></div>`;
-            if (!g.frames) return `<div class="gameCard">${head}<div class="noframes">Summary only</div></div>`;
-            return `<div class="gameCard">${head}<div class="sheetScroll"><div class="frames">${framesHTML(g.frames,-1)}</div>${pinLeaveRowHTML(g.frames)}</div></div>`;
-          }).join('');
-      }).join('')}
+      <div class="recapTitle" style="font-size:17px">${esc(s.event || (isBaker?'BAKER SESSION':'SESSION'))}</div>
+      <div class="recapWho" style="margin-bottom:4px">${d.toLocaleDateString(undefined,{weekday:'short',month:'long',day:'numeric',year:'numeric'})}${s.type?` · ${esc(s.type)}`:' · <span style="opacity:.6">no type set</span>'}${s.oilCategory?` · <span style="color:var(--teal)">${esc(s.oilCategory)}${s.oilPattern?': '+esc(s.oilPattern):''}</span>`:''}</div>
+      ${s.oilPattern ? `<a class="kegelLink" href="https://patternlibrary.kegel.net/" target="_blank" rel="noopener">🔍 Look up "${esc(s.oilPattern)}" in the Kegel pattern library ↗</a>` : ''}
+      ${s.note ? `<div class="sessNote">📝 ${esc(s.note)}</div>` : ''}
+      <button class="editLabelBtn" id="editLabelBtn">✎ Edit label${s.type?'':' · add type'}</button>
+      <div id="labelEditor" class="labelEditor" style="display:none">
+        <div class="anaHead">SESSION TYPE</div>
+        <div class="typeSeg" id="editTypeSeg">
+          ${['Practice','League','Tournament','Baker'].map(t=>
+            `<button data-type="${t}"${s.type===t?' class="on"':''}${t==='Baker'&&!isBaker?' disabled style="opacity:.4"':''}>${t}</button>`).join('')}
+        </div>
+        <div class="anaHead">EVENT · LOCATION <span style="opacity:.5;letter-spacing:0;font-weight:600">(optional)</span></div>
+        <input id="editEvent" class="eventInput" maxlength="40" placeholder="e.g. Junior Gold · Minneapolis" value="${esc(s.event||'')}">
+        <div class="anaHead">LANE CONDITION <span style="opacity:.5;letter-spacing:0;font-weight:600">(optional)</span></div>
+        <div class="typeSeg" id="editOilSeg">
+          ${['','House','Sport','Challenge'].map(o=>
+            `<button data-oil="${o}"${(s.oilCategory||'')===o?' class="on"':''}>${o||'—'}</button>`).join('')}
+        </div>
+        <input id="editOilPattern" class="eventInput" list="editOilList" maxlength="40" placeholder="Pattern name (optional) — pick or type" value="${esc(s.oilPattern||'')}" style="margin-top:8px;${s.oilCategory?'':'display:none'}">
+        <datalist id="editOilList"></datalist>
+        <div class="anaHead">NOTE <span style="opacity:.5;letter-spacing:0;font-weight:600">(optional)</span></div>
+        <input id="editNote" class="eventInput" maxlength="120" placeholder="e.g. lanes hooked early, moved 2 boards left" value="${esc(s.note||'')}">
+        <div class="editLabelActions">
+          <button class="cancel" id="editCancel">Cancel</button>
+          <button class="modalOk" id="editSave">Save</button>
+        </div>
+      </div>
+      ${bodyHTML}
       <button class="removeBtn show" id="delSess" style="margin-top:14px">Delete this session from history</button>
     `;
     const goBack = ()=>{
@@ -2534,6 +3113,47 @@
       else { histTab='sessions'; showHistPane('home'); renderHistHome(); }
     };
     document.getElementById('histBack2').onclick = goBack;
+    const kegelLink = pane.querySelector('.kegelLink');
+    if (kegelLink) kegelLink.addEventListener('click', ()=>{
+      try{ if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(s.oilPattern).catch(()=>{}); }catch(e){}
+      toast('Pattern name copied — paste it in Kegel\u2019s search', true);
+    });
+    // label editor
+    let pickedType = s.type || '';
+    const editor = document.getElementById('labelEditor');
+    document.getElementById('editLabelBtn').onclick = ()=>{
+      editor.style.display = editor.style.display==='none' ? 'block' : 'none';
+    };
+    document.querySelectorAll('#editTypeSeg button:not([disabled])').forEach(btn=>btn.onclick = ()=>{
+      pickedType = btn.dataset.type;
+      document.querySelectorAll('#editTypeSeg button').forEach(x=>x.classList.toggle('on', x===btn));
+    });
+    // oil editor
+    let pickedOil = s.oilCategory || '';
+    const editOilField = document.getElementById('editOilPattern');
+    const editOilList = document.getElementById('editOilList');
+    const fillEditOil = ()=>{ editOilList.innerHTML = (OIL_PATTERNS[pickedOil]||[]).map(n=>`<option value="${esc(n)}">`).join(''); };
+    fillEditOil();
+    document.querySelectorAll('#editOilSeg button').forEach(btn=>btn.onclick = ()=>{
+      pickedOil = btn.dataset.oil;
+      document.querySelectorAll('#editOilSeg button').forEach(x=>x.classList.toggle('on', x===btn));
+      editOilField.style.display = pickedOil ? 'block' : 'none';
+      if (!pickedOil) editOilField.value = '';
+      fillEditOil();
+    });
+    document.getElementById('editCancel').onclick = ()=>{ editor.style.display='none'; };
+    document.getElementById('editSave').onclick = async ()=>{
+      // Baker type is structural — never let editing flip a non-Baker into Baker or vice-versa
+      const newType = isBaker ? 'Baker' : (pickedType && pickedType!=='Baker' ? pickedType : s.type || '');
+      s.type = newType;
+      s.event = document.getElementById('editEvent').value.trim();
+      s.note = document.getElementById('editNote').value.trim();
+      s.oilCategory = pickedOil;
+      s.oilPattern = pickedOil ? editOilField.value.trim() : '';
+      await archivePut(s);
+      histSessions = await archiveAll();
+      openSessionPage(id, returnCtx);   // re-render with updated label
+    };
     document.getElementById('delSess').onclick = async ()=>{
       if (!await askConfirm('Delete this session from history? This cannot be undone.', 'Delete')) return;
       await archiveDel(id);
@@ -2544,7 +3164,188 @@
     historyView.scrollTop = 0;
   }
 
-  /* ---------- backup file: export / import ---------- */
+  /* ---------- spare drill mode ---------- */
+  const DRILL_KEY = 'strikebook_drills_v1';
+  // common practice leaves (single pins + makeable combos + a few splits)
+  const DRILL_POOL = [
+    [10],[7],[4],[6],[2],[3],[9],[8],[5],       // singles
+    [3,10],[2,7],[6,10],[4,7],[2,4,7],[3,6,10],[4,7,10],[6,7,10], // multi
+    [4,6],[7,10]                                  // splits
+  ];
+  function drillHistoryGet(bid){
+    try{ return (JSON.parse(localStorage.getItem(DRILL_KEY))||{})[bid] || []; }catch(e){ return []; }
+  }
+  function drillHistoryAdd(bid, entry){
+    try{
+      const all = JSON.parse(localStorage.getItem(DRILL_KEY))||{};
+      (all[bid] = all[bid]||[]).push(entry);
+      localStorage.setItem(DRILL_KEY, JSON.stringify(all));
+    }catch(e){}
+  }
+  // weight the pool toward this bowler's worst converters from match play
+  function drillWeights(ident){
+    const games = bowlerGames(ident, histSessions, 'career');
+    const {leaves} = leaveStats(games);
+    return DRILL_POOL.map(pins=>{
+      const key = pins.slice().sort((a,b)=>a-b).join(',');
+      const e = leaves[key];
+      // base weight 1; add up to 4 more for a low conversion rate with real attempts
+      let w = 1;
+      if (e && e.att >= 2){ const rate = e.made/e.att; w += Math.round((1-rate)*4); }
+      return {pins, w};
+    });
+  }
+  function drillPick(ident){
+    const weighted = drillWeights(ident);
+    const total = weighted.reduce((a,x)=>a+x.w,0);
+    let r = Math.random()*total;
+    for (const x of weighted){ if ((r -= x.w) <= 0) return x.pins; }
+    return weighted[0].pins;
+  }
+  let drillState = null; // {ident, target, made, attempts, streak}
+  function openDrill(ident){
+    drillState = { ident, target: drillPick(ident), made:0, attempts:0, streak:0 };
+    document.getElementById('drillWho').textContent = ident.name + ' · tap the result after each shot';
+    renderDrill();
+    document.getElementById('drillView').classList.add('open');
+    document.getElementById('drillView').scrollTop = 0;
+  }
+  function renderDrill(){
+    const s = drillState;
+    const pct = s.attempts ? Math.round(100*s.made/s.attempts) : null;
+    document.getElementById('drillBody').innerHTML = `
+      <div class="drillCard">
+        <div class="drillTarget">${leaveSVG(s.target, 92)}</div>
+        <div class="drillName">${esc(leaveLabel(s.target))}</div>
+        <div class="drillHint">Set it up (or shoot it on a full rack) — did you make it?</div>
+        <div class="drillBtns">
+          <button class="drillMade" id="drillMade">✓ Made it</button>
+          <button class="drillMiss" id="drillMiss">✗ Missed</button>
+        </div>
+      </div>
+      <div class="drillScore">
+        <div class="ds"><div class="dv">${s.attempts}</div><div class="dl">SHOTS</div></div>
+        <div class="ds"><div class="dv">${s.made}</div><div class="dl">MADE</div></div>
+        <div class="ds"><div class="dv">${pct===null?'–':pct+'%'}</div><div class="dl">RATE</div></div>
+        <div class="ds"><div class="dv">${s.streak}</div><div class="dl">STREAK</div></div>
+      </div>
+      <button class="drillSkip" id="drillSkipShot">Skip this leave ▸</button>
+    `;
+    document.getElementById('drillMade').onclick = ()=>drillResult(true);
+    document.getElementById('drillMiss').onclick = ()=>drillResult(false);
+    document.getElementById('drillSkipShot').onclick = ()=>{ drillState.target = drillPick(drillState.ident); renderDrill(); };
+  }
+  function drillResult(made){
+    const s = drillState;
+    s.attempts++; if (made){ s.made++; s.streak++; } else s.streak = 0;
+    drillHistoryAdd(s.ident.bid || ('nm:'+normName(s.ident.name)), {
+      pins: s.target, made, at: Date.now()
+    });
+    toast(made ? 'NICE!' : 'KEEP AT IT', made);
+    s.target = drillPick(s.ident);
+    renderDrill();
+  }
+  document.getElementById('drillClose').onclick = ()=>document.getElementById('drillView').classList.remove('open');
+
+  /* ---------- coach report card (canvas → share/download PNG) ---------- */
+  function roundRect(g,x,y,w,h,r){ g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
+  async function buildReportCard(ident){
+    const games = bowlerGames(ident, histSessions, 'career');
+    const c = careerLine(games);
+    const ds = deepStats(games);
+    const {leaves} = leaveStats(games);
+    const sc = spareClasses(leaves);
+    const rec = bowlerRecords(ident, histSessions);
+    const pos = positionAverages(ident, histSessions);
+    const W = 1080, H = 1500;
+    const cv = document.createElement('canvas'); cv.width=W; cv.height=H;
+    const g = cv.getContext('2d');
+    g.fillStyle = '#10141F'; g.fillRect(0,0,W,H);
+    g.fillStyle = '#181E2E';
+    for (let i=-2;i<14;i++){ g.save(); g.translate(i*92,0); g.rotate(-0.14); g.globalAlpha=0.5; g.fillRect(0,-100,26,H+200); g.restore(); }
+    g.globalAlpha=1;
+    g.textAlign='left';
+    g.fillStyle='#E39B2D'; g.font="700 40px 'Barlow Semi Condensed',sans-serif";
+    g.fillText('STRIKEBOOK', 60, 88);
+    g.fillStyle='#F5EFE0'; g.font="800 20px 'Barlow Semi Condensed',sans-serif";
+    g.fillText('COACH REPORT CARD', 60, 118);
+    g.textAlign='right'; g.fillStyle='#D8D0BC'; g.font="500 22px 'Barlow Semi Condensed',sans-serif";
+    g.fillText(new Date().toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}), W-60, 92);
+    g.textAlign='left';
+    g.fillStyle='#F5EFE0'; g.font="800 68px 'Barlow Semi Condensed',sans-serif";
+    g.fillText(ident.name, 60, 210);
+    g.fillStyle='#D8D0BC'; g.font="500 24px 'Barlow Semi Condensed',sans-serif";
+    g.fillText(c && !c.bakerOnly ? `${c.n} games tracked · career view` : 'Baker games · leave tracking', 60, 246);
+    const tile = (x,y,w,h,label,val,accent)=>{
+      g.fillStyle='#181E2E'; roundRect(g,x,y,w,h,14); g.fill();
+      g.strokeStyle='rgba(245,239,224,.12)'; g.lineWidth=1.5; roundRect(g,x,y,w,h,14); g.stroke();
+      g.textAlign='center';
+      g.fillStyle=accent||'#E39B2D'; g.font="800 46px 'Barlow Semi Condensed',sans-serif";
+      g.fillText(String(val), x+w/2, y+h/2+6);
+      g.fillStyle='#D8D0BC'; g.font="700 16px 'Barlow Semi Condensed',sans-serif";
+      g.fillText(label, x+w/2, y+h-18);
+      g.textAlign='left';
+    };
+    let y=290; const gap=18; const tw=(W-120-gap*3)/4;
+    tile(60, y, tw, 120, 'AVG', c&&c.avg!==null?c.avg:'—');
+    tile(60+(tw+gap), y, tw, 120, 'HIGH GAME', rec.highGame||'—', '#5DCAA5');
+    tile(60+(tw+gap)*2, y, tw, 120, 'STRIKE %', ds&&ds.strikeRate!==null?ds.strikeRate+'%':'—');
+    tile(60+(tw+gap)*3, y, tw, 120, 'SPARE %', c&&c.sparePct!==null?c.sparePct+'%':'—', '#5DCAA5');
+    y=430;
+    tile(60, y, tw, 120, '1ST BALL', ds&&ds.firstBallAvg?ds.firstBallAvg:'—');
+    tile(60+(tw+gap), y, tw, 120, 'DOUBLE %', ds&&ds.doubleRate!==null?ds.doubleRate+'%':'—');
+    tile(60+(tw+gap)*2, y, tw, 120, 'CLEAN 10TH', ds&&ds.clean10Pct!==null?ds.clean10Pct+'%':'—');
+    tile(60+(tw+gap)*3, y, tw, 120, 'CONSISTENCY', ds&&ds.sigma!==null?'±'+ds.sigma:'—');
+    y=600;
+    g.fillStyle='#E39B2D'; g.font="800 26px 'Barlow Semi Condensed',sans-serif";
+    g.fillText('SPARE CONVERSION BY DIFFICULTY', 60, y);
+    const clsPct=o=>o.att?Math.round(100*o.made/o.att):null;
+    const bar=(label,o,accent)=>{
+      y+=52;
+      g.fillStyle='#F5EFE0'; g.font="700 22px 'Barlow Semi Condensed',sans-serif"; g.textAlign='left';
+      g.fillText(label, 60, y);
+      const p = clsPct(o);
+      g.textAlign='right'; g.fillStyle=accent;
+      g.fillText(p===null?'no data':`${p}%  ·  ${o.made}/${o.att}`, W-60, y);
+      g.textAlign='left';
+      g.fillStyle='#22283a'; roundRect(g,60,y+10,W-120,14,7); g.fill();
+      if (p!==null){ g.fillStyle=accent; roundRect(g,60,y+10,(W-120)*Math.max(p,2)/100,14,7); g.fill(); }
+      y+=20;
+    };
+    bar('Single pins', sc.single, '#5DCAA5');
+    bar('Makeable multi-pin', sc.multi, '#E39B2D');
+    bar('Splits', sc.split, '#DE4A2E');
+    if (pos.filter(x=>x!==null).length>=2){
+      y+=70;
+      g.fillStyle='#E39B2D'; g.font="800 26px 'Barlow Semi Condensed',sans-serif";
+      g.fillText('AVERAGE BY GAME POSITION', 60, y);
+      y+=30;
+      const labels=['1st game','2nd game','3rd+ game'];
+      const pw=(W-120-gap*2)/3;
+      pos.forEach((v,i)=>{ if(v===null) return; tile(60+(pw+gap)*i, y, pw, 110, labels[i], v, '#F5EFE0'); });
+      y+=110;
+    }
+    g.fillStyle='#8a8878'; g.font="500 20px 'Barlow Semi Condensed',sans-serif"; g.textAlign='center';
+    g.fillText('Generated by Strikebook · v'+APP_VERSION, W/2, H-40);
+    g.textAlign='left';
+    return cv;
+  }
+  async function shareReportCard(ident){
+    try{
+      const cv = await buildReportCard(ident);
+      const blob = await new Promise(res=>cv.toBlob(res,'image/png'));
+      const file = new File([blob], `strikebook-report-${ident.name}.png`, {type:'image/png'});
+      if (navigator.canShare && navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], title:`${ident.name} — Strikebook report`});
+      } else {
+        const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+        a.download=`strikebook-report-${ident.name}.png`; a.click();
+        setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+      }
+    }catch(e){}
+  }
+
+
   async function exportBackup(){
     const data = { kind:'strikebook-backup', version:1,
       exported: new Date().toISOString(),
@@ -2585,6 +3386,144 @@
     }
   }
 
+  /* ---------- per-bowler data handoff (separate from backup) ----------
+     Exports ONE bowler's sessions as a portable file tagged with their stable ID.
+     This same single-bowler shape is the unit a future coach-archive (option B) would carry. */
+  async function exportBowler(ident){
+    const sessions = await archiveAll();
+    // pull every session this bowler appears in, but keep ONLY their entry from each
+    const slices = [];
+    sessions.forEach(s=>{
+      const isBaker = s.type === 'Baker' && s.baker;
+      const mine = (s.bowlers||[]).filter(b=>sameBowler(b, ident));
+      if (!mine.length) return;
+      // For a normal session, ship just this bowler's slice. For Baker, ship their
+      // attributed partials plus a note so their leave data travels intact.
+      slices.push({
+        id: s.id, date: s.date, event: s.event, type: s.type, note: s.note,
+        bowlers: mine.map(b=>({ name:b.name, bid:b.bid || ident.bid || null,
+          games:b.games, baker: !!b.baker })),
+        fromBaker: isBaker || undefined
+      });
+    });
+    // include the live session slice if this bowler is currently on the sheet
+    const liveSlice = bowlers.filter(b=>sameBowler(b, ident) && gamesForRecap(b).length);
+    if (liveSlice.length && !bakerActive()){
+      slices.push({ id:'live-'+Date.now(), date:new Date().toISOString(), event:eventLabel, type:sessionType,
+        bowlers: liveSlice.map(b=>({ name:b.name, bid:b.bid, games:gamesForRecap(b).map(g=>({total:g.total, frames:g.frames})) })) });
+    }
+    const data = {
+      kind: 'strikebook-bowler', version: 1,
+      exported: new Date().toISOString(),
+      bowler: { name: ident.name, bid: ident.bid || null },
+      sessions: slices
+    };
+    const safeName = ident.name.replace(/[^a-z0-9]+/gi,'-').toLowerCase();
+    const blob = new Blob([JSON.stringify(data)], {type:'application/json'});
+    const file = new File([blob], `strikebook-${safeName}-data.json`, {type:'application/json'});
+    if (navigator.canShare && navigator.canShare({files:[file]})){
+      try{ await navigator.share({files:[file], title:`${ident.name}'s Strikebook data`}); return; }catch(e){}
+    }
+    try{
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=file.name; a.click();
+      setTimeout(()=>URL.revokeObjectURL(a.href),5000);
+    }catch(e){}
+  }
+
+  // Smart import: handles BOTH full backups and single-bowler files, with a per-bowler
+  // merge confirmation and silent de-duping by session ID.
+  async function importAny(fileObj){
+    let data;
+    try{ data = JSON.parse(await fileObj.text()); }
+    catch(e){ return importResult("Couldn't read that file — it isn't valid Strikebook data."); }
+    if (data.kind === 'strikebook-backup') return importBackup(fileObj);
+    if (data.kind !== 'strikebook-bowler' || !Array.isArray(data.sessions))
+      return importResult("That file doesn't look like Strikebook data.");
+    await importBowlerFile(data);
+  }
+  function importResult(msg){ const el=document.getElementById('backupHint'); if(el) el.textContent = msg; }
+
+  async function importBowlerFile(data){
+    const incomingName = data.bowler ? data.bowler.name : 'Unknown bowler';
+    const incomingBid = data.bowler ? data.bowler.bid : null;
+    // does this bowler already exist here? match by ID first, then name.
+    const known = knownBowlers(await archiveAll());
+    const match = known.find(k => (incomingBid && k.bid && k.bid===incomingBid))
+               || known.find(k => normName(k.name) === normName(incomingName));
+    // ask the user how to handle this person
+    const choice = await askBowlerMerge(incomingName, match);
+    if (choice === 'cancel') return;
+    // resolve the target identity (whose bid these sessions attach to on THIS device)
+    let targetBid, targetName;
+    if (choice === 'merge' && match){ targetBid = match.bid || incomingBid || genBid(); targetName = match.name; }
+    else { targetBid = incomingBid || genBid(); targetName = incomingName; }  // import as new
+
+    const existing = new Set((await archiveAll()).map(s=>s.id));
+    let added=0, skipped=0;
+    for (const s of data.sessions){
+      // de-dupe: same session id already here → skip silently
+      if (s.id && existing.has(s.id)){ skipped++; continue; }
+      // stamp this bowler's entries with the resolved target id/name so they group correctly
+      const sess = {
+        id: s.id && !existing.has(s.id) ? s.id : String(Date.now())+Math.random().toString(36).slice(2,6),
+        date: s.date || new Date().toISOString(), event: s.event||'', type: s.type||'', note: s.note||'',
+        bowlers: (s.bowlers||[]).map(b=>({
+          name: targetName, bid: targetBid,
+          games: (b.games||[]).map(g=>({ total:g.total, frames: g.frames?migrateFrames(g.frames):g.frames, ...(g.bakerPartial?{bakerPartial:true}:{}) })),
+          ...(b.baker?{baker:true}:{})
+        }))
+      };
+      await archivePut(sess); existing.add(sess.id); added++;
+    }
+    histSessions = await archiveAll();
+    renderHistHome();
+    importResult(`${targetName}: imported ${added} session${added===1?'':'s'}${skipped?`, skipped ${skipped} already here`:''}.`);
+  }
+
+  // Merge-choice dialog specific to bowler handoff
+  function askBowlerMerge(name, match){
+    return new Promise(res=>{
+      const dlg = document.getElementById('confirmDlg');
+      const merge = match ? `<button class="modalOk" id="mrgMerge">Merge into ${esc(match.name)}</button>` : '';
+      dlg.innerHTML = `<div class="card">
+        <h3 style="margin:0 0 8px">Import ${esc(name)}'s data</h3>
+        <p style="font-size:13.5px;color:var(--cream-dim);line-height:1.5;margin-bottom:14px">
+          ${match ? `You already have <b>${esc(match.name)}</b> on this device. Merge the incoming games into that history, or import as a separate bowler.`
+                  : `This will add <b>${esc(name)}</b> to your bowlers. Sessions already on this device are skipped automatically.`}
+        </p>
+        <div class="btns">
+          <button class="cancel" id="mrgCancel">Cancel</button>
+          ${match ? `<button class="cancel" id="mrgNew">Import as new</button>` : ''}
+          ${match ? merge : `<button class="modalOk" id="mrgMerge">Import</button>`}
+        </div>
+      </div>`;
+      dlg.classList.add('open');
+      const done = v => { dlg.classList.remove('open'); res(v); };
+      document.getElementById('mrgCancel').onclick = ()=>done('cancel');
+      const mNew = document.getElementById('mrgNew'); if (mNew) mNew.onclick = ()=>done('new');
+      document.getElementById('mrgMerge').onclick = ()=>done(match ? 'merge' : 'new');
+    });
+  }
+
+  // Remove one bowler's data from THIS device only (local; never touches their copy)
+  async function removeBowler(ident){
+    if (!await askConfirm(`Remove ${ident.name}'s data from THIS device? Their sessions here will be deleted. This only affects your phone — if you've sent them their data, their own copy is untouched. Consider exporting first.`, 'Remove')) return;
+    const sessions = await archiveAll();
+    for (const s of sessions){
+      const remaining = (s.bowlers||[]).filter(b=>!sameBowler(b, ident));
+      if (remaining.length === (s.bowlers||[]).length) continue; // bowler not in this session
+      if (remaining.length === 0){
+        await archiveDel(s.id);  // session was only this bowler → remove it
+      } else {
+        s.bowlers = remaining;   // keep others, drop this bowler
+        await archivePut(s);
+      }
+    }
+    histSessions = await archiveAll();
+    showHistPane('home'); renderHistHome();
+  }
+
+
   /* ---------- history wiring ---------- */
   document.getElementById('historyBtn').onclick = openHistory;
   document.getElementById('histClose').onclick = ()=>historyView.classList.remove('open');
@@ -2594,7 +3533,7 @@
   document.getElementById('exportBtn').onclick = exportBackup;
   document.getElementById('importBtn').onclick = ()=>document.getElementById('importFile').click();
   document.getElementById('importFile').addEventListener('change', e=>{
-    if (e.target.files && e.target.files[0]) importBackup(e.target.files[0]);
+    if (e.target.files && e.target.files[0]) importAny(e.target.files[0]);
     e.target.value = '';
   });
 
@@ -2746,10 +3685,25 @@
     });
     renderRoster(known);
     document.getElementById('startEvent').value = eventLabel;
+    document.querySelectorAll('#startTypeSeg button').forEach(x=>x.classList.toggle('on', x.dataset.type===sessionType));
+    document.querySelectorAll('#startOilSeg button').forEach(x=>x.classList.toggle('on', x.dataset.oil===oilCategory));
+    syncOilPatternField();
+    document.getElementById('startOilPattern').value = oilPattern;
     document.getElementById('startClose').style.display = sessionLive() ? 'block' : 'none';
     renderBackupPill();
     startView.classList.add('open');
     startView.scrollTop = 0;
+  }
+  // show the pattern field only once a category is chosen, and fill its suggestions
+  function syncOilPatternField(){
+    const field = document.getElementById('startOilPattern');
+    const dl = document.getElementById('oilPatternList');
+    const link = document.getElementById('startKegelLink');
+    if (!oilCategory){ field.style.display='none'; if(link) link.style.display='none'; dl.innerHTML=''; return; }
+    field.style.display='block';
+    if (link) link.style.display='inline-block';
+    const list = OIL_PATTERNS[oilCategory] || [];
+    dl.innerHTML = list.map(n=>`<option value="${esc(n)}">`).join('');
   }
   function isSelected(k){
     return startSel.some(s => (s.bid && k.bid && s.bid===k.bid) || normName(s.name)===normName(k.name));
@@ -2793,15 +3747,56 @@
   }
   function beginSession(){
     if (!startSel.length) return;
+    eventLabel = document.getElementById('startEvent').value.trim();
+    sessionNote = '';
+    if (sessionType === 'Baker'){
+      if (startSel.length < 2){ /* Baker needs a team */ 
+        return beginBakerFallback();
+      }
+      return beginBaker();
+    }
     bowlers = startSel.map(s=>newBowler(s.name, s.bid));
     cur = 0; history = []; gameNum = 1;
-    eventLabel = document.getElementById('startEvent').value.trim();
     lastCall = 'Lace up — first ball of the game.';
     startView.classList.remove('open');
     render();
     showIntro();
   }
+  function beginBaker(){
+    bakerRoster = startSel.map(s=>({bid:s.bid||genBid(), name:s.name}));
+    // one "team" bowler carries the shared Baker sheet
+    const teamName = bakerRoster.map(t=>t.name.split(' ')[0]).join('/');
+    bowlers = [ newBowler(teamName.length<=14 ? teamName : 'Team', genBid()) ];
+    cur = 0; history = []; gameNum = 1;
+    lastCall = `Baker game — ${bakerRoster.map(t=>t.name).join(' → ')}. Lead-off up.`;
+    startView.classList.remove('open');
+    render();
+    showIntro();
+  }
+  function beginBakerFallback(){
+    // Baker with <2 selected makes no sense; run a normal session instead
+    bakerRoster = [];
+    bowlers = startSel.map(s=>newBowler(s.name, s.bid));
+    cur = 0; history = []; gameNum = 1;
+    lastCall = 'Lace up — first ball of the game.';
+    startView.classList.remove('open');
+    render(); showIntro();
+  }
   document.getElementById('startBowlBtn').onclick = beginSession;
+  document.querySelectorAll('#startTypeSeg button').forEach(btn=>btn.onclick = ()=>{
+    sessionType = btn.dataset.type;
+    document.querySelectorAll('#startTypeSeg button').forEach(x=>x.classList.toggle('on', x===btn));
+    // Baker mode wants the roster to feel like a team ordering; hint via button label
+    document.getElementById('startBowlBtn').textContent = sessionType==='Baker' ? '🎳 Start Baker game' : "🎳 Let's bowl";
+  });
+  document.querySelectorAll('#startOilSeg button').forEach(btn=>btn.onclick = ()=>{
+    oilCategory = btn.dataset.oil;
+    document.querySelectorAll('#startOilSeg button').forEach(x=>x.classList.toggle('on', x===btn));
+    if (!oilCategory) oilPattern = '';           // clearing category clears the specific name
+    syncOilPatternField();
+    document.getElementById('startOilPattern').value = oilPattern;
+  });
+  document.getElementById('startOilPattern').addEventListener('input', e=>{ oilPattern = e.target.value.trim(); });
   document.getElementById('addBowlerBtn').onclick = addRosterName;
   document.getElementById('newBowlerInput').addEventListener('keydown', e=>{ if (e.key==='Enter') addRosterName(); });
   document.getElementById('startHistBtn').onclick = ()=>openHistory();
@@ -2814,8 +3809,131 @@
   document.getElementById('startVersion').textContent = versionText;
   document.getElementById('sopVersion').textContent = versionText;
 
+  /* ---------- version history + "what's new" after an update ---------- */
+  const SEEN_VERSION_KEY = 'strikebook_seen_version';
+  const clogHTML = list => list.map(c=>
+    `<div class="clog"><span class="cv">${esc(c.v)}</span><span class="cd">${esc(c.d)}</span></div>`).join('');
+  // the manual always shows the full history
+  document.getElementById('changelogList').innerHTML = clogHTML(CHANGELOG);
+
+  function seenVersionGet(){ try{ return localStorage.getItem(SEEN_VERSION_KEY); }catch(e){ return null; } }
+  function seenVersionSet(v){ try{ localStorage.setItem(SEEN_VERSION_KEY, v); }catch(e){} }
+  function maybeShowWhatsNew(){
+    const seen = seenVersionGet();
+    // First-ever launch: nothing has "changed" for this person — just record and move on.
+    if (!seen){ seenVersionSet(APP_VERSION); return false; }
+    if (cmpVersion(seen, APP_VERSION) >= 0) return false;   // already current (or ahead)
+    const newer = CHANGELOG.filter(c => cmpVersion(c.v, seen) > 0);
+    if (!newer.length){ seenVersionSet(APP_VERSION); return false; }
+    document.getElementById('wnSub').innerHTML =
+      `You were on <b>v${esc(seen)}</b> — you're now on <b>v${APP_VERSION}</b>.<br>` +
+      `Here${newer.length===1?"'s what":"'s everything"} that changed:`;
+    document.getElementById('wnList').innerHTML = clogHTML(newer);
+    const view = document.getElementById('whatsNewView');
+    view.classList.add('open'); view.scrollTop = 0;
+    return true;
+  }
+  /* ---------- feedback ---------- */
+  let fbMood = '💡 Idea';
+  const fbView = document.getElementById('feedbackView');
+  function fbDiagnostics(){
+    const ua = navigator.userAgent || '';
+    // keep it short and human-readable rather than dumping the whole UA string
+    const os = /iPhone|iPad|iPod/.test(ua) ? 'iOS' : /Android/.test(ua) ? 'Android'
+             : /Mac/.test(ua) ? 'Mac' : /Windows/.test(ua) ? 'Windows' : 'Other';
+    const br = /CriOS|Chrome/.test(ua) ? 'Chrome' : /FxiOS|Firefox/.test(ua) ? 'Firefox'
+             : /EdgiOS|Edg/.test(ua) ? 'Edge' : /Safari/.test(ua) ? 'Safari' : 'Other';
+    const standalone = (window.navigator.standalone === true) ||
+      (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+    return [
+      `App: Strikebook v${APP_VERSION} (built ${APP_BUILD_DATE})`,
+      `Device: ${os} · ${br}${standalone ? ' · home-screen app' : ' · browser tab'}`,
+      `Screen: ${window.innerWidth}×${window.innerHeight}`,
+      `Sessions saved: ${histSessions.length}`
+    ].join('\n');
+  }
+  function fbCompose(){
+    const topic = document.getElementById('fbTopic').value;
+    const msg = document.getElementById('fbMessage').value.trim();
+    const who = document.getElementById('fbName').value.trim();
+    const diag = document.getElementById('fbDiag').checked;
+    const lines = [
+      `Topic: ${topic}`,
+      `Type: ${fbMood}`,
+      who ? `From: ${who}` : null,
+      '',
+      msg,
+      diag ? '\n---\n' + fbDiagnostics() : null
+    ].filter(x => x !== null);
+    return { topic, msg, who, body: lines.join('\n') };
+  }
+  function fbValidate(){
+    const ok = document.getElementById('fbMessage').value.trim().length > 2;
+    document.getElementById('fbSend').disabled = !ok;
+    return ok;
+  }
+  function fbHint(t){ document.getElementById('fbHint').textContent = t; }
+  function openFeedback(){
+    document.getElementById('fbMessage').value = '';
+    document.getElementById('fbName').value = '';
+    document.getElementById('fbTopic').selectedIndex = 0;
+    fbMood = '💡 Idea';
+    document.querySelectorAll('#fbMood button').forEach(x=>x.classList.toggle('on', x.dataset.mood===fbMood));
+    // no destination configured → hide Send, leave Copy (which always works)
+    const hasDest = !!(FEEDBACK_FORM || FEEDBACK_EMAIL);
+    document.getElementById('fbSend').style.display = hasDest ? 'block' : 'none';
+    fbHint(hasDest ? '' : 'Tap Copy, then paste it into a text or email to your coach.');
+    fbValidate();
+    fbView.classList.add('open'); fbView.scrollTop = 0;
+  }
+  document.getElementById('feedbackBtn').onclick = openFeedback;
+  document.getElementById('fbClose').onclick = ()=>fbView.classList.remove('open');
+  document.getElementById('fbMessage').addEventListener('input', fbValidate);
+  document.querySelectorAll('#fbMood button').forEach(btn=>btn.onclick = ()=>{
+    fbMood = btn.dataset.mood;
+    document.querySelectorAll('#fbMood button').forEach(x=>x.classList.toggle('on', x===btn));
+  });
+  document.getElementById('fbSend').onclick = ()=>{
+    if (!fbValidate()) return;
+    const f = fbCompose();
+    if (FEEDBACK_FORM){
+      // Google Form: open it, and put the composed text on the clipboard to paste in
+      try{ if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(f.body).catch(()=>{}); }catch(e){}
+      window.open(FEEDBACK_FORM, '_blank', 'noopener');
+      fbHint('Form opened — your message is on the clipboard, paste it in.');
+      return;
+    }
+    const subject = `Strikebook feedback — ${f.topic}`;
+    const url = `mailto:${encodeURIComponent(FEEDBACK_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(f.body)}`;
+    try{
+      window.location.href = url;
+      fbHint('Opening your mail app… if nothing happens, use Copy below.');
+    }catch(e){
+      fbHint("Couldn't open a mail app — use Copy below instead.");
+    }
+  };
+  document.getElementById('fbCopy').onclick = ()=>{
+    const f = fbCompose();
+    if (!f.msg){ fbHint('Add a message first.'); return; }
+    let done = false;
+    try{
+      if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(f.body).then(()=>fbHint('Copied — paste it into a text or email.'))
+          .catch(()=>fbHint('Select the text above and copy it manually.'));
+        done = true;
+      }
+    }catch(e){}
+    if (!done) fbHint('Select your message above and copy it manually.');
+  };
+
+  document.getElementById('wnDone').onclick = ()=>{
+    seenVersionSet(APP_VERSION);
+    document.getElementById('whatsNewView').classList.remove('open');
+  };
+
   if (!loadSession()) resetSession(); else render();
   if (!sessionLive()) openStart();
+  maybeShowWhatsNew();
 })();
 </script>
 </body>
