@@ -949,8 +949,8 @@
 
       <h4>12 · Sending feedback</h4>
       <p>On the start screen, <b>💬 Send feedback or request a feature</b> opens a short form: pick the area it's about (scoring, analytics, Baker mode, and so on — or <i>Feature request</i>), mark it as a bug, idea, praise, or question, and write your message. Leaving the <b>include app version &amp; device info</b> box ticked attaches the version, phone type, browser, and whether it's running as a home-screen app — that context solves most bug reports without a round of questions. Untick it if you'd rather not send it.<br><br>
-      <b>Where it goes:</b> tapping <b>Send</b> opens your mail app (or a feedback form) with everything filled in. If that doesn't work on your device — some phones have no mail app set up — tap <b>📋 Copy instead</b> and paste it into a text message. Copy always works, including with no signal.<br><br>
-      <b>For the coach (setup):</b> the destination is two lines near the top of the app file — <i>FEEDBACK_EMAIL</i> and <i>FEEDBACK_FORM</i>. Put your email in the first for mail, or a Google Form URL in the second to collect responses in a spreadsheet (the form takes priority if both are set). While both are empty, the Send button hides and only Copy is offered, so nothing breaks either way.</p>
+      <b>Where it goes:</b> tapping <b>Send</b> opens your mail app with everything already filled in and addressed to the coach — you just hit send. If that doesn't work on your device — some phones have no mail app set up — tap <b>📋 Copy instead</b> and paste it into a text message. Copy always works, including with no signal.<br><br>
+      <b>For the coach (setup):</b> the destination is two lines near the top of the app file — <i>FEEDBACK_EMAIL</i> (currently set) and <i>FEEDBACK_FORM</i>. Swap in a Google Form URL in the second if you'd rather collect responses in a spreadsheet; the form takes priority if both are filled. If both are ever emptied, the Send button hides and only Copy is offered, so nothing breaks.</p>
 
       <h4>13 · Version history</h4>
       <p>The version you're running shows at the bottom of the start screen. To confirm everyone's current, have them check that number against the top of this list. After an update, the first launch shows a <b>What's New</b> screen listing only what changed since the version that device was on — so nobody has to read the whole history to catch up. A brand-new install skips it.</p>
@@ -1071,9 +1071,10 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.8.0';  // Single source of truth for the version history: renders BOTH the manual's
+  const APP_VERSION = '1.8.1';  // Single source of truth for the version history: renders BOTH the manual's
   // section 12 and the "what's new" overlay shown after an update.
   const CHANGELOG = [
+    {v:'1.8.1', d:'Feedback now sends straight to the coach by email.'},
     {v:'1.8.0', d:'A feedback button on the start screen \u2014 pick the area it\u2019s about (or request a feature), add a note, and send it by mail, form, or copy-paste. Optionally attaches version and device info to help with bug reports.'},
     {v:'1.7.0', d:"A \u201cwhat\u2019s new\u201d screen the first time you open an updated version, listing everything added since the version you were on."},
     {v:'1.6.0', d:'Added this version history to the manual.'},
@@ -1101,7 +1102,7 @@
      FEEDBACK_FORM  : a Google Form (or any form) URL. If set, it takes priority over email
                       and opens the form instead. Leave as '' to use email.
      If BOTH are empty, the Send button hides and only "Copy" is offered — which always works. */
-  const FEEDBACK_EMAIL = '';
+  const FEEDBACK_EMAIL = 'wootechservices@gmail.com';
   const FEEDBACK_FORM  = '';
 
   /* ---------- state ---------- */
@@ -3904,7 +3905,9 @@
       return;
     }
     const subject = `Strikebook feedback — ${f.topic}`;
-    const url = `mailto:${encodeURIComponent(FEEDBACK_EMAIL)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(f.body)}`;
+    // NOTE: the address is intentionally NOT encoded — some mail apps mishandle
+    // a percent-encoded "@" in the recipient. Subject/body are still encoded.
+    const url = `mailto:${FEEDBACK_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(f.body)}`;
     try{
       window.location.href = url;
       fbHint('Opening your mail app… if nothing happens, use Copy below.');
