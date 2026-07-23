@@ -181,6 +181,30 @@
   .actions{padding:8px 14px calc(14px + env(safe-area-inset-bottom))}
   /* Start screen + SOP */
   #startView{z-index:69}
+  #oilGuideView{z-index:73}
+  .laneDiag{background:var(--navy-2);border:1.5px solid rgba(245,239,224,.12);border-radius:10px;padding:10px;margin:8px 0 10px}
+  .ruleBox{background:var(--navy-2);border:1.5px solid rgba(227,155,45,.35);border-radius:12px;padding:14px;margin:12px 0}
+  .ruleH{font-family:'Bowlby One SC',cursive;font-size:13px;color:var(--amber);letter-spacing:.5px}
+  .ruleP{font-size:13px;color:var(--cream-dim);line-height:1.5;margin:6px 0 12px}
+  .ruleCalc{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .ruleCalc input{
+    width:78px;background:var(--navy);border:1.5px solid rgba(245,239,224,.3);border-radius:9px;
+    color:var(--cream);font-family:inherit;font-size:17px;font-weight:700;padding:9px 10px;outline:none;text-align:center;
+  }
+  .ruleCalc input:focus{border-color:var(--amber)}
+  .ruleEq{font-size:14px;color:var(--cream-dim);font-weight:600}
+  .ruleOut{font-family:'Bowlby One SC',cursive;font-size:26px;color:var(--green);min-width:44px;text-align:center}
+  .ruleUnit{font-size:12px;color:var(--cream-dim);letter-spacing:1px;text-transform:uppercase}
+  .ruleNote{font-size:12px;color:var(--cream-dim);opacity:.85;margin-top:9px;line-height:1.45}
+  .guideFoot{
+    background:var(--navy-2);border-left:3px solid var(--teal);border-radius:0 8px 8px 0;
+    padding:10px 12px;font-size:12.5px;color:var(--cream-dim);line-height:1.5;margin-top:16px;
+  }
+  .oilGuideLink{
+    display:block;width:100%;margin-top:8px;padding:10px 12px;border-radius:10px;cursor:pointer;text-align:left;
+    background:var(--navy-2);border:1.5px solid rgba(46,143,163,.4);color:var(--teal);
+    font-family:inherit;font-weight:600;font-size:12.5px;
+  }
   #onboardView{z-index:84;display:none}
   #onboardView.open{display:block}
   .obHero{text-align:center;padding:24px 0 18px}
@@ -899,6 +923,7 @@
     <input id="startOilPattern" class="eventInput" list="oilPatternList" maxlength="40" placeholder="Pattern name (optional) — pick or type" autocomplete="off" style="margin-top:8px;display:none">
     <datalist id="oilPatternList"></datalist>
     <a id="startKegelLink" class="kegelLink" href="https://patternlibrary.kegel.net/" target="_blank" rel="noopener" style="display:none;margin-top:6px">🔍 Browse the Kegel pattern library ↗</a>
+    <button id="oilGuideBtn" class="oilGuideLink">🎓 New to oil patterns? Read the quick guide</button>
     <div class="anaHead">EVENT · LOCATION <span style="opacity:.5;letter-spacing:0;font-weight:600">(optional)</span></div>
     <input id="startEvent" class="eventInput" maxlength="40" placeholder="e.g. Junior Gold · Minneapolis" autocomplete="off">
     <button id="startBowlBtn">🎳 Let's bowl</button>
@@ -910,6 +935,92 @@
     <button id="feedbackBtn" class="feedbackBtn">💬 Send feedback or request a feature</button>
     <button id="startClose" class="startCloseBtn" style="display:none">↩ Back to current sheet</button>
     <div class="appVersion" id="startVersion"></div>
+  </div>
+</div>
+
+<div class="recap" id="oilGuideView">
+  <div class="recapInner">
+    <div class="recapHead">
+      <div><div class="recapTitle">READING AN OIL PATTERN</div>
+      <div class="recapWho">A coach's cheat sheet</div></div>
+      <button id="oilGuideClose">✕ Close</button>
+    </div>
+    <div class="sop">
+
+      <p style="margin-bottom:4px">Every lane is coated with oil you can't see. It protects the lane — and it decides
+      where your ball skids, where it hooks, and whether a good shot carries. A pattern sheet is the map. Here's how to read it.</p>
+
+      <h4>The lane, in one picture</h4>
+      <div class="laneDiag">
+        <svg viewBox="0 0 300 120" width="100%">
+          <rect x="10" y="18" width="280" height="60" fill="#F5EFE0" stroke="#221B12" stroke-width="1.5"/>
+          <rect x="10" y="18" width="187" height="60" fill="#2E8FA3" opacity="0.32"/>
+          <line x1="197" y1="14" x2="197" y2="82" stroke="#E39B2D" stroke-width="2" stroke-dasharray="4 3"/>
+          <text x="100" y="52" text-anchor="middle" font-size="11" font-weight="700" fill="#221B12">OIL</text>
+          <text x="243" y="52" text-anchor="middle" font-size="10" font-weight="700" fill="#8a6d2e">DRY</text>
+          <text x="14" y="94" font-size="8.5" fill="#D8D0BC">foul line</text>
+          <text x="197" y="94" text-anchor="middle" font-size="8.5" fill="#E39B2D">end of oil</text>
+          <text x="286" y="94" text-anchor="end" font-size="8.5" fill="#D8D0BC">pins · 60ft</text>
+          <text x="197" y="10" text-anchor="middle" font-size="8.5" font-weight="700" fill="#E39B2D">breakpoint zone</text>
+        </svg>
+      </div>
+      <p>The ball <b>skids</b> on the oil, then grabs the dry boards and <b>hooks</b> toward the pocket.
+      Almost everything on a pattern sheet is telling you where that handoff happens and how much room you get.</p>
+
+      <h4>1 · Length — where you play</h4>
+      <p>The single biggest number. It's where the oil stops, so it's where your ball can finally start hooking.<br><br>
+      <b>Short (under 36 ft):</b> ball hooks early, breakpoint is out near the gutter. Play more direct, keep it right.<br>
+      <b>Medium (37–42 ft):</b> the common range; breakpoint usually boards 8–12.<br>
+      <b>Long (43 ft+):</b> less room to hook. Play straighter and closer to the pocket, breakpoint boards 13–16.</p>
+
+      <div class="ruleBox">
+        <div class="ruleH">The Rule of 31</div>
+        <div class="ruleP">Pattern length − 31 = roughly the board your ball should be on as it leaves the oil.</div>
+        <div class="ruleCalc">
+          <input id="oilLenInput" type="number" min="30" max="52" step="1" placeholder="41" inputmode="numeric">
+          <span class="ruleEq">− 31 =</span>
+          <span class="ruleOut" id="oilBoardOut">—</span>
+          <span class="ruleUnit">board</span>
+        </div>
+        <div class="ruleNote" id="oilRuleNote">Type a pattern length to see the target board.</div>
+      </div>
+      <p style="opacity:.85"><b>Treat it as a starting point, not a law.</b> It's most reliable on sport patterns
+      and in the 37–42 ft range, and it drifts on very short or very long patterns. It tells you where motion
+      <i>can</i> happen — your ball, speed, and rev rate decide the rest.</p>
+
+      <h4>2 · Ratio — how much room you get</h4>
+      <p>The side-to-side comparison of oil in the middle vs. the outside. This is what makes a shot forgiving or brutal.<br><br>
+      <b>House shot (roughly 8:1 or higher):</b> lots of oil in the middle, dry outside. That difference acts like a
+      funnel — miss right and friction hooks it back, miss left and the oil holds it. Very forgiving.<br>
+      <b>Sport (3:1 or less):</b> oil is nearly flat across the lane. No funnel, no bail-out. Miss two boards and
+      you'll see it in the pin count. This is why Junior Gold scores look nothing like league scores —
+      <b>the same bowler, on a flatter ratio</b>.</p>
+
+      <h4>3 · Volume — how much ball you need</h4>
+      <p>Total conditioner, listed in millilitres. More volume means more skid, so you'll generally want a
+      stronger ball or a duller surface to get the same shape. Less volume means the lane grabs sooner —
+      often the moment to go weaker or shinier before it over-hooks.</p>
+
+      <h4>4 · The graph — loads and buffs</h4>
+      <p>The bar chart shows how many units of oil sit on each board, and the pattern is applied going
+      <b>down</b> the lane and then <b>back</b>. Tall bars in the middle with short ones outside is that house-shot
+      funnel drawn out. Bars nearly level across is a sport pattern. You don't need to read every number —
+      look at the <i>shape</i>: where's the wall of oil, and where's the friction?</p>
+
+      <h4>5 · Transition — it changes under you</h4>
+      <p>Oil moves. Every shot carries a little downlane and scrubs a little off the front. Over a block the
+      ball starts hooking earlier, then the fresh friction lines burn up. This is why bowlers move left across
+      a set. <b>Coaching note:</b> if a kid's first game is strong and the third falls apart, that's usually
+      transition, not mechanics — and Strikebook's <i>game-position averages</i> will show it as a pattern
+      across many sessions.</p>
+
+      <h4>The 30-second version</h4>
+      <p><b>Length</b> tells you where to play. <b>Ratio</b> tells you how badly a miss will hurt.
+      <b>Volume</b> tells you how much ball to throw. Everything else is detail.</p>
+
+      <div class="guideFoot">Rules of thumb, not guarantees — every bowler's speed and rev rate shifts these.
+      Log the pattern in Strikebook and let your own numbers tell you what actually works.</div>
+    </div>
   </div>
 </div>
 
@@ -925,6 +1036,7 @@
       <h4>1 · What this is, where your data lives</h4>
       <p>Strikebook is a single self-contained file. Everything — sessions, history, analytics — is stored <b>on this device, in this browser</b>. Nothing is uploaded anywhere. That means privacy by default, and it means <b>backups are your responsibility</b> (see §4). New users see a short welcome tour the first time they open the app, covering home-screen install, backups, and where to find this manual.</p>
       <button class="editLabelBtn" id="replayTourBtn" style="margin-top:8px">👋 Replay the welcome tour</button>
+      <button class="editLabelBtn" id="oilGuideBtn2" style="margin-top:8px">🎓 Reading an oil pattern — quick guide</button>
 
       <h4>2 · Scoring: the daily drill</h4>
       <p><b>Pin rack mode</b> (default): tap the pins <b>left standing</b> after each ball, then hit the big count button. Tap nothing = strike. This mode feeds all leave/spare analytics.<br>
@@ -1161,9 +1273,10 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.9.1';  // Single source of truth for the version history: renders BOTH the manual's
+  const APP_VERSION = '1.10.0';  // Single source of truth for the version history: renders BOTH the manual's
   // section 12 and the "what's new" overlay shown after an update.
   const CHANGELOG = [
+    {v:'1.10.0', d:"A quick guide to reading an oil pattern \u2014 what length, ratio, volume and the graph each do to your shot, plus a built-in Rule of 31 calculator. Open it from the lane-condition picker or the Owner's Manual."},
     {v:'1.9.1', d:"Saved bowlers can be removed straight from the start screen with the \u2715 on their name chip. Also fixed: removing a bowler from a live session could delete their whole history instead of just taking them off that sheet."},
     {v:'1.9.0', d:"A welcome tour the first time the app is opened \u2014 how to add it to your home screen (steps match your phone), that scores live on the device and need backing up, how pin-tap scoring works, and where the Owner's Manual is. Replayable any time from the manual."},
     {v:'1.8.2', d:"A brand-new install now asks for a bowler's name instead of showing a pre-filled one. The bowler list keeps filling itself from your saved history, so returning users just tap a name."},
@@ -3937,6 +4050,31 @@
 
   function seenVersionGet(){ try{ return localStorage.getItem(SEEN_VERSION_KEY); }catch(e){ return null; } }
   function seenVersionSet(v){ try{ localStorage.setItem(SEEN_VERSION_KEY, v); }catch(e){} }
+  /* ---------- oil pattern guide ---------- */
+  const oilGuideView = document.getElementById('oilGuideView');
+  function openOilGuide(){ oilGuideView.classList.add('open'); oilGuideView.scrollTop = 0; }
+  document.getElementById('oilGuideBtn').onclick = openOilGuide;
+  document.getElementById('oilGuideBtn2').onclick = ()=>{ sopView.classList.remove('open'); openOilGuide(); };
+  document.getElementById('oilGuideClose').onclick = ()=>oilGuideView.classList.remove('open');
+  document.getElementById('oilLenInput').addEventListener('input', e=>{
+    const len = Number(e.target.value);
+    const out = document.getElementById('oilBoardOut');
+    const note = document.getElementById('oilRuleNote');
+    if (!len || len < 20 || len > 60){
+      out.textContent = '—';
+      note.textContent = 'Type a pattern length to see the target board.';
+      return;
+    }
+    const board = len - 31;
+    out.textContent = board > 0 ? board : '—';
+    if (len < 36)
+      note.innerHTML = `<b>Short pattern.</b> Expect an early hook and a breakpoint out near the gutter. The rule gets loose down here — treat board ${board} as a rough start and trust what you see.`;
+    else if (len <= 42)
+      note.innerHTML = `<b>Medium pattern.</b> This is where the rule works best — aim to have the ball around board <b>${board}</b> as it leaves the oil.`;
+    else
+      note.innerHTML = `<b>Long pattern.</b> Less room to hook, so play straighter and closer to the pocket — around board <b>${board}</b>, give or take.`;
+  });
+
   /* ---------- first-run onboarding ---------- */
   const ONBOARDED_KEY = 'strikebook_onboarded';
   function isStandalone(){
