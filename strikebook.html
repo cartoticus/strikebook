@@ -181,6 +181,32 @@
   .actions{padding:8px 14px calc(14px + env(safe-area-inset-bottom))}
   /* Start screen + SOP */
   #startView{z-index:69}
+  #onboardView{z-index:84;display:none}
+  #onboardView.open{display:block}
+  .obHero{text-align:center;padding:24px 0 18px}
+  .obTag{font-size:12px;color:var(--cream-dim);letter-spacing:2px;margin-top:4px;text-transform:uppercase}
+  .obCard{
+    display:flex;gap:12px;align-items:flex-start;
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.13);border-radius:12px;
+    padding:14px;margin-bottom:10px;
+  }
+  .obCard.obManual{border-color:rgba(227,155,45,.4)}
+  .obNum{
+    flex:0 0 30px;height:30px;border-radius:50%;background:var(--amber);color:var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Bowlby One SC',cursive;font-size:14px;
+  }
+  .obCard.obManual .obNum{background:none;font-size:20px}
+  .obH{font-weight:700;font-size:15px;color:var(--cream);margin-bottom:4px;line-height:1.3}
+  .obP{font-size:13px;color:var(--cream-dim);line-height:1.5}
+  .obP b{color:var(--cream)}
+  .obDoneBtn{
+    width:100%;height:54px;margin-top:8px;border:none;border-radius:12px;cursor:pointer;
+    font-family:'Bowlby One SC',cursive;font-size:16px;letter-spacing:.5px;
+    background:var(--amber);color:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.45);
+  }
+  .obDoneBtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.45)}
+  .obFoot{text-align:center;font-size:11.5px;color:var(--cream-dim);opacity:.6;margin-top:12px}
   #feedbackView{z-index:76}
   .feedbackBtn{
     width:100%;margin-top:10px;padding:11px 13px;border-radius:10px;cursor:pointer;
@@ -301,6 +327,19 @@
   .startHero{text-align:center;padding:26px 0 18px}
   .startTag{font-size:13px;color:var(--cream-dim);letter-spacing:2px;margin-top:4px;text-transform:uppercase}
   .rosterChips{display:flex;flex-wrap:wrap;gap:8px;min-height:38px}
+  .rchipWrap{display:inline-flex;align-items:stretch}
+  .rchipWrap .rchip{border-top-right-radius:0;border-bottom-right-radius:0;border-right:none}
+  .rchipDel{
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.25);border-left:none;
+    border-radius:0 999px 999px 0;color:var(--cream-dim);opacity:.65;
+    font-family:inherit;font-size:12px;padding:0 11px;cursor:pointer;
+  }
+  .rchipDel:active{opacity:1;color:var(--red)}
+  .firstRun{
+    background:var(--navy-2);border:1.5px solid rgba(227,155,45,.3);border-radius:10px;
+    padding:11px 13px;font-size:13px;color:var(--cream-dim);line-height:1.5;width:100%;
+  }
+  .firstRun b{color:var(--cream)}
   .rchip{
     display:flex;align-items:center;gap:7px;
     background:var(--navy-2);border:1.5px solid rgba(245,239,224,.25);color:var(--cream-dim);
@@ -884,7 +923,8 @@
     </div>
     <div class="sop">
       <h4>1 · What this is, where your data lives</h4>
-      <p>Strikebook is a single self-contained file. Everything — sessions, history, analytics — is stored <b>on this device, in this browser</b>. Nothing is uploaded anywhere. That means privacy by default, and it means <b>backups are your responsibility</b> (see §4).</p>
+      <p>Strikebook is a single self-contained file. Everything — sessions, history, analytics — is stored <b>on this device, in this browser</b>. Nothing is uploaded anywhere. That means privacy by default, and it means <b>backups are your responsibility</b> (see §4). New users see a short welcome tour the first time they open the app, covering home-screen install, backups, and where to find this manual.</p>
+      <button class="editLabelBtn" id="replayTourBtn" style="margin-top:8px">👋 Replay the welcome tour</button>
 
       <h4>2 · Scoring: the daily drill</h4>
       <p><b>Pin rack mode</b> (default): tap the pins <b>left standing</b> after each ball, then hit the big count button. Tap nothing = strike. This mode feeds all leave/spare analytics.<br>
@@ -1008,6 +1048,56 @@
   </div>
 </div>
 
+<div class="recap" id="onboardView">
+  <div class="recapInner">
+    <div class="obHero">
+      <div class="wordmark" style="font-size:32px">STRIKE<span>BOOK</span></div>
+      <div class="obTag">Score. Track. Improve.</div>
+    </div>
+
+    <div class="obCard">
+      <div class="obNum">1</div>
+      <div class="obBody">
+        <div class="obH">Add it to your home screen</div>
+        <div class="obP" id="obInstall"></div>
+      </div>
+    </div>
+
+    <div class="obCard">
+      <div class="obNum">2</div>
+      <div class="obBody">
+        <div class="obH">Your scores stay on this device</div>
+        <div class="obP">Nothing is uploaded anywhere — no account, no sign-in, works with no signal.
+        The flip side: <b>backups are on you.</b> After a tournament, open History and tap
+        <b>Save backup file</b>, then keep it in iCloud or Drive. That file is the only thing
+        a cleared browser can't erase.</div>
+      </div>
+    </div>
+
+    <div class="obCard">
+      <div class="obNum">3</div>
+      <div class="obBody">
+        <div class="obH">Score by tapping pins</div>
+        <div class="obP">After each ball, tap the pins <b>left standing</b> — that's what powers the
+        spare stats and practice rack. Tap nothing for a strike. There's a faster number keypad too,
+        but it can't track leaves.</div>
+      </div>
+    </div>
+
+    <div class="obCard obManual">
+      <div class="obNum">📖</div>
+      <div class="obBody">
+        <div class="obH">Questions? The Owner's Manual has answers</div>
+        <div class="obP">It's on the start screen and covers everything — scoring, backups, Baker mode,
+        sharing a bowler's data, installing, troubleshooting. <b>When something seems off, look there first.</b></div>
+      </div>
+    </div>
+
+    <button id="obDone" class="obDoneBtn">Got it — let's bowl 🎳</button>
+    <div class="obFoot">You can reopen this any time from the Owner's Manual.</div>
+  </div>
+</div>
+
 <div class="recap" id="whatsNewView">
   <div class="recapInner">
     <div class="wnHero">
@@ -1071,9 +1161,12 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.8.1';  // Single source of truth for the version history: renders BOTH the manual's
+  const APP_VERSION = '1.9.1';  // Single source of truth for the version history: renders BOTH the manual's
   // section 12 and the "what's new" overlay shown after an update.
   const CHANGELOG = [
+    {v:'1.9.1', d:"Saved bowlers can be removed straight from the start screen with the \u2715 on their name chip. Also fixed: removing a bowler from a live session could delete their whole history instead of just taking them off that sheet."},
+    {v:'1.9.0', d:"A welcome tour the first time the app is opened \u2014 how to add it to your home screen (steps match your phone), that scores live on the device and need backing up, how pin-tap scoring works, and where the Owner's Manual is. Replayable any time from the manual."},
+    {v:'1.8.2', d:"A brand-new install now asks for a bowler's name instead of showing a pre-filled one. The bowler list keeps filling itself from your saved history, so returning users just tap a name."},
     {v:'1.8.1', d:'Feedback now sends straight to the coach by email.'},
     {v:'1.8.0', d:'A feedback button on the start screen \u2014 pick the area it\u2019s about (or request a feature), add a note, and send it by mail, form, or copy-paste. Optionally attaches version and device info to help with bug reports.'},
     {v:'1.7.0', d:"A \u201cwhat\u2019s new\u201d screen the first time you open an updated version, listing everything added since the version you were on."},
@@ -1190,7 +1283,7 @@
   }
   function resetSession(){
     bakerRoster = [];
-    bowlers = bowlers.length ? bowlers.map(b=>newBowler(b.name, b.bid)) : [newBowler('Wayne')];
+    bowlers = bowlers.length ? bowlers.map(b=>newBowler(b.name, b.bid)) : [];
     cur = 0; history = []; gameNum = 1;
     try{ localStorage.removeItem(STORE_KEY); }catch(e){}
     render();
@@ -1812,6 +1905,9 @@
   }
 
   function render(){
+    // Fresh install: no bowlers named yet. The start screen is what's on screen,
+    // so there's nothing to draw — bail out rather than dereferencing bowlers[cur].
+    if (!bowlers.length){ tabsEl.innerHTML = ''; return; }
     const b = bowlers[cur];
     // tabs
     tabsEl.innerHTML = '';
@@ -1822,7 +1918,7 @@
         (i===cur && bowlers.length>1 ? `<span class="x" title="Remove bowler">✕</span>` : '');
       t.onclick = ()=>{ cur=i; render(); };
       const x = t.querySelector('.x');
-      if (x) x.onclick = (e)=>{ e.stopPropagation(); removeBowler(i); };
+      if (x) x.onclick = (e)=>{ e.stopPropagation(); removeBowlerFromSession(i); };
       tabsEl.appendChild(t);
     });
     if (bowlers.length < 6){
@@ -1959,7 +2055,7 @@
   document.getElementById('confirmYes').onclick = ()=>settleConfirm(true);
   document.getElementById('confirmNo').onclick  = ()=>settleConfirm(false);
 
-  async function removeBowler(i){
+  async function removeBowlerFromSession(i){
     if (bowlers.length <= 1) return;
     const b = bowlers[i];
     modal.classList.remove('open'); // close rename modal if open
@@ -1971,7 +2067,7 @@
     else if (cur > i) cur--;
     render();
   }
-  document.getElementById('modalRemove').onclick = ()=>removeBowler(cur);
+  document.getElementById('modalRemove').onclick = ()=>removeBowlerFromSession(cur);
   document.getElementById('modalCancel').onclick = ()=>modal.classList.remove('open');
   document.getElementById('modalOk').onclick = confirmModal;
   nameInput.addEventListener('keydown', e=>{ if(e.key==='Enter') confirmModal(); });
@@ -3040,7 +3136,7 @@
     const sendB = document.getElementById('sendDataBtn');
     if (sendB) sendB.onclick = ()=>exportBowler(ident);
     const remB = document.getElementById('removeDataBtn');
-    if (remB) remB.onclick = ()=>removeBowler(ident);
+    if (remB) remB.onclick = ()=>removeBowlerData(ident);
     pane.querySelectorAll('.scopeSeg button').forEach(btn=>btn.onclick = ()=>{
       anaScope = btn.dataset.sc; openBowlerPage(ident);
     });
@@ -3507,8 +3603,8 @@
   }
 
   // Remove one bowler's data from THIS device only (local; never touches their copy)
-  async function removeBowler(ident){
-    if (!await askConfirm(`Remove ${ident.name}'s data from THIS device? Their sessions here will be deleted. This only affects your phone — if you've sent them their data, their own copy is untouched. Consider exporting first.`, 'Remove')) return;
+  async function removeBowlerData(ident, skipConfirm){
+    if (!skipConfirm && !await askConfirm(`Remove ${ident.name}'s data from THIS device? Their sessions here will be deleted. This only affects your phone — if you've sent them their data, their own copy is untouched. Consider exporting first.`, 'Remove')) return;
     const sessions = await archiveAll();
     for (const s of sessions){
       const remaining = (s.bowlers||[]).filter(b=>!sameBowler(b, ident));
@@ -3521,7 +3617,7 @@
       }
     }
     histSessions = await archiveAll();
-    showHistPane('home'); renderHistHome();
+    if (!skipConfirm){ showHistPane('home'); renderHistHome(); }
   }
 
 
@@ -3694,6 +3790,10 @@
     renderBackupPill();
     startView.classList.add('open');
     startView.scrollTop = 0;
+    // First run (nobody known yet): put the cursor in the name box so they can just type.
+    if (!known.length){
+      setTimeout(()=>{ try{ document.getElementById('newBowlerInput').focus(); }catch(e){} }, 120);
+    }
   }
   // show the pattern field only once a category is chosen, and fill its suggestions
   function syncOilPatternField(){
@@ -3712,16 +3812,34 @@
   function renderRoster(known){
     const wrap = document.getElementById('rosterChips');
     if (!known.length){
-      wrap.innerHTML = `<div class="recapWho">No bowlers yet — add the first one below.</div>`;
+      wrap.innerHTML = `<div class="firstRun">👋 <b>Welcome!</b> Type a bowler's name below to get started —
+        it'll be saved, so next time you'll just tap it.</div>`;
       updateStartBtn(); return;
     }
     wrap.innerHTML = known.map((k,i)=>
-      `<button class="rchip${isSelected(k)?' sel':''}" data-i="${i}">${esc(k.name)}</button>`).join('');
+      `<span class="rchipWrap"><button class="rchip${isSelected(k)?' sel':''}" data-i="${i}">${esc(k.name)}</button>` +
+      `<button class="rchipDel" data-del="${i}" title="Remove ${esc(k.name)}">✕</button></span>`).join('');
     wrap.querySelectorAll('.rchip').forEach(el=>el.onclick = ()=>{
       const k = known[Number(el.dataset.i)];
       if (isSelected(k)) startSel = startSel.filter(s => !((s.bid && k.bid && s.bid===k.bid) || normName(s.name)===normName(k.name)));
       else if (startSel.length < 6) startSel.push({bid: k.bid || genBid(), name: k.name});
       renderRoster(known);
+    });
+    wrap.querySelectorAll('.rchipDel').forEach(el=>el.onclick = async ()=>{
+      const k = known[Number(el.dataset.del)];
+      const games = bowlerGames(k, await archiveAll(), 'career').length;
+      const msg = games
+        ? `Remove ${k.name} from this device? Their ${games} saved game${games===1?'':'s'} and all their stats will be deleted. This can't be undone.`
+        : `Remove ${k.name} from your bowler list?`;
+      if (!await askConfirm(msg, 'Remove')) return;
+      await removeBowlerData(k, true);
+      // knownBowlers() also unions the live roster, so drop them there too or
+      // they'd reappear from memory even though their history is gone.
+      bowlers = bowlers.filter(b => !sameBowler(b, k));
+      if (cur >= bowlers.length) cur = Math.max(0, bowlers.length - 1);
+      startSel = startSel.filter(s => !((s.bid && k.bid && s.bid===k.bid) || normName(s.name)===normName(k.name)));
+      render();
+      await openStartRefreshChips();
     });
     updateStartBtn();
   }
@@ -3819,6 +3937,43 @@
 
   function seenVersionGet(){ try{ return localStorage.getItem(SEEN_VERSION_KEY); }catch(e){ return null; } }
   function seenVersionSet(v){ try{ localStorage.setItem(SEEN_VERSION_KEY, v); }catch(e){} }
+  /* ---------- first-run onboarding ---------- */
+  const ONBOARDED_KEY = 'strikebook_onboarded';
+  function isStandalone(){
+    return (window.navigator.standalone === true) ||
+      (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  }
+  function installCopy(){
+    const ua = navigator.userAgent || '';
+    if (isStandalone())
+      return `You're already running it as an app — nice. It'll open fullscreen and work offline from here on.`;
+    if (/iPhone|iPad|iPod/.test(ua))
+      return `In <b>Safari</b>, tap the <b>Share</b> button (the square with an up-arrow), scroll down and
+        tap <b>Add to Home Screen</b>. This matters on iPhone: a home-screen app keeps its saved scores far
+        longer than a Safari tab, which can be cleared after a week of not opening it.`;
+    if (/Android/.test(ua))
+      return `In <b>Chrome</b>, tap the <b>⋮</b> menu (top-right) and choose <b>Add to Home screen</b>
+        (some phones say <b>Install app</b>). You'll get an icon that opens fullscreen and works offline.`;
+    return `On a phone, open this link in Safari (iPhone) or Chrome (Android) and choose
+      <b>Add to Home Screen</b> — you'll get an icon that opens fullscreen and works offline.`;
+  }
+  function showOnboarding(){
+    document.getElementById('obInstall').innerHTML = installCopy();
+    const v = document.getElementById('onboardView');
+    v.classList.add('open'); v.scrollTop = 0;
+  }
+  function onboardedGet(){ try{ return localStorage.getItem(ONBOARDED_KEY); }catch(e){ return null; } }
+  function onboardedSet(){ try{ localStorage.setItem(ONBOARDED_KEY, '1'); }catch(e){} }
+  document.getElementById('replayTourBtn').onclick = ()=>{ sopView.classList.remove('open'); showOnboarding(); };
+  document.getElementById('obDone').onclick = ()=>{    onboardedSet();
+    document.getElementById('onboardView').classList.remove('open');
+    // land them in the name box, since a fresh install has no bowlers yet
+    setTimeout(()=>{ try{
+      const inp = document.getElementById('newBowlerInput');
+      if (inp && !document.querySelectorAll('.rchip').length) inp.focus();
+    }catch(e){} }, 150);
+  };
+
   function maybeShowWhatsNew(){
     const seen = seenVersionGet();
     // First-ever launch: nothing has "changed" for this person — just record and move on.
@@ -3936,7 +4091,12 @@
 
   if (!loadSession()) resetSession(); else render();
   if (!sessionLive()) openStart();
-  maybeShowWhatsNew();
+  // A brand-new user gets onboarding; a returning user gets "what's new". Never both.
+  (async ()=>{
+    const firstRun = !onboardedGet() && (await archiveAll()).length === 0;
+    if (firstRun){ seenVersionSet(APP_VERSION); showOnboarding(); }
+    else maybeShowWhatsNew();
+  })();
 })();
 </script>
 </body>
