@@ -159,6 +159,7 @@
     border-radius:12px;font-family:inherit;font-weight:700;font-size:15px;cursor:pointer;
   }
   #undoBtn:active{background:rgba(245,239,224,.1)}
+  #undoBtn:disabled{opacity:.3;pointer-events:none}
 
   /* Announcer booth */
   .booth{
@@ -351,6 +352,33 @@
   .startHero{text-align:center;padding:26px 0 18px}
   .startTag{font-size:13px;color:var(--cream-dim);letter-spacing:2px;margin-top:4px;text-transform:uppercase}
   .rosterChips{display:flex;flex-wrap:wrap;gap:8px;min-height:38px}
+  .turnOrderList{display:flex;flex-direction:column;gap:6px;margin-bottom:4px}
+  .turnRow{
+    display:flex;align-items:center;gap:10px;
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.18);border-radius:10px;
+    padding:9px 12px;touch-action:none;
+  }
+  .turnRow.dragging{opacity:.9;border-color:var(--amber);box-shadow:0 8px 16px rgba(0,0,0,.45);z-index:5;position:relative}
+  .turnHandle{color:var(--cream-dim);font-size:17px;cursor:grab;flex:none;padding:2px 6px;touch-action:none}
+  .turnNum{
+    flex:0 0 22px;height:22px;border-radius:50%;background:var(--amber);color:var(--ink);
+    display:flex;align-items:center;justify-content:center;font-family:'Bowlby One SC',cursive;font-size:11px;
+  }
+  .turnName{flex:1;font-weight:700;font-size:14px;color:var(--cream);user-select:none}
+  .reorderTrigger{
+    display:block;margin:0 16px 6px;padding:8px 13px;border-radius:9px;cursor:pointer;
+    background:none;border:1.5px solid rgba(46,143,163,.4);color:var(--teal);
+    font-family:inherit;font-weight:600;font-size:12px;
+  }
+  .reorderHint{font-size:12px;color:var(--cream-dim);opacity:.85;margin:10px 0 4px;line-height:1.45}
+  .feGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:10px 0}
+  .feGrid button{
+    height:44px;border-radius:9px;border:1.5px solid rgba(245,239,224,.25);background:var(--navy);
+    color:var(--cream);font-family:inherit;font-weight:700;font-size:15px;cursor:pointer;
+  }
+  .feGrid button:active{transform:scale(.94);background:#232B40}
+  .feGrid button:disabled{opacity:.22;pointer-events:none}
+  .feFrameTag{font-size:11px;color:var(--cream-dim);opacity:.8;margin:-2px 0 10px;line-height:1.4}
   .rchipWrap{display:inline-flex;align-items:stretch}
   .rchipWrap .rchip{border-top-right-radius:0;border-bottom-right-radius:0;border-right:none}
   .rchipDel{
@@ -766,6 +794,7 @@
 </header>
 
 <div class="tabs" id="tabs"></div>
+<button id="reorderTrigger" class="reorderTrigger" style="display:none">⇅ Reorder turns</button>
 
 <div class="sheetwrap">
   <div class="sheet">
@@ -906,6 +935,10 @@
       <input id="newBowlerInput" maxlength="14" placeholder="Add a bowler…" autocomplete="off">
       <button id="addBowlerBtn">＋</button>
     </div>
+    <div id="turnOrderWrap" style="display:none">
+      <div class="anaHead">TURN ORDER <span style="opacity:.5;letter-spacing:0;font-weight:600">(drag ☰ to reorder)</span></div>
+      <div id="turnOrderList" class="turnOrderList"></div>
+    </div>
     <div class="anaHead">SESSION TYPE</div>
     <div class="typeSeg" id="startTypeSeg">
       <button data-type="Practice" class="on">Practice</button>
@@ -1041,7 +1074,10 @@
       <h4>2 · Scoring: the daily drill</h4>
       <p><b>Pin rack mode</b> (default): tap the pins <b>left standing</b> after each ball, then hit the big count button. Tap nothing = strike. This mode feeds all leave/spare analytics.<br>
       <b>Keypad mode</b>: faster, counts only — those frames score perfectly but can't appear in the practice rack or spare ledger.<br>
-      <b>F</b> records a foul (scores zero, full rack respotted per rule). <b>↩</b> undoes the last ball. The announcer and share cards run themselves.</p>
+      <b>F</b> records a foul (scores zero, full rack respotted per rule). <b>↩</b> undoes whichever bowler's tab you're currently viewing — their own last ball, specifically, without switching you to whoever bowled most recently. It dims when the bowler on screen has nothing of their own to undo yet. The announcer and share cards run themselves.<br><br>
+      <b>Turn order:</b> once 2 or more bowlers are selected on the start screen, a <b>TURN ORDER</b> list appears — drag a name by its ☰ handle to change who bowls first, second, and so on. This sets both the normal rotation and, for Baker sessions, the frame-by-frame throwing order.<br><br>
+      <b>Reordering mid-game:</b> a <b>⇅ Reorder turns</b> button sits above the scoresheet any time 2+ bowlers are in the session — a late arrival, a kid who needs a break, anything. Drag to reorder the same way. Whoever is mid-frame right now keeps their turn; the new order takes over starting with the next bowler up. In Baker mode, any frame that's already been thrown keeps the bowler it was thrown by, permanently — reordering only changes who's next, never who threw what.<br><br>
+      <b>Fixing a mistake:</b> press and hold any frame on the live sheet — even one from several frames back — to re-enter it. Every score from that point forward recalculates automatically, and wherever the bowler currently is in the game is completely undisturbed. The editor opens on the same <b>pin rack</b> used for live scoring, so tapping the exact pins left standing keeps that frame's leave detail fully accurate in the practice rack and spare ledger. There's also a <b>🔢 Quick numbers</b> toggle for when you just need the score fixed fast and don't care about pin detail for that one frame.</p>
 
       <h4>3 · Sessions: finish, don't reset</h4>
       <p>When the night's games are done, tap <b>🏁 Finish session</b>. That permanently banks everything into History and returns to the start screen. <b>Reset</b> is the destructive one — it discards the current session without saving. Rule of thumb: Finish always, Reset only for do-overs.</p>
@@ -1244,6 +1280,28 @@
   </div>
 </div>
 
+<div class="modal" id="frameEditModal">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <h3 style="margin:0" id="feTitle">Edit frame</h3>
+      <button id="feX" class="bkXBtn">✕</button>
+    </div>
+    <div id="feBody"></div>
+  </div>
+</div>
+
+<div class="modal" id="reorderModal">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <h3 style="margin:0">Reorder turns</h3>
+      <button id="reorderX" class="bkXBtn">✕</button>
+    </div>
+    <div class="turnOrderList" id="liveTurnOrderList"></div>
+    <div class="reorderHint" id="reorderHint"></div>
+    <div class="btns"><button class="modalOk" id="reorderDone" style="flex:1">Done</button></div>
+  </div>
+</div>
+
 <div class="modal" id="backupModal">
   <div class="card">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
@@ -1273,9 +1331,14 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.10.0';  // Single source of truth for the version history: renders BOTH the manual's
+  const APP_VERSION = '1.13.1';  // Single source of truth for the version history: renders BOTH the manual's
   // section 12 and the "what's new" overlay shown after an update.
   const CHANGELOG = [
+    {v:'1.13.1', d:"Fixing a frame now defaults to the real pin rack \u2014 tap the exact pins left standing, same as live scoring, so the practice rack and spare ledger stay accurate for that frame too. A Quick numbers toggle is still there for a fast fix when pin detail doesn't matter."},
+    {v:'1.13.0', d:"Fix a scoring mistake from earlier in the game \u2014 press and hold any frame on the live sheet, even several frames back, and re-enter it. Scores recalculate forward automatically and your current frame is undisturbed. In Baker mode, editing a frame's pinfall never reassigns who threw it."},
+    {v:'1.12.1', d:"Fixed undo: it now undoes the currently-viewed bowler's own last roll and stays on their tab, instead of jumping to whoever bowled most recently. The undo button also dims when the bowler you're viewing has nothing of their own to undo."},
+    {v:'1.12.0', d:"Reorder bowlers mid-game, not just before starting \u2014 tap \u2191\u2193 Reorder turns above the scoresheet. Whoever's mid-frame keeps their turn; the new order applies from the next turn on. In Baker mode, frames already thrown keep their original bowler no matter how the roster is reordered afterward \u2014 fixed the underlying attribution so that's now guaranteed, not just usually true."},
+    {v:'1.11.0', d:"Drag a bowler's name chip in the turn-order list to change the order bowlers take their turns \u2014 works for regular sessions and sets the rotation order for Baker mode."},
     {v:'1.10.0', d:"A quick guide to reading an oil pattern \u2014 what length, ratio, volume and the graph each do to your shot, plus a built-in Rule of 31 calculator. Open it from the lane-condition picker or the Owner's Manual."},
     {v:'1.9.1', d:"Saved bowlers can be removed straight from the start screen with the \u2715 on their name chip. Also fixed: removing a bowler from a live session could delete their whole history instead of just taking them off that sheet."},
     {v:'1.9.0', d:"A welcome tour the first time the app is opened \u2014 how to add it to your home screen (steps match your phone), that scores live on the device and need backing up, how pin-tap scoring works, and where the Owner's Manual is. Replayable any time from the manual."},
@@ -1390,12 +1453,16 @@
       b.past.push({ total: liveTotal(b), frames: saveMode==='SUMMARY_ONLY' ? null : b.frames });
       b.frames = Array.from({length:10},()=>[]);
     });
+    if (bakerActive()){
+      bakerGameOwners.push(bakerFrameOwners.slice());
+      bakerFrameOwners = Array(10).fill(null);
+    }
     gameNum++; cur = 0; history = [];
     lastCall = `Game ${gameNum} — fresh racks, same session. Let's roll.`;
     render();
   }
   function resetSession(){
-    bakerRoster = [];
+    bakerRoster = []; bakerFrameOwners = []; bakerGameOwners = [];
     bowlers = bowlers.length ? bowlers.map(b=>newBowler(b.name, b.bid)) : [];
     cur = 0; history = []; gameNum = 1;
     try{ localStorage.removeItem(STORE_KEY); }catch(e){}
@@ -1729,6 +1796,13 @@
     if (gameOver(b)) list.push({total: liveTotal(b), frames: b.frames});
     return list;
   }
+  // Mirrors gamesForRecap's shape exactly, so ownersForRecap[i] always lines up with
+  // gamesForRecap(bowlers[0])[i] — completed games first, then the just-finished current one.
+  function bakerOwnersForRecap(){
+    const list = bakerGameOwners.slice();
+    if (gameOver(bowlers[0])) list.push(bakerFrameOwners.slice());
+    return list;
+  }
   function seriesStats(b){
     const games = gamesForRecap(b);
     if (!games.length) return null;
@@ -1792,6 +1866,9 @@
     const b = bowlers[cur];
     const ctx = rollContext(b);
     if (!ctx) return;
+    if (bakerActive() && !bakerFrameOwners[ctx.fi]){
+      bakerFrameOwners[ctx.fi] = bakerOwner(ctx.fi).bid;   // lock this frame to whoever is up right now
+    }
     const pinsDown = foul ? 0 : v;      // a foul scores 0 pins regardless of pinfall
     if (pinsDown > ctx.max) return;
     const roll = {p: pinsDown, f: !!foul};
@@ -1821,12 +1898,211 @@
     }
   }
   function undo(){
-    const last = history.pop();
-    if (!last) return;
+    // Rolls from every bowler share one chronological log, but undo should only ever
+    // touch the bowler currently on screen — find THEIR last roll, wherever it sits
+    // in that shared log, and leave cur (who's being viewed) untouched.
+    let idx = -1;
+    for (let i = history.length - 1; i >= 0; i--){
+      if (history[i].b === cur){ idx = i; break; }
+    }
+    if (idx === -1) return;   // nothing of this bowler's to undo
+    const last = history.splice(idx, 1)[0];
     bowlers[last.b].frames[last.f].pop();
-    cur = last.b;
     render();
   }
+  function hasUndo(){ return history.some(h => h.b === cur); }
+
+  /* ---------- fix-a-frame: long-press any live frame to re-score it from scratch ---------- */
+  let feFi = null;
+  let feRolls = null;
+  let feMode = 'pins';               // 'pins' | 'nums' — remembered across edits this session
+  let feTapped = new Set();          // pins tapped as LEFT STANDING for the ball being entered
+  function feMaxCtx(){
+    // Same rule engine as live scoring — fake a bowler whose target frame holds the
+    // in-progress edit, every other frame untouched, and ask rollContext what's legal next.
+    const b = bowlers[cur];
+    if (!b) return null;
+    const temp = { frames: b.frames.map((fr,i)=> i===feFi ? feRolls : fr) };
+    return rollContext(temp);
+  }
+  // Mirrors targetRack(b,ctx) from live scoring, scoped to the in-progress edit.
+  function feTargetRack(){
+    const r = feRolls;
+    const ALL = [1,2,3,4,5,6,7,8,9,10];
+    if (r.length === 0) return ALL;
+    if (feFi < 9) return r[0].s || null;
+    const i = r.length;
+    const fresh = P(r[i-1])===10 || (i===2 && P(r[0])!==10 && P(r[0])+P(r[1])===10);
+    if (fresh) return ALL;
+    return r[i-1].s || null;
+  }
+  function openFrameEditor(fi){
+    const b = bowlers[cur];
+    if (!b || !b.frames[fi] || !b.frames[fi].length) return;   // nothing thrown yet — nothing to edit
+    feFi = fi; feRolls = []; feTapped = new Set();
+    const who = bakerActive() ? bakerOwner(fi).name : b.name;
+    document.getElementById('feTitle').textContent = `${who} · Frame ${fi+1}`;
+    renderFrameEditor();
+    document.getElementById('frameEditModal').classList.add('open');
+  }
+  function feModeToggleHTML(){
+    return `<div class="typeSeg" id="feModeSeg" style="grid-template-columns:1fr 1fr;margin-bottom:10px">
+      <button data-mode="pins"${feMode==='pins'?' class="on"':''}>🎯 Pin rack</button>
+      <button data-mode="nums"${feMode==='nums'?' class="on"':''}>🔢 Quick numbers</button>
+    </div>`;
+  }
+  function wireFeModeToggle(){
+    document.querySelectorAll('#feModeSeg button').forEach(btn=>btn.onclick = ()=>{
+      feMode = btn.dataset.mode;
+      feTapped = new Set();
+      renderFrameEditor();
+    });
+  }
+  function renderFrameEditor(){
+    const body = document.getElementById('feBody');
+    const ctx = feMaxCtx();
+    if (!ctx || ctx.fi !== feFi){
+      // the re-entered frame is complete
+      const hasFullPinData = feRolls.length>0 && feRolls.every(r => Array.isArray(r.s));
+      body.innerHTML = `<p class="bkTxt">Frame ${feFi+1} re-scored.</p>
+        <div class="feFrameTag">${hasFullPinData
+          ? 'Pin-by-pin leave detail was captured for every ball — the practice rack will reflect this frame accurately.'
+          : 'One or more balls used quick numbers, so exact pin-by-pin detail isn\u2019t available for those — the score is still exactly right.'}</div>
+        <div class="btns"><button class="ok" id="feSave" style="flex:1">Save</button></div>`;
+      document.getElementById('feSave').onclick = saveFrameEdit;
+      return;
+    }
+    if (feMode === 'pins') renderFrameEditorPins(ctx); else renderFrameEditorNums(ctx);
+  }
+  function renderFrameEditorPins(ctx){
+    const body = document.getElementById('feBody');
+    const target = feTargetRack();
+    const ballNo = feRolls.length + 1;
+    if (!target){
+      body.innerHTML = `${feModeToggleHTML()}
+        <p class="bkTxt">Ball ${ballNo}</p>
+        <div class="feFrameTag">No pin data for the first ball in this frame — switch to Quick numbers for this one.</div>`;
+      wireFeModeToggle();
+      return;
+    }
+    const tset = new Set(target);
+    let svg = '';
+    for (let p=1; p<=10; p++){
+      const [x,y] = PIN_XY[p];
+      const locked = !tset.has(p);
+      const up = feTapped.has(p);
+      svg += `<g class="pin${locked?' locked':(up?'':' down')}" data-pin="${p}">
+        <circle cx="${x}" cy="${y}" r="10"></circle>
+        <text x="${x}" y="${y+3}" text-anchor="middle">${p}</text></g>`;
+    }
+    const down = target.length - feTapped.size;
+    const si = splitInfo([...feTapped]);
+    const hintTxt = feTapped.size === 0
+      ? `All ${target.length} down — or tap the pins <b>left standing</b>.`
+      : `${down} down, ${feTapped.size} standing` + (si ? ` — <b>${esc(si.split_name)}</b>!` : '');
+    const down10 = down === ctx.max;
+    const confirmLabel = down10 && ctx.special==='X' ? 'Strike ✕' : down10 && ctx.special==='/' ? 'Spare ⁄' : `Count ${down}`;
+    body.innerHTML = `${feModeToggleHTML()}
+      <p class="bkTxt">Ball ${ballNo}${feRolls.length?' — re-entering this frame from scratch':''}</p>
+      <svg id="feRack" viewBox="0 0 120 104" style="width:100%;max-width:210px;display:block;margin:4px auto 8px">${svg}</svg>
+      <div class="feFrameTag" style="text-align:center">${hintTxt}</div>
+      <div class="btns">
+        <button class="cancel" id="feFoulP" style="flex:1">Foul</button>
+        <button class="ok" id="feConfirmP" style="flex:1">${confirmLabel}</button>
+      </div>
+      ${feRolls.length ? `<button class="removeBtn show" id="feRestart" style="margin-top:10px">Start this frame over</button>` : ''}
+    `;
+    wireFeModeToggle();
+    body.querySelectorAll('#feRack .pin:not(.locked)').forEach(g=>{
+      g.addEventListener('click', ()=>{
+        const p = +g.dataset.pin;
+        feTapped.has(p) ? feTapped.delete(p) : feTapped.add(p);
+        renderFrameEditorPins(ctx);
+      });
+    });
+    document.getElementById('feFoulP').onclick = ()=>{
+      feRolls.push({p:0, f:true, d:[], s:target.slice()});
+      feTapped = new Set();
+      renderFrameEditor();
+    };
+    document.getElementById('feConfirmP').onclick = ()=>{
+      const downIds = target.filter(p=>!feTapped.has(p));
+      feRolls.push({p:downIds.length, f:false, d:downIds, s:[...feTapped].sort((a,b)=>a-b)});
+      feTapped = new Set();
+      renderFrameEditor();
+    };
+    const restart = document.getElementById('feRestart');
+    if (restart) restart.onclick = ()=>{ feRolls = []; feTapped = new Set(); renderFrameEditor(); };
+  }
+  function renderFrameEditorNums(ctx){
+    const body = document.getElementById('feBody');
+    const ballNo = feRolls.length + 1;
+    let btns = '';
+    for (let v=0; v<=9; v++) btns += `<button class="feNum" data-v="${v}"${v>ctx.max?' disabled':''}>${v===0?'–':v}</button>`;
+    body.innerHTML = `${feModeToggleHTML()}
+      <p class="bkTxt">Ball ${ballNo}${feRolls.length?' — re-entering this frame from scratch':''}</p>
+      <div class="feGrid">${btns}</div>
+      <div class="btns">
+        <button class="cancel" id="feFoul" style="flex:1">Foul</button>
+        <button class="ok" id="feSpecial" style="flex:1">${ctx.special==='X'?'Strike ✕':'Spare ⁄'}</button>
+      </div>
+      ${feRolls.length ? `<button class="removeBtn show" id="feRestart" style="margin-top:10px">Start this frame over</button>` : ''}
+    `;
+    wireFeModeToggle();
+    body.querySelectorAll('.feNum').forEach(btn=>btn.onclick = ()=>feAddRoll(Number(btn.dataset.v), false));
+    document.getElementById('feFoul').onclick = ()=>feAddRoll(0, true);
+    document.getElementById('feSpecial').onclick = ()=>feAddRoll(ctx.max, false);
+    const restart = document.getElementById('feRestart');
+    if (restart) restart.onclick = ()=>{ feRolls = []; renderFrameEditor(); };
+  }
+  function feAddRoll(v, foul){
+    const ctx = feMaxCtx();
+    if (!ctx) return;
+    const p = foul ? 0 : v;
+    if (p > ctx.max) return;
+    feRolls.push({p, f:!!foul});
+    renderFrameEditor();
+  }
+  function saveFrameEdit(){
+    const b = bowlers[cur];
+    b.frames[feFi] = feRolls;
+    // Undo history for this frame no longer lines up with its new roll count — drop those
+    // entries rather than let a later undo pop the wrong ball.
+    history = history.filter(h => !(h.b === cur && h.f === feFi));
+    document.getElementById('frameEditModal').classList.remove('open');
+    lastCall = `Frame ${feFi+1} updated for ${b.name}.`;
+    render();
+  }
+  document.getElementById('feX').onclick = ()=>document.getElementById('frameEditModal').classList.remove('open');
+
+  // Long-press (or click-and-hold) any frame in the LIVE sheet to fix a scoring mistake,
+  // even frames from several turns ago. History/recap views don't get this — they're
+  // read-only records of what already happened.
+  let fePressTimer = null, fePressStart = null;
+  function wireFrameLongPress(){
+    const el = document.getElementById('framesEl');
+    if (!el || el.dataset.longPressWired) return;
+    el.dataset.longPressWired = '1';
+    const cancel = () => { if (fePressTimer){ clearTimeout(fePressTimer); fePressTimer = null; } };
+    el.addEventListener('pointerdown', e=>{
+      const cell = e.target.closest('.frame');
+      if (!cell) return;
+      fePressStart = {x:e.clientX, y:e.clientY};
+      fePressTimer = setTimeout(()=>{
+        fePressTimer = null;
+        try{ navigator.vibrate && navigator.vibrate(12); }catch(err){}
+        openFrameEditor(Number(cell.dataset.fi));
+      }, 480);
+    });
+    el.addEventListener('pointermove', e=>{
+      if (!fePressStart || !fePressTimer) return;
+      if (Math.abs(e.clientX-fePressStart.x) > 8 || Math.abs(e.clientY-fePressStart.y) > 8) cancel();
+    });
+    el.addEventListener('pointerup', cancel);
+    el.addEventListener('pointercancel', cancel);
+    el.addEventListener('pointerleave', cancel);
+  }
+
 
   /* ---------- pin entry ---------- */
   let entryMode = 'pins';            // 'pins' | 'nums'
@@ -1837,6 +2113,10 @@
   let oilCategory = '';              // '' | House | Sport | Challenge
   let oilPattern = '';              // optional specific pattern name
   let bakerRoster = [];              // Baker: ordered team [{bid,name}], or empty when not in Baker mode
+  let bakerFrameOwners = [];         // Baker: bid stamped per frame of the CURRENT game, once that frame starts.
+                                      // Locks who owns a frame the moment it's thrown, so reordering the
+                                      // roster later (mid-game or between games) never rewrites history.
+  let bakerGameOwners = [];          // Baker: bakerFrameOwners snapshot for each completed game, parallel to b.past
 
   // Known oil patterns grouped by difficulty (Kegel Navigation/Landmark + common house).
   // Used to populate a pick list; a free-type field always lets the user enter anything,
@@ -1847,7 +2127,15 @@
     Sport: ['Turnpike', 'Winding Road', "Dead Man's Curve", 'Boardwalk', 'Autobahn', 'Highway to Hell', 'Alcatraz', 'Sphinx', 'Red Square', 'Eiffel Tower', 'US Open', 'USBC Masters', 'Junior Gold', 'Team USA Trials']
   };
   function bakerActive(){ return bakerRoster.length > 0; }
-  function bakerOwner(fi){ return bakerRoster[fi % bakerRoster.length]; }
+  function bakerOwner(fi){
+    // A frame already thrown into keeps whoever was up when it started, even if the
+    // roster gets reordered afterward. Only untouched frames follow the live order.
+    if (bakerFrameOwners[fi]){
+      const locked = bakerRoster.find(t=>t.bid===bakerFrameOwners[fi]);
+      if (locked) return locked;
+    }
+    return bakerRoster[fi % bakerRoster.length];
+  }
   let tapped = new Set();            // pins tapped as LEFT STANDING for the pending ball
   let entryKey = '';                 // bowler|frame|ball — reset taps when it changes
 
@@ -1998,7 +2286,7 @@
           } else balls += `<div class="ball"></div>`;
         }
       }
-      html += `<div class="frame${fi===currentFi?' current':''}">
+      html += `<div class="frame${fi===currentFi?' current':''}" data-fi="${fi}">
         <div class="num">${fi+1}</div><div class="balls">${balls}</div>
         <div class="cum">${cums[fi]===null?'':cums[fi]}</div></div>`;
     }
@@ -2020,8 +2308,10 @@
   function render(){
     // Fresh install: no bowlers named yet. The start screen is what's on screen,
     // so there's nothing to draw — bail out rather than dereferencing bowlers[cur].
-    if (!bowlers.length){ tabsEl.innerHTML = ''; return; }
+    if (!bowlers.length){ tabsEl.innerHTML = ''; refreshReorderTrigger(); return; }
     const b = bowlers[cur];
+    refreshReorderTrigger();
+    document.getElementById('undoBtn').disabled = !hasUndo();
     // tabs
     tabsEl.innerHTML = '';
     bowlers.forEach((bw,i)=>{
@@ -2658,23 +2948,36 @@
     if (bakerActive()){
       // Baker: the single team sheet is stored whole (for replay), and each frame's
       // pin data is attributed to its owning bowler so leave analytics credit the right kid.
+      // Ownership comes from the LOCKED per-frame stamps (set the instant each frame was
+      // first thrown), never recomputed from the roster's current order — so reordering
+      // bowlers mid-game or between games can never rewrite who a past frame belongs to.
       const teamGames = gamesForRecap(bowlers[0]);   // the shared Baker sheets
+      const ownersForGames = bakerOwnersForRecap();  // parallel array, same order as teamGames
       const perBowler = bakerRoster.map(t=>({ name:t.name, bid:t.bid, games:[], baker:true }));
-      teamGames.forEach(g=>{
+      const gameOwnerNames = [];
+      teamGames.forEach((g,gi)=>{
+        gameOwnerNames.push(null);
         if (!g.frames) return;
+        const owners = ownersForGames[gi] || [];
         // build a per-bowler pseudo-game holding only their owned frames (for leave stats)
         const slots = bakerRoster.map(()=> ({ frames:Array.from({length:10},()=>[]), total:0, partial:true }));
+        const names = [];
         g.frames.forEach((fr,fi)=>{
-          const owner = fi % bakerRoster.length;
-          slots[owner].frames[fi] = fr;
+          const bid = owners[fi];
+          let idx = bid ? bakerRoster.findIndex(t=>t.bid===bid) : -1;
+          if (idx < 0) idx = fi % bakerRoster.length;   // safety net for pre-upgrade data with no stamp
+          slots[idx].frames[fi] = fr;
+          names[fi] = bakerRoster[idx] ? bakerRoster[idx].name : '?';
         });
+        gameOwnerNames[gi] = names;
         slots.forEach((s,idx)=> perBowler[idx].games.push({ total:null, frames:s.frames, bakerPartial:true }));
       });
       return {
         id: String(Date.now()), date: new Date().toISOString(),
         event: eventLabel, type:'Baker', note: sessionNote,
         oilCategory, oilPattern,
-        baker: { team: bakerRoster.map(t=>({...t})), games: teamGames.map(g=>({total:g.total, frames:g.frames})) },
+        baker: { team: bakerRoster.map(t=>({...t})),
+                 games: teamGames.map((g,gi)=>({total:g.total, frames:g.frames, owners:gameOwnerNames[gi]})) },
         bowlers: perBowler.filter(b=>b.games.length)
       };
     }
@@ -2710,7 +3013,7 @@
                            : ' (Backup folder needs reconnecting — check the status on this screen.)';
     }
 
-    bakerRoster = [];
+    bakerRoster = []; bakerFrameOwners = []; bakerGameOwners = [];
     bowlers = bowlers.map(b=>newBowler(b.name, b.bid));
     cur = 0; history = []; gameNum = 1; eventLabel = ''; sessionNote = ''; oilCategory=''; oilPattern='';
     lastCall = 'In the books! Session saved to history.' + backupNote;
@@ -3271,9 +3574,12 @@
         s.baker.games.map((g,i)=>{
           const head = `<div class="gh"><b>Baker Game ${i+1}</b><span class="gt">${g.total}</span></div>`;
           if (!g.frames) return `<div class="gameCard">${head}<div class="noframes">Summary only</div></div>`;
-          // owner initials under each frame
+          // owner initials under each frame — from the locked per-frame names when available
           const ownerRow = `<div class="frames bakerOwners">` +
-            g.frames.map((_,fi)=>`<div class="frame pf"><span class="ownerTag">${esc((s.baker.team[fi % s.baker.team.length].name||'?').slice(0,3))}</span></div>`).join('') + `</div>`;
+            g.frames.map((_,fi)=>{
+              const nm = (g.owners && g.owners[fi]) || (s.baker.team[fi % s.baker.team.length]||{}).name || '?';
+              return `<div class="frame pf"><span class="ownerTag">${esc(nm.slice(0,3))}</span></div>`;
+            }).join('') + `</div>`;
           return `<div class="gameCard">${head}<div class="sheetScroll"><div class="frames">${framesHTML(g.frames,-1)}</div>${ownerRow}${pinLeaveRowHTML(g.frames)}</div></div>`;
         }).join('')
       : s.bowlers.map(b=>{
@@ -3955,10 +4261,119 @@
       await openStartRefreshChips();
     });
     updateStartBtn();
+    renderTurnOrder();
   }
   function updateStartBtn(){
     document.getElementById('startBowlBtn').disabled = startSel.length === 0;
   }
+
+  /* ---------- turn order: drag to set who bowls in what sequence ---------- */
+  // Reusable pointer-drag reorder: wires every .turnHandle in listEl, and calls
+  // onCommit(orderedBids) once a drag ends. Used by both the start-screen turn-order
+  // list and the mid-game reorder modal, so the drag physics only exist once.
+  function wireDragReorder(listEl, onCommit){
+    listEl.querySelectorAll('.turnHandle').forEach(h => h.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      const row = e.currentTarget.closest('.turnRow');
+      let startY = e.clientY;
+      row.setPointerCapture(e.pointerId);
+      row.classList.add('dragging');
+      const move = ev => {
+        const dy = ev.clientY - startY;
+        row.style.transform = `translateY(${dy}px)`;
+        const siblings = Array.from(listEl.children);
+        const idx = siblings.indexOf(row);
+        const rowRect = row.getBoundingClientRect();
+        const rowMid = rowRect.top + rowRect.height/2;
+        if (idx > 0){
+          const prev = siblings[idx-1], pr = prev.getBoundingClientRect();
+          if (rowMid < pr.top + pr.height/2){
+            listEl.insertBefore(row, prev);
+            startY = ev.clientY; row.style.transform = 'translateY(0px)';
+            return;
+          }
+        }
+        if (idx < siblings.length - 1){
+          const next = siblings[idx+1], nr = next.getBoundingClientRect();
+          if (rowMid > nr.top + nr.height/2){
+            listEl.insertBefore(row, next.nextSibling);
+            startY = ev.clientY; row.style.transform = 'translateY(0px)';
+            return;
+          }
+        }
+      };
+      const up = ev => {
+        document.removeEventListener('pointermove', move);
+        document.removeEventListener('pointerup', up);
+        row.classList.remove('dragging');
+        row.style.transform = '';
+        try{ row.releasePointerCapture(e.pointerId); }catch(err){}
+        onCommit(Array.from(listEl.children).map(r => r.dataset.bid));
+      };
+      document.addEventListener('pointermove', move);
+      document.addEventListener('pointerup', up);
+    }));
+  }
+  function turnRowsHTML(entries){
+    return entries.map((s,i)=>
+      `<div class="turnRow" data-bid="${esc(s.bid)}">
+        <span class="turnHandle">☰</span>
+        <span class="turnNum">${i+1}</span>
+        <span class="turnName">${esc(s.name)}</span>
+      </div>`).join('');
+  }
+  function renderTurnOrder(){
+    const wrap = document.getElementById('turnOrderWrap');
+    const list = document.getElementById('turnOrderList');
+    if (startSel.length < 2){ wrap.style.display = 'none'; list.innerHTML = ''; return; }
+    wrap.style.display = 'block';
+    list.innerHTML = turnRowsHTML(startSel);
+    wireDragReorder(list, order => {
+      startSel.sort((a,b) => order.indexOf(a.bid) - order.indexOf(b.bid));
+      renderTurnOrder();
+    });
+  }
+
+  /* ---------- mid-game reorder ---------- */
+  function reorderSource(){ return bakerActive() ? bakerRoster : bowlers; }
+  function refreshReorderTrigger(){
+    const btn = document.getElementById('reorderTrigger');
+    if (btn) btn.style.display = reorderSource().length >= 2 ? 'block' : 'none';
+  }
+  function renderLiveTurnOrder(){
+    const list = document.getElementById('liveTurnOrderList');
+    list.innerHTML = turnRowsHTML(reorderSource());
+    document.getElementById('reorderHint').textContent = bakerActive()
+      ? "Frames already thrown keep their original bowler — this only changes who's up next."
+      : 'Whoever is mid-frame keeps their turn — this changes who bowls after them.';
+    wireDragReorder(list, order => commitLiveReorder(order));
+  }
+  function commitLiveReorder(order){
+    if (bakerActive()){
+      bakerRoster.sort((a,b) => order.indexOf(a.bid) - order.indexOf(b.bid));
+    } else {
+      const curBid = bowlers[cur] && bowlers[cur].bid;
+      const oldBowlers = bowlers.slice();          // capture old index → bowler identity
+      bowlers.sort((a,b) => order.indexOf(a.bid) - order.indexOf(b.bid));
+      const newIndexOf = bid => bowlers.findIndex(bw => bw.bid === bid);
+      if (curBid){ const ni = newIndexOf(curBid); if (ni >= 0) cur = ni; }
+      // undo history references bowlers by index — remap every entry to the SAME
+      // bowler object's new position, so undo still targets the right person/frame.
+      history = history.map(h => {
+        const bid = oldBowlers[h.b] && oldBowlers[h.b].bid;
+        const ni = bid ? newIndexOf(bid) : -1;
+        return { b: ni >= 0 ? ni : h.b, f: h.f };
+      });
+    }
+    renderLiveTurnOrder();
+    render();
+  }
+  document.getElementById('reorderTrigger').onclick = ()=>{
+    renderLiveTurnOrder();
+    document.getElementById('reorderModal').classList.add('open');
+  };
+  document.getElementById('reorderX').onclick = ()=>document.getElementById('reorderModal').classList.remove('open');
+  document.getElementById('reorderDone').onclick = ()=>document.getElementById('reorderModal').classList.remove('open');
   function addRosterName(){
     const inp = document.getElementById('newBowlerInput');
     const n = inp.value.trim();
@@ -3996,6 +4411,8 @@
   }
   function beginBaker(){
     bakerRoster = startSel.map(s=>({bid:s.bid||genBid(), name:s.name}));
+    bakerFrameOwners = Array(10).fill(null);
+    bakerGameOwners = [];
     // one "team" bowler carries the shared Baker sheet
     const teamName = bakerRoster.map(t=>t.name.split(' ')[0]).join('/');
     bowlers = [ newBowler(teamName.length<=14 ? teamName : 'Team', genBid()) ];
@@ -4007,7 +4424,7 @@
   }
   function beginBakerFallback(){
     // Baker with <2 selected makes no sense; run a normal session instead
-    bakerRoster = [];
+    bakerRoster = []; bakerFrameOwners = []; bakerGameOwners = [];
     bowlers = startSel.map(s=>newBowler(s.name, s.bid));
     cur = 0; history = []; gameNum = 1;
     lastCall = 'Lace up — first ball of the game.';
@@ -4229,6 +4646,7 @@
 
   if (!loadSession()) resetSession(); else render();
   if (!sessionLive()) openStart();
+  wireFrameLongPress();
   // A brand-new user gets onboarding; a returning user gets "what's new". Never both.
   (async ()=>{
     const firstRun = !onboardedGet() && (await archiveAll()).length === 0;
