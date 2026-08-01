@@ -182,7 +182,14 @@
   .actions{padding:8px 14px calc(14px + env(safe-area-inset-bottom))}
   /* Start screen + SOP */
   #startView{z-index:69}
+  #menuView{z-index:68}
   #oilGuideView{z-index:73}
+  #howtoView{z-index:71}
+  .htTask{margin-bottom:15px}
+  .htTaskName{font-weight:700;font-size:14px;color:var(--cream);margin-bottom:4px}
+  .htSteps{margin:0;padding-left:20px}
+  .htSteps li{font-size:13px;color:var(--cream-dim);line-height:1.55;margin-bottom:3px}
+  .htSteps li b{color:var(--cream)}
   .laneDiag{background:var(--navy-2);border:1.5px solid rgba(245,239,224,.12);border-radius:10px;padding:10px;margin:8px 0 10px}
   .ruleBox{background:var(--navy-2);border:1.5px solid rgba(227,155,45,.35);border-radius:12px;padding:14px;margin:12px 0}
   .ruleH{font-family:'Bowlby One SC',cursive;font-size:13px;color:var(--amber);letter-spacing:.5px}
@@ -286,6 +293,41 @@
   .wnDoneBtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.45)}
   .wnFoot{text-align:center;font-size:11.5px;color:var(--cream-dim);opacity:.6;margin-top:12px}
   #drillView{z-index:74}
+  #logPastView{z-index:75}
+  .lpBowlerGames{
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.15);border-radius:12px;
+    padding:12px;margin-bottom:10px;
+  }
+  .lpBowlerName{font-weight:700;font-size:14px;color:var(--cream);margin-bottom:8px}
+  .lpGameRow{display:flex;flex-direction:column;gap:8px}
+  .lpGameInput{display:flex;align-items:center;gap:8px}
+  .lpGameInput input{
+    flex:1;background:var(--navy);border:1.5px solid rgba(245,239,224,.25);border-radius:9px;
+    color:var(--cream);font-family:inherit;font-size:15px;font-weight:600;padding:9px 12px;outline:none;
+  }
+  .lpGameInput input:focus{border-color:var(--amber)}
+  .lpFbf{
+    flex:none;width:38px;height:38px;border-radius:8px;background:none;
+    border:1.5px solid rgba(46,143,163,.4);font-size:16px;cursor:pointer;
+  }
+  .lpGameDetailed{
+    background:var(--navy);border:1.5px solid rgba(93,202,165,.4);border-radius:9px;
+    padding:9px 10px;display:flex;align-items:center;gap:8px;
+  }
+  .lpDetailSummary{flex:1;font-size:13px;color:var(--cream-dim)}
+  .lpDetailSummary b{color:var(--green);font-family:'Bowlby One SC',cursive;font-size:15px}
+  .lpReenter{
+    flex:none;background:none;border:1.5px solid rgba(245,239,224,.3);color:var(--cream-dim);
+    border-radius:8px;padding:7px 10px;font-family:inherit;font-weight:600;font-size:11px;cursor:pointer;
+  }
+  .lpRemoveGame{
+    flex:none;width:34px;height:34px;border-radius:8px;background:none;
+    border:1.5px solid rgba(222,74,46,.4);color:var(--red);font-family:inherit;font-size:14px;cursor:pointer;
+  }
+  .lpAddGame{
+    margin-top:9px;background:none;border:1.5px solid rgba(46,143,163,.4);color:var(--teal);
+    border-radius:8px;padding:7px 12px;font-family:inherit;font-weight:600;font-size:12px;cursor:pointer;
+  }
   .drillStartBtn{
     width:100%;height:50px;margin:6px 0 8px;border:none;border-radius:12px;cursor:pointer;
     font-family:'Bowlby One SC',cursive;font-size:15px;letter-spacing:.5px;
@@ -422,11 +464,18 @@
   }
   #startBowlBtn:disabled{opacity:.35;box-shadow:none;pointer-events:none}
   #startBowlBtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.45)}
-  .startAlt{display:flex;gap:8px;margin-top:10px}
-  .startAlt button{
-    flex:1;height:46px;background:none;border:1.5px solid rgba(245,239,224,.3);color:var(--cream-dim);
-    border-radius:10px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;
+  .menuStartBtn{
+    width:100%;height:56px;margin-top:18px;border:none;border-radius:12px;cursor:pointer;
+    font-family:'Bowlby One SC',cursive;font-size:17px;letter-spacing:.5px;
+    background:var(--amber);color:var(--ink);box-shadow:0 3px 0 rgba(0,0,0,.45);
   }
+  .menuStartBtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.45)}
+  .menuList{display:flex;flex-direction:column;gap:8px;margin-top:22px}
+  .menuList button{
+    width:100%;height:48px;background:none;border:1.5px solid rgba(245,239,224,.3);color:var(--cream-dim);
+    border-radius:10px;font-family:inherit;font-weight:600;font-size:14px;cursor:pointer;text-align:left;padding:0 16px;
+  }
+  .menuList button:active{background:rgba(245,239,224,.06)}
   .startCloseBtn{
     width:100%;height:42px;margin-top:14px;background:none;border:none;color:var(--cream-dim);
     font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;text-decoration:underline;
@@ -906,6 +955,7 @@
       <button id="histClose">✕ Close</button>
     </div>
     <div id="histHome">
+      <button id="logPastBtn" class="feedbackBtn" style="margin:0 0 14px">🗓 Log a past session</button>
       <div class="histTabs">
         <button id="htBowlers" class="on">Bowlers</button>
         <button id="htSessions">Sessions</button>
@@ -923,12 +973,28 @@
   </div>
 </div>
 
-<div class="recap" id="startView">
+<div class="recap" id="menuView">
   <div class="recapInner">
     <div class="startHero">
       <div class="wordmark" style="font-size:34px">STRIKE<span>BOOK</span></div>
       <div class="startTag">Score. Track. Improve.</div>
     </div>
+    <button id="menuStartBtn" class="menuStartBtn">🎳 Start a session</button>
+    <div class="menuList">
+      <button id="startHistBtn">📊 History &amp; analytics</button>
+      <button id="startSopBtn">📖 Owner's manual</button>
+      <button id="startHowtoBtn">📋 How to</button>
+      <button id="feedbackBtn">💬 Send feedback or request a feature</button>
+    </div>
+    <button id="backupStatus" class="backupStatus"><i class="dot"></i><span>Checking backup status…</span></button>
+    <button id="startClose" class="startCloseBtn" style="display:none">↩ Back to current sheet</button>
+    <div class="appVersion" id="startVersion"></div>
+  </div>
+</div>
+
+<div class="recap" id="startView">
+  <div class="recapInner">
+    <button id="setupBack" class="editLabelBtn" style="margin-bottom:10px">← Menu</button>
     <div class="anaHead" style="margin-top:6px">WHO'S BOWLING TONIGHT?</div>
     <div id="rosterChips" class="rosterChips"></div>
     <div class="addRow">
@@ -960,14 +1026,166 @@
     <div class="anaHead">EVENT · LOCATION <span style="opacity:.5;letter-spacing:0;font-weight:600">(optional)</span></div>
     <input id="startEvent" class="eventInput" maxlength="40" placeholder="e.g. Junior Gold · Minneapolis" autocomplete="off">
     <button id="startBowlBtn">🎳 Let's bowl</button>
-    <div class="startAlt">
-      <button id="startHistBtn">📊 History &amp; analytics</button>
-      <button id="startSopBtn">📖 Owner's manual</button>
+  </div>
+</div>
+
+<div class="recap" id="howtoView">
+  <div class="recapInner">
+    <div class="recapHead">
+      <div><div class="recapTitle">HOW TO</div>
+      <div class="recapWho">Step by step for every feature</div></div>
+      <button id="howtoClose">✕ Close</button>
     </div>
-    <button id="backupStatus" class="backupStatus"><i class="dot"></i><span>Checking backup status…</span></button>
-    <button id="feedbackBtn" class="feedbackBtn">💬 Send feedback or request a feature</button>
-    <button id="startClose" class="startCloseBtn" style="display:none">↩ Back to current sheet</button>
-    <div class="appVersion" id="startVersion"></div>
+    <div class="sop">
+
+      <h4>Getting started</h4>
+      <div class="htTask"><div class="htTaskName">Add a bowler for the first time</div>
+        <ol class="htSteps">
+          <li>On the setup screen (tap <b>🎳 Start a session</b> from the menu), type a name in <b>Add a bowler…</b>.</li>
+          <li>Tap ＋ (or press Enter). Their name becomes a tappable chip and is saved for next time.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Start a session</div>
+        <ol class="htSteps">
+          <li>Tap the chip for everyone bowling tonight — tap again to deselect.</li>
+          <li>If 2 or more are selected, drag names under <b>TURN ORDER</b> by the ☰ handle to set who goes first.</li>
+          <li>Pick a session type: Practice, League, Tournament, or Baker.</li>
+          <li>Optionally set a lane condition and event/location.</li>
+          <li>Tap <b>🎳 Let's bowl</b>.</li>
+        </ol></div>
+
+      <h4>Scoring</h4>
+      <div class="htTask"><div class="htTaskName">Score with the pin rack (default, most accurate)</div>
+        <ol class="htSteps">
+          <li>After each ball, tap the pins still standing on the diagram — leave nothing tapped for a strike.</li>
+          <li>Tap the big count/STRIKE/SPARE button to confirm.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Score with the keypad (faster, no leave detail)</div>
+        <ol class="htSteps">
+          <li>Tap <b>123 Count</b> near the top of the scoring pad to switch modes.</li>
+          <li>Tap the number of pins knocked down for each ball.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Mark a foul</div>
+        <ol class="htSteps"><li>Tap <b>F</b> instead of a pin count — it scores zero and respots the full rack per the rule.</li></ol></div>
+      <div class="htTask"><div class="htTaskName">Undo the last ball</div>
+        <ol class="htSteps"><li>Tap <b>↩</b>. It undoes whichever bowler's tab you're currently viewing — their own last ball, without switching you to anyone else.</li></ol></div>
+      <div class="htTask"><div class="htTaskName">Reorder turns mid-game</div>
+        <ol class="htSteps">
+          <li>Tap <b>⇅ Reorder turns</b> above the scoresheet.</li>
+          <li>Drag names by ☰ into the new order, then tap <b>Done</b>.</li>
+          <li>Whoever's mid-frame keeps their turn — the new order starts with whoever bowls next.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Fix a mistake in an earlier frame</div>
+        <ol class="htSteps">
+          <li>Press and hold that frame on the live scoresheet, even several frames back.</li>
+          <li>Tap the pins left standing for each ball (or switch to <b>🔢 Quick numbers</b> for a fast fix).</li>
+          <li>Tap <b>Save</b> — every score after that frame recalculates automatically.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Move to the next game</div>
+        <ol class="htSteps"><li>Once everyone's game is complete, tap <b>Start Game 2</b> (or Game 3, etc.) to keep the same session going.</li></ol></div>
+      <div class="htTask"><div class="htTaskName">Finish a session</div>
+        <ol class="htSteps"><li>Tap <b>🏁 Finish session — save to history</b>. This permanently banks everything and returns you to the menu.</li></ol></div>
+      <div class="htTask"><div class="htTaskName">Reset a session (discard, don't save)</div>
+        <ol class="htSteps"><li>Tap <b>Reset</b> in the header, then confirm. Use <b>Finish</b> instead if you want to keep the scores.</li></ol></div>
+
+      <h4>Baker mode</h4>
+      <div class="htTask"><div class="htTaskName">Start a Baker game</div>
+        <ol class="htSteps">
+          <li>Select 2+ bowlers on the setup screen and set their turn order — this becomes the throwing order.</li>
+          <li>Pick <b>Baker</b> as the session type, then tap <b>🎳 Start Baker game</b>.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Score a Baker game</div>
+        <ol class="htSteps">
+          <li>The prompt shows who's up for each frame — score normally with the pin rack or keypad.</li>
+          <li>Every frame's pin leaves still credit the bowler who threw it, even in the shared sheet.</li>
+        </ol></div>
+
+      <h4>History &amp; stats</h4>
+      <div class="htTask"><div class="htTaskName">Open a bowler's stats page</div>
+        <ol class="htSteps">
+          <li>Tap <b>📊 History &amp; analytics</b> on the menu.</li>
+          <li>Under the <b>Bowlers</b> tab, tap their name.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Change the stats time window</div>
+        <ol class="htSteps"><li>On a bowler's page, tap <b>Career</b>, <b>Last 5 sessions</b>, or <b>Tonight</b> near the top.</li></ol></div>
+      <div class="htTask"><div class="htTaskName">View a past session's scoresheet</div>
+        <ol class="htSteps">
+          <li>In History, switch to the <b>Sessions</b> tab (or scroll to <b>SESSIONS</b> on a bowler's page) and tap any session.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Edit a session's date, type, event, or note</div>
+        <ol class="htSteps">
+          <li>Open the session, tap <b>✎ Edit label</b>.</li>
+          <li>Change any field, then tap <b>Save</b>.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Delete a session</div>
+        <ol class="htSteps"><li>Open the session, tap <b>Delete this session from history</b>, and confirm. This can't be undone.</li></ol></div>
+
+      <h4>Practice tools</h4>
+      <div class="htTask"><div class="htTaskName">Run a spare drill</div>
+        <ol class="htSteps">
+          <li>Open a bowler's page, tap <b>🎯 Start spare drill</b>.</li>
+          <li>Set up the target leave shown and tap <b>✓ Made it</b> or <b>✗ Missed</b> after each attempt.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Generate a coach report card</div>
+        <ol class="htSteps">
+          <li>Open a bowler's page, tap <b>📋 Coach report card</b>.</li>
+          <li>Share or save the image it produces.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Share a story-style score card</div>
+        <ol class="htSteps"><li>After a game, tap <b>Snapchat</b> or <b>FB Stories</b> below the scoresheet to build and open the share sheet.</li></ol></div>
+      <div class="htTask"><div class="htTaskName">View the full series recap</div>
+        <ol class="htSteps"><li>Tap <b>📋 View series recap</b> to see every bowler's stacked scoresheets and standings for the session so far.</li></ol></div>
+
+      <h4>Logging past scores</h4>
+      <div class="htTask"><div class="htTaskName">Log a past session with quick totals</div>
+        <ol class="htSteps">
+          <li>In History, tap <b>🗓 Log a past session</b>.</li>
+          <li>Pick who bowled, the real date, session type, and type each game's final score.</li>
+          <li>Tap <b>Save session</b>.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Log a past session frame by frame</div>
+        <ol class="htSteps">
+          <li>In the same form, tap <b>🎳</b> next to a game instead of typing a total.</li>
+          <li>Enter each frame on the number pad — strikes, spares, and fouls all work like live scoring.</li>
+          <li>Tap <b>Save game</b>, then <b>Save session</b>. No pin rack here, so exact pin leaves aren't recorded, but the scoresheet and strike/spare counts are.</li>
+        </ol></div>
+
+      <h4>Sharing &amp; moving data</h4>
+      <div class="htTask"><div class="htTaskName">Send one bowler's data to their own phone</div>
+        <ol class="htSteps">
+          <li>Open their page, tap <b>📤 Send [name]'s data</b>, and share the file however's easiest.</li>
+          <li>On their phone: History → <b>⬆ Load / import</b> → pick the file → choose merge or import as new.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Remove a bowler from this device</div>
+        <ol class="htSteps"><li>Open their page, tap <b>🗑 Remove from this device</b>, and confirm. Their own copy elsewhere is untouched.</li></ol></div>
+      <div class="htTask"><div class="htTaskName">Save a full backup</div>
+        <ol class="htSteps"><li>In History, tap <b>⬇ Save backup file</b> and store it in iCloud or Drive.</li></ol></div>
+      <div class="htTask"><div class="htTaskName">Load a backup</div>
+        <ol class="htSteps"><li>In History, tap <b>⬆ Load / import</b> and pick the file — it detects the type and merges automatically, skipping anything already here.</li></ol></div>
+      <div class="htTask"><div class="htTaskName">Turn on auto-backup (desktop Chrome/Edge only)</div>
+        <ol class="htSteps">
+          <li>On the menu, tap the backup status pill.</li>
+          <li>Tap <b>Choose folder</b> and pick your synced Drive/iCloud/Dropbox folder.</li>
+        </ol></div>
+
+      <h4>Lane conditions</h4>
+      <div class="htTask"><div class="htTaskName">Set the lane condition for a session</div>
+        <ol class="htSteps">
+          <li>On the setup screen, pick House, Sport, or Challenge under <b>LANE CONDITION</b>.</li>
+          <li>Pick a pattern from the list, or type any name — useful since tournament patterns are often kept secret beforehand.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Look up a pattern in the Kegel library</div>
+        <ol class="htSteps"><li>Tap the 🔍 link that appears once a pattern name is set, on the setup screen or any session with one.</li></ol></div>
+
+      <h4>Getting help</h4>
+      <div class="htTask"><div class="htTaskName">Send feedback or request a feature</div>
+        <ol class="htSteps">
+          <li>Tap <b>💬 Send feedback or request a feature</b> on the menu.</li>
+          <li>Pick a topic and how it's going, write your message, then tap <b>Send feedback</b>.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Replay the welcome tour or reread the manual</div>
+        <ol class="htSteps"><li>Both are one tap from <b>📖 Owner's manual</b> on the menu.</li></ol></div>
+
+    </div>
   </div>
 </div>
 
@@ -1067,23 +1285,26 @@
     </div>
     <div class="sop">
       <h4>1 · What this is, where your data lives</h4>
-      <p>Strikebook is a single self-contained file. Everything — sessions, history, analytics — is stored <b>on this device, in this browser</b>. Nothing is uploaded anywhere. That means privacy by default, and it means <b>backups are your responsibility</b> (see §4). New users see a short welcome tour the first time they open the app, covering home-screen install, backups, and where to find this manual.</p>
+      <p>Strikebook is a single self-contained file. Everything — sessions, history, analytics — is stored <b>on this device, in this browser</b>. Nothing is uploaded anywhere. That means privacy by default, and it means <b>backups are your responsibility</b> (see §4). New users see a short welcome tour the first time they open the app, covering home-screen install, backups, and where to find this manual.<br><br>
+      <b>Opening the app lands you on a menu</b> — one tap to <b>🎳 Start a session</b>, plus History, this manual, the How To guide, and feedback, all in one place. Tapping Start a session takes you to a dedicated screen for picking bowlers, turn order, session type, and lane condition before you begin; <b>← Menu</b> there takes you back without starting anything. For quick "how do I do X" lookups without reading the whole manual, the <b>📋 How To</b> guide on the menu has short numbered steps for every feature.</p>
       <button class="editLabelBtn" id="replayTourBtn" style="margin-top:8px">👋 Replay the welcome tour</button>
+      <button class="editLabelBtn" id="howtoBtn2" style="margin-top:8px">📋 How to — step by step for every feature</button>
       <button class="editLabelBtn" id="oilGuideBtn2" style="margin-top:8px">🎓 Reading an oil pattern — quick guide</button>
 
       <h4>2 · Scoring: the daily drill</h4>
       <p><b>Pin rack mode</b> (default): tap the pins <b>left standing</b> after each ball, then hit the big count button. Tap nothing = strike. This mode feeds all leave/spare analytics.<br>
       <b>Keypad mode</b>: faster, counts only — those frames score perfectly but can't appear in the practice rack or spare ledger.<br>
       <b>F</b> records a foul (scores zero, full rack respotted per rule). <b>↩</b> undoes whichever bowler's tab you're currently viewing — their own last ball, specifically, without switching you to whoever bowled most recently. It dims when the bowler on screen has nothing of their own to undo yet. The announcer and share cards run themselves.<br><br>
-      <b>Turn order:</b> once 2 or more bowlers are selected on the start screen, a <b>TURN ORDER</b> list appears — drag a name by its ☰ handle to change who bowls first, second, and so on. This sets both the normal rotation and, for Baker sessions, the frame-by-frame throwing order.<br><br>
+      <b>Turn order:</b> once 2 or more bowlers are selected on the setup screen, a <b>TURN ORDER</b> list appears — drag a name by its ☰ handle to change who bowls first, second, and so on. This sets both the normal rotation and, for Baker sessions, the frame-by-frame throwing order.<br><br>
       <b>Reordering mid-game:</b> a <b>⇅ Reorder turns</b> button sits above the scoresheet any time 2+ bowlers are in the session — a late arrival, a kid who needs a break, anything. Drag to reorder the same way. Whoever is mid-frame right now keeps their turn; the new order takes over starting with the next bowler up. In Baker mode, any frame that's already been thrown keeps the bowler it was thrown by, permanently — reordering only changes who's next, never who threw what.<br><br>
       <b>Fixing a mistake:</b> press and hold any frame on the live sheet — even one from several frames back — to re-enter it. Every score from that point forward recalculates automatically, and wherever the bowler currently is in the game is completely undisturbed. The editor opens on the same <b>pin rack</b> used for live scoring, so tapping the exact pins left standing keeps that frame's leave detail fully accurate in the practice rack and spare ledger. There's also a <b>🔢 Quick numbers</b> toggle for when you just need the score fixed fast and don't care about pin detail for that one frame.</p>
 
       <h4>3 · Sessions: finish, don't reset</h4>
-      <p>When the night's games are done, tap <b>🏁 Finish session</b>. That permanently banks everything into History and returns to the start screen. <b>Reset</b> is the destructive one — it discards the current session without saving. Rule of thumb: Finish always, Reset only for do-overs.</p>
+      <p>When the night's games are done, tap <b>🏁 Finish session</b>. That permanently banks everything into History and returns to the menu. <b>Reset</b> is the destructive one — it discards the current session without saving. Rule of thumb: Finish always, Reset only for do-overs.<br><br>
+      <b>Forgot to score something live?</b> In History, tap <b>🗓 Log a past session</b> — pick who bowled, the date it actually happened, and each game's score. Type a final total for a quick entry, or tap the <b>🎳</b> next to any game to walk through it frame by frame on a number pad — same rules as live scoring, strikes and spares included, just no pin rack, so exact pin leaves aren't captured for these games (the scoresheet, strike count, and spare count all are). Mix and match freely: some games quick, others frame by frame, in the same session. Everything counts fully toward averages, highs, and session history either way. <b>Any saved session's date can be changed too</b> — open it and tap <b>✎ Edit label</b>. Session lists sort by that real date, so a backdated entry lands where it actually happened, not at the top just because it was typed in today.</p>
 
       <h4>4 · Backup SOP — do this after every tournament</h4>
-      <p><b>Auto-backup (desktop Chrome/Edge only):</b> on the start screen, tap the backup status pill and choose
+      <p><b>Auto-backup (desktop Chrome/Edge only):</b> on the menu, tap the backup status pill and choose
       a folder — ideally your synced Google Drive/iCloud/Dropbox folder. From then on, every <b>Finish session</b>
       writes a dated backup file there automatically. This isn't available on iPhone or in most mobile browsers —
       the pill will say so plainly rather than pretend it works.<br><br>
@@ -1094,10 +1315,10 @@
       file — auto or manual — cannot be erased by a browser.</p>
 
       <h4>5 · How the analytics compute</h4>
-      <p>Career stats group by a hidden bowler ID, so renaming a bowler never splits their history. Leave percentages count only pin-rack entries. A leave needs <b>4 attempts</b> before it's ranked (under that, it's held in the "keep bowling" note). <b>Splits are tracked separately</b> so they don't drag down the makeable-spare percentage. The drill list estimates ~11 pins of scoring cost per missed spare — an approximation, flagged as such. <b>Game Craft</b> adds Clean Frame % (marks per frame, works even for keypad games) and Bounce-Back % (how often a mark follows an open). <b>Spare Classes</b> rolls every leave into three difficulty tiers — singles, makeable multi-pin, splits — and the <b>Nemesis Pin</b> is simply the single-pin leave you see most. The <b>Ball-by-Ball</b> block adds first-ball average (the strongest predictor of scoring), strike rate, double rate (strikes that follow strikes), clean-10th %, and a consistency figure (± your game-to-game swing). <b>Game-Position Average</b> compares your 1st vs 2nd vs 3rd game to reveal warm-up or fatigue patterns; it needs a few multi-game sessions before it appears. <b>Lane condition</b> (House / Sport / Challenge, plus an optional pattern name) can be set on the start screen or added later by editing any session's label — it's stored so future analytics can compare how a bowler scores across easy house shots vs tough sport patterns. You can pick a known pattern from the list or free-type any name, which matters because tournament patterns like Junior Gold are kept secret until after the block. When a pattern name is set, the session page shows a <b>🔍 Look up in the Kegel pattern library</b> link that opens Kegel's official library (and copies the name so you can paste it into their search) — handy for pulling the actual pattern sheet before practice.</p>
+      <p>Career stats group by a hidden bowler ID, so renaming a bowler never splits their history. Leave percentages count only pin-rack entries. A leave needs <b>4 attempts</b> before it's ranked (under that, it's held in the "keep bowling" note). <b>Splits are tracked separately</b> so they don't drag down the makeable-spare percentage. The drill list estimates ~11 pins of scoring cost per missed spare — an approximation, flagged as such. <b>Game Craft</b> adds Clean Frame % (marks per frame, works even for keypad games) and Bounce-Back % (how often a mark follows an open). <b>Spare Classes</b> rolls every leave into three difficulty tiers — singles, makeable multi-pin, splits — and the <b>Nemesis Pin</b> is simply the single-pin leave you see most. The <b>Ball-by-Ball</b> block adds first-ball average (the strongest predictor of scoring), strike rate, double rate (strikes that follow strikes), clean-10th %, and a consistency figure (± your game-to-game swing). <b>Game-Position Average</b> compares your 1st vs 2nd vs 3rd game to reveal warm-up or fatigue patterns; it needs a few multi-game sessions before it appears. <b>Lane condition</b> (House / Sport / Challenge, plus an optional pattern name) can be set on the setup screen or added later by editing any session's label — it's stored so future analytics can compare how a bowler scores across easy house shots vs tough sport patterns. You can pick a known pattern from the list or free-type any name, which matters because tournament patterns like Junior Gold are kept secret until after the block. When a pattern name is set, the session page shows a <b>🔍 Look up in the Kegel pattern library</b> link that opens Kegel's official library (and copies the name so you can paste it into their search) — handy for pulling the actual pattern sheet before practice.</p>
 
       <h4>6 · Baker mode, drills &amp; report cards</h4>
-      <p><b>Baker mode:</b> pick "Baker" as the session type on the start screen with 2+ bowlers. You'll score one shared sheet where bowlers alternate frames (lead-off throws frames 1, 6; second throws 2, 7; and so on). The app shows whose turn it is on every ball. Baker games don't produce individual game scores, but each frame's pin leaves are still credited to the bowler who threw it — so a kid's spare practice data keeps building even from Baker play.<br><br>
+      <p><b>Baker mode:</b> pick "Baker" as the session type on the setup screen with 2+ bowlers. You'll score one shared sheet where bowlers alternate frames (lead-off throws frames 1, 6; second throws 2, 7; and so on). The app shows whose turn it is on every ball. Baker games don't produce individual game scores, but each frame's pin leaves are still credited to the bowler who threw it — so a kid's spare practice data keeps building even from Baker play.<br><br>
       <b>Spare drill:</b> on any bowler's page, tap <b>🎯 Start spare drill</b>. The app deals target leaves weighted toward that bowler's weakest spares, you set them up (or shoot them on a full rack) and tap made/missed. Drill results are stored separately from match play, so they don't inflate real game stats.<br><br>
       <b>Coach report card:</b> tap <b>📋 Coach report card</b> to generate a one-page image of a bowler's key stats — perfect for texting a parent or printing for a practice folder. It uses the phone's share sheet, or downloads if sharing isn't available.</p>
 
@@ -1136,12 +1357,12 @@
       <p><b>Share button does nothing:</b> some in-app browsers block the share sheet — the card downloads instead; share the PNG manually. <b>History looks empty:</b> you may have opened the file from a different location — import your latest backup. <b>Buttons unresponsive after an update:</b> fully close and reopen the browser tab. When in doubt: export a backup <i>first</i>, then investigate.</p>
 
       <h4>12 · Sending feedback</h4>
-      <p>On the start screen, <b>💬 Send feedback or request a feature</b> opens a short form: pick the area it's about (scoring, analytics, Baker mode, and so on — or <i>Feature request</i>), mark it as a bug, idea, praise, or question, and write your message. Leaving the <b>include app version &amp; device info</b> box ticked attaches the version, phone type, browser, and whether it's running as a home-screen app — that context solves most bug reports without a round of questions. Untick it if you'd rather not send it.<br><br>
+      <p>On the menu, <b>💬 Send feedback or request a feature</b> opens a short form: pick the area it's about (scoring, analytics, Baker mode, and so on — or <i>Feature request</i>), mark it as a bug, idea, praise, or question, and write your message. Leaving the <b>include app version &amp; device info</b> box ticked attaches the version, phone type, browser, and whether it's running as a home-screen app — that context solves most bug reports without a round of questions. Untick it if you'd rather not send it.<br><br>
       <b>Where it goes:</b> tapping <b>Send</b> opens your mail app with everything already filled in and addressed to the coach — you just hit send. If that doesn't work on your device — some phones have no mail app set up — tap <b>📋 Copy instead</b> and paste it into a text message. Copy always works, including with no signal.<br><br>
       <b>For the coach (setup):</b> the destination is two lines near the top of the app file — <i>FEEDBACK_EMAIL</i> (currently set) and <i>FEEDBACK_FORM</i>. Swap in a Google Form URL in the second if you'd rather collect responses in a spreadsheet; the form takes priority if both are filled. If both are ever emptied, the Send button hides and only Copy is offered, so nothing breaks.</p>
 
       <h4>13 · Version history</h4>
-      <p>The version you're running shows at the bottom of the start screen. To confirm everyone's current, have them check that number against the top of this list. After an update, the first launch shows a <b>What's New</b> screen listing only what changed since the version that device was on — so nobody has to read the whole history to catch up. A brand-new install skips it.</p>
+      <p>The version you're running shows at the bottom of the menu. To confirm everyone's current, have them check that number against the top of this list. After an update, the first launch shows a <b>What's New</b> screen listing only what changed since the version that device was on — so nobody has to read the whole history to catch up. A brand-new install skips it.</p>
       <div class="changelog" id="changelogList"></div>
       <p style="margin-top:10px;opacity:.7">Older layout and reliability fixes were folded into 1.0.0 and aren't listed separately.</p>
     </div>
@@ -1236,7 +1457,7 @@
       <div class="obNum">📖</div>
       <div class="obBody">
         <div class="obH">Questions? The Owner's Manual has answers</div>
-        <div class="obP">It's on the start screen and covers everything — scoring, backups, Baker mode,
+        <div class="obP">It's on the menu and covers everything — scoring, backups, Baker mode,
         sharing a bowler's data, installing, troubleshooting. <b>When something seems off, look there first.</b></div>
       </div>
     </div>
@@ -1259,6 +1480,56 @@
   </div>
 </div>
 
+<div class="recap" id="logPastView">
+  <div class="recapInner">
+    <div class="recapHead">
+      <div><div class="recapTitle">LOG A PAST SESSION</div>
+      <div class="recapWho">For games bowled without the app open</div></div>
+      <button id="lpClose">✕ Close</button>
+    </div>
+
+    <div class="anaHead">WHO BOWLED?</div>
+    <div id="lpRosterChips" class="rosterChips"></div>
+    <div class="addRow">
+      <input id="lpNewBowlerInput" maxlength="14" placeholder="Add a bowler…" autocomplete="off">
+      <button id="lpAddBowlerBtn">＋</button>
+    </div>
+
+    <div class="anaHead">DATE</div>
+    <input id="lpDate" type="date" class="eventInput">
+
+    <div class="anaHead">SESSION TYPE</div>
+    <div class="typeSeg" id="lpTypeSeg" style="grid-template-columns:repeat(3,1fr)">
+      <button data-type="Practice" class="on">Practice</button>
+      <button data-type="League">League</button>
+      <button data-type="Tournament">Tournament</button>
+    </div>
+
+    <div class="anaHead">LANE CONDITION <span style="opacity:.5;letter-spacing:0;font-weight:600">(optional)</span></div>
+    <div class="typeSeg" id="lpOilSeg">
+      <button data-oil="" class="on">—</button>
+      <button data-oil="House">House</button>
+      <button data-oil="Sport">Sport</button>
+      <button data-oil="Challenge">Challenge</button>
+    </div>
+    <input id="lpOilPattern" class="eventInput" list="lpOilList" maxlength="40" placeholder="Pattern name (optional) — pick or type" style="margin-top:8px;display:none">
+    <datalist id="lpOilList"></datalist>
+
+    <div class="anaHead">EVENT · LOCATION <span style="opacity:.5;letter-spacing:0;font-weight:600">(optional)</span></div>
+    <input id="lpEvent" class="eventInput" maxlength="40" placeholder="e.g. Junior Gold · Minneapolis">
+
+    <div class="anaHead">NOTE <span style="opacity:.5;letter-spacing:0;font-weight:600">(optional)</span></div>
+    <input id="lpNote" class="eventInput" maxlength="120" placeholder="e.g. lanes hooked early, moved 2 boards left">
+
+    <div class="anaHead">SCORES</div>
+    <div id="lpGamesWrap"></div>
+
+    <button id="lpSave" class="fbSendBtn" style="margin-top:14px">Save session</button>
+    <div class="fbHint" id="lpHint"></div>
+    <div class="feFrameTag" style="margin-top:10px">Logged this way, sessions record final scores only — no frame-by-frame sheet or pin-leave detail, since the games weren't scored live. Averages, highs, and session history all still work normally.</div>
+  </div>
+</div>
+
 <div class="recap" id="drillView">
   <div class="recapInner">
     <div class="recapHead">
@@ -1277,6 +1548,16 @@
     <div class="introSub" id="introSub"></div>
     <div class="introBar"><i id="introBarFill"></i></div>
     <button id="introSkip" class="introSkip">Skip ▸</button>
+  </div>
+</div>
+
+<div class="modal" id="gameEntryModal">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <h3 style="margin:0" id="geTitle">Enter game</h3>
+      <button id="geX" class="bkXBtn">✕</button>
+    </div>
+    <div id="geBody"></div>
   </div>
 </div>
 
@@ -1331,9 +1612,13 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.13.1';  // Single source of truth for the version history: renders BOTH the manual's
+  const APP_VERSION = '1.17.0';  // Single source of truth for the version history: renders BOTH the manual's
   // section 12 and the "what's new" overlay shown after an update.
   const CHANGELOG = [
+    {v:'1.17.0', d:"A cleaner start \u2014 the busy start screen is now a simple menu (Start a session, History, Manual, How To, Feedback), with roster and session setup moved to their own screen reached by tapping Start a session."},
+    {v:'1.16.0', d:"A How To guide \u2014 short numbered steps for every feature in the app, from starting a session to Baker mode to sending feedback. Open it from the start screen or from inside the Owner's Manual."},
+    {v:'1.15.0', d:"Log a past session now supports frame-by-frame, ball-by-ball entry \u2014 tap the \ud83c\udfb3 next to any game to walk through all 10 frames with the same number pad used to fix a mistake, strikes and spares included. No pin rack for backfilled games, so exact pin leaves aren't captured, but the full scoresheet, strike count, and spare count all are. Quick totals are still there for when that level of detail isn't needed."},
+    {v:'1.14.0', d:"Log a past session \u2014 add final scores for a game bowled without the app open, with any date you choose. Also: any saved session's date can now be edited (look for \u2018Edit label\u2019), and session lists now sort by that real date instead of when it was entered, so a backdated session lands where it actually happened."},
     {v:'1.13.1', d:"Fixing a frame now defaults to the real pin rack \u2014 tap the exact pins left standing, same as live scoring, so the practice rack and spare ledger stay accurate for that frame too. A Quick numbers toggle is still there for a fast fix when pin detail doesn't matter."},
     {v:'1.13.0', d:"Fix a scoring mistake from earlier in the game \u2014 press and hold any frame on the live sheet, even several frames back, and re-enter it. Scores recalculate forward automatically and your current frame is undisturbed. In Baker mode, editing a frame's pinfall never reassigns who threw it."},
     {v:'1.12.1', d:"Fixed undo: it now undoes the currently-viewed bowler's own last roll and stays on their tab, instead of jumping to whoever bowled most recently. The undo button also dims when the bowler you're viewing has nothing of their own to undo."},
@@ -1364,7 +1649,7 @@
     }
     return 0;
   }
-  const APP_BUILD_DATE = '2026-07-20';
+  const APP_BUILD_DATE = '2026-08-01';
 
   /* ---------- FEEDBACK DESTINATION — edit these two lines to change where feedback goes ----------
      FEEDBACK_EMAIL : your email address. Leave as '' to disable the email option.
@@ -2412,6 +2697,22 @@
   }
   function allDone(){ return bowlers.every(gameOver); }
   function esc(s){ return s.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+  // Local-timezone YYYY-MM-DD for an <input type="date"> value — matches how the rest of
+  // the app displays dates (toLocaleDateString), so the picker never shows an off-by-one day.
+  function dateInputVal(iso){
+    const d = iso ? new Date(iso) : new Date();
+    if (isNaN(d)) return dateInputVal(new Date().toISOString());
+    const y = d.getFullYear(), m = String(d.getMonth()+1).padStart(2,'0'), day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+  // Rebuild a full ISO timestamp from a YYYY-MM-DD picker value, keeping the original
+  // time-of-day so sessions logged the same day still order sensibly against each other.
+  function combineDateInput(dateVal, originalIso){
+    const [y,m,day] = dateVal.split('-').map(Number);
+    const orig = originalIso ? new Date(originalIso) : new Date();
+    const time = isNaN(orig) ? new Date() : orig;
+    return new Date(y, m-1, day, time.getHours(), time.getMinutes(), time.getSeconds()).toISOString();
+  }
 
   /* ---------- toast ---------- */
   const toastEl = document.getElementById('toast');
@@ -2812,7 +3113,7 @@
     if (await askConfirm('Reset the whole session WITHOUT saving? All games, scores, and series totals will be discarded. (Use Finish session to save instead.)', 'Discard')){
       lastCall = 'Fresh session — lace up, first ball of the game.';
       resetSession();
-      openStart();
+      openMenu();
     }
   };
 
@@ -3018,7 +3319,7 @@
     cur = 0; history = []; gameNum = 1; eventLabel = ''; sessionNote = ''; oilCategory=''; oilPattern='';
     lastCall = 'In the books! Session saved to history.' + backupNote;
     render();
-    openStart();
+    openMenu();
   }
 
   /* ---------- leave analytics engine ---------- */
@@ -3078,7 +3379,9 @@
   }
   // aggregate a bowler's games across sessions for a scope
   function bowlerGames(ident, sessions, scope){
-    let list = sessions.slice().sort((a,b)=>b.id.localeCompare(a.id));
+    // sort by the session's real DATE, not id (creation order) — a backdated session
+    // needs to slot in where it actually happened, not where it was entered
+    let list = sessions.slice().sort((a,b)=> (b.date||'').localeCompare(a.date||'') || b.id.localeCompare(a.id));
     if (scope === 'last5') list = list.slice(0,5);
     if (scope === 'tonight') list = [];
     const games = [];
@@ -3316,6 +3619,228 @@
     historyView.classList.add('open');
     historyView.scrollTop = 0;
   }
+
+  /* ---------- log a past session: back-fill scores that weren't entered live ---------- */
+  let logPastSel = [];               // [{bid,name}] chosen for this back-filled session
+  let logPastGames = {};             // { bid: [scoreOrNull, ...] }
+  let lpType = 'Practice', lpOilCat = '', lpOilPat = '';
+  function lpIsSelected(k){
+    return logPastSel.some(s => (s.bid && k.bid && s.bid===k.bid) || normName(s.name)===normName(k.name));
+  }
+  async function lpRefreshRoster(){
+    const sessions = await archiveAll();
+    const known = knownBowlers(sessions);
+    const wrap = document.getElementById('lpRosterChips');
+    if (!known.length){
+      wrap.innerHTML = `<div class="firstRun">Add a bowler's name below to log their score.</div>`;
+      return;
+    }
+    wrap.innerHTML = known.map((k,i)=>
+      `<button class="rchip${lpIsSelected(k)?' sel':''}" data-i="${i}">${esc(k.name)}</button>`).join('');
+    wrap.querySelectorAll('.rchip').forEach(el=>el.onclick = ()=>{
+      const k = known[Number(el.dataset.i)];
+      if (lpIsSelected(k)) logPastSel = logPastSel.filter(s => !((s.bid && k.bid && s.bid===k.bid) || normName(s.name)===normName(k.name)));
+      else if (logPastSel.length < 6) logPastSel.push({bid: k.bid || genBid(), name: k.name});
+      lpRefreshRoster();
+      lpRenderGames();
+    });
+  }
+  function lpRenderGames(){
+    const wrap = document.getElementById('lpGamesWrap');
+    if (!logPastSel.length){
+      wrap.innerHTML = `<div class="noData">Pick who bowled above, then enter their game scores here.</div>`;
+      return;
+    }
+    wrap.innerHTML = logPastSel.map(s=>{
+      const games = logPastGames[s.bid] && logPastGames[s.bid].length ? logPastGames[s.bid] : [null];
+      return `<div class="lpBowlerGames">
+        <div class="lpBowlerName">${esc(s.name)}</div>
+        <div class="lpGameRow">
+          ${games.map((v,gi)=>{
+            const detailed = v && typeof v === 'object';
+            if (detailed){
+              return `<div class="lpGameInput lpGameDetailed">
+                <div class="lpDetailSummary">🎳 Frame-by-frame · <b>${v.total}</b></div>
+                <button class="lpReenter" data-bid="${esc(s.bid)}" data-gi="${gi}">Re-enter</button>
+                ${games.length>1 ? `<button class="lpRemoveGame" data-bid="${esc(s.bid)}" data-gi="${gi}">✕</button>` : ''}
+              </div>`;
+            }
+            return `<div class="lpGameInput">
+              <input type="number" min="0" max="300" inputmode="numeric" placeholder="Game ${gi+1} score"
+                value="${v===null||v===undefined?'':v}" data-bid="${esc(s.bid)}" data-gi="${gi}">
+              <button class="lpFbf" data-bid="${esc(s.bid)}" data-gi="${gi}" title="Enter frame by frame">🎳</button>
+              ${games.length>1 ? `<button class="lpRemoveGame" data-bid="${esc(s.bid)}" data-gi="${gi}">✕</button>` : ''}
+            </div>`;
+          }).join('')}
+        </div>
+        <button class="lpAddGame" data-bid="${esc(s.bid)}">+ Add game</button>
+      </div>`;
+    }).join('');
+    wrap.querySelectorAll('input[type=number]').forEach(inp=>{
+      inp.addEventListener('input', ()=>{
+        const bid = inp.dataset.bid, gi = Number(inp.dataset.gi);
+        const raw = inp.value;
+        const v = raw === '' ? null : Math.max(0, Math.min(300, Math.round(Number(raw))));
+        if (!logPastGames[bid]) logPastGames[bid] = [];
+        logPastGames[bid][gi] = v;
+      });
+    });
+    wrap.querySelectorAll('.lpFbf, .lpReenter').forEach(btn=>btn.onclick = ()=>{
+      openGameEntry(btn.dataset.bid, Number(btn.dataset.gi));
+    });
+    wrap.querySelectorAll('.lpAddGame').forEach(btn=>btn.onclick = ()=>{
+      const bid = btn.dataset.bid;
+      if (!logPastGames[bid]) logPastGames[bid] = [null];
+      if (logPastGames[bid].length < 12) logPastGames[bid].push(null);
+      lpRenderGames();
+    });
+    wrap.querySelectorAll('.lpRemoveGame').forEach(btn=>btn.onclick = ()=>{
+      const bid = btn.dataset.bid, gi = Number(btn.dataset.gi);
+      logPastGames[bid].splice(gi, 1);
+      lpRenderGames();
+    });
+  }
+
+  /* ---------- frame-by-frame entry for a back-filled game (numbers only, no pin rack) ---------- */
+  let geBid = null, geGi = null, geFrames = null;
+  function geCtx(){ return rollContext({ frames: geFrames }); }
+  function openGameEntry(bid, gi){
+    geBid = bid; geGi = gi;
+    const existing = (logPastGames[bid] || [])[gi];
+    geFrames = (existing && typeof existing==='object' && existing.frames)
+      ? existing.frames.map(fr=>fr.slice())
+      : Array.from({length:10}, ()=>[]);
+    const who = logPastSel.find(s=>s.bid===bid);
+    document.getElementById('geTitle').textContent = who ? `${who.name} · Game ${gi+1}` : `Game ${gi+1}`;
+    renderGameEntry();
+    document.getElementById('gameEntryModal').classList.add('open');
+  }
+  function renderGameEntry(){
+    const body = document.getElementById('geBody');
+    const ctx = geCtx();
+    if (!ctx){
+      const total = cumScores({frames:geFrames})[9];
+      body.innerHTML = `<p class="bkTxt">Game complete — final score <b>${total}</b>.</p>
+        <div class="feFrameTag">Captures every frame and the full scoresheet, strikes and spares included —
+        just not exactly which pins stood, since there's no pin tap here.</div>
+        <div class="btns"><button class="ok" id="geSave" style="flex:1">Save game</button></div>`;
+      document.getElementById('geSave').onclick = ()=>{
+        if (!logPastGames[geBid]) logPastGames[geBid] = [];
+        logPastGames[geBid][geGi] = { total, frames: geFrames };
+        document.getElementById('gameEntryModal').classList.remove('open');
+        lpRenderGames();
+      };
+      return;
+    }
+    const fi = ctx.fi;
+    const ballNo = geFrames[fi].length + 1;
+    const cums = cumScores({frames:geFrames});
+    let runningTotal = null;
+    for (let i=fi-1; i>=0; i--){ if (cums[i]!==null){ runningTotal = cums[i]; break; } }
+    let btns = '';
+    for (let v=0; v<=9; v++) btns += `<button class="feNum" data-v="${v}"${v>ctx.max?' disabled':''}>${v===0?'–':v}</button>`;
+    body.innerHTML = `
+      <p class="bkTxt">Frame ${fi+1} · Ball ${ballNo}${runningTotal!==null?` <span style="opacity:.6;font-weight:600">— running total ${runningTotal}</span>`:''}</p>
+      <div class="feGrid">${btns}</div>
+      <div class="btns">
+        <button class="cancel" id="geFoul" style="flex:1">Foul</button>
+        <button class="ok" id="geSpecial" style="flex:1">${ctx.special==='X'?'Strike ✕':'Spare ⁄'}</button>
+      </div>
+      ${geFrames.some(fr=>fr.length) ? `<button class="removeBtn show" id="geUndo" style="margin-top:10px">Undo last ball</button>` : ''}
+    `;
+    body.querySelectorAll('.feNum').forEach(btn=>btn.onclick = ()=>geAddRoll(Number(btn.dataset.v), false));
+    document.getElementById('geFoul').onclick = ()=>geAddRoll(0, true);
+    document.getElementById('geSpecial').onclick = ()=>geAddRoll(ctx.max, false);
+    const undo = document.getElementById('geUndo');
+    if (undo) undo.onclick = geUndoLast;
+  }
+  function geAddRoll(v, foul){
+    const ctx = geCtx();
+    if (!ctx) return;
+    const p = foul ? 0 : v;
+    if (p > ctx.max) return;
+    geFrames[ctx.fi].push({p, f:!!foul});
+    renderGameEntry();
+  }
+  function geUndoLast(){
+    for (let fi=9; fi>=0; fi--){
+      if (geFrames[fi].length){ geFrames[fi].pop(); renderGameEntry(); return; }
+    }
+  }
+  document.getElementById('geX').onclick = ()=>document.getElementById('gameEntryModal').classList.remove('open');
+  async function openLogPast(){
+    logPastSel = []; logPastGames = {};
+    lpType = 'Practice'; lpOilCat = ''; lpOilPat = '';
+    document.getElementById('lpDate').value = dateInputVal(new Date().toISOString());
+    document.getElementById('lpEvent').value = '';
+    document.getElementById('lpNote').value = '';
+    document.getElementById('lpOilPattern').value = '';
+    document.getElementById('lpOilPattern').style.display = 'none';
+    document.querySelectorAll('#lpTypeSeg button').forEach(b=>b.classList.toggle('on', b.dataset.type==='Practice'));
+    document.querySelectorAll('#lpOilSeg button').forEach(b=>b.classList.toggle('on', b.dataset.oil===''));
+    document.getElementById('lpHint').textContent = '';
+    await lpRefreshRoster();
+    lpRenderGames();
+    document.getElementById('logPastView').classList.add('open');
+    document.getElementById('logPastView').scrollTop = 0;
+  }
+  document.getElementById('logPastBtn').onclick = openLogPast;
+  document.getElementById('lpClose').onclick = ()=>document.getElementById('logPastView').classList.remove('open');
+  document.getElementById('lpAddBowlerBtn').onclick = ()=>{
+    const inp = document.getElementById('lpNewBowlerInput');
+    const n = inp.value.trim();
+    if (!n || logPastSel.length >= 6) return;
+    if (!logPastSel.some(s=>normName(s.name)===normName(n))) logPastSel.push({bid: genBid(), name: n});
+    inp.value = '';
+    lpRefreshRoster(); lpRenderGames();
+  };
+  document.getElementById('lpNewBowlerInput').addEventListener('keydown', e=>{ if (e.key==='Enter') document.getElementById('lpAddBowlerBtn').click(); });
+  document.querySelectorAll('#lpTypeSeg button').forEach(btn=>btn.onclick = ()=>{
+    lpType = btn.dataset.type;
+    document.querySelectorAll('#lpTypeSeg button').forEach(x=>x.classList.toggle('on', x===btn));
+  });
+  document.querySelectorAll('#lpOilSeg button').forEach(btn=>btn.onclick = ()=>{
+    lpOilCat = btn.dataset.oil;
+    document.querySelectorAll('#lpOilSeg button').forEach(x=>x.classList.toggle('on', x===btn));
+    const field = document.getElementById('lpOilPattern');
+    field.style.display = lpOilCat ? 'block' : 'none';
+    if (!lpOilCat) field.value = '';
+    document.getElementById('lpOilList').innerHTML = (OIL_PATTERNS[lpOilCat]||[]).map(n=>`<option value="${esc(n)}">`).join('');
+  });
+  document.getElementById('lpOilPattern').addEventListener('input', e=>{ lpOilPat = e.target.value.trim(); });
+  document.getElementById('lpSave').onclick = async ()=>{
+    const hint = document.getElementById('lpHint');
+    if (!logPastSel.length){ hint.textContent = 'Add at least one bowler.'; return; }
+    const dateVal = document.getElementById('lpDate').value;
+    if (!dateVal){ hint.textContent = 'Pick a date.'; return; }
+    const bowlersOut = [];
+    let anyGames = false;
+    logPastSel.forEach(s=>{
+      const raw = logPastGames[s.bid] || [];
+      const games = raw
+        .filter(v => v!==null && v!==undefined && !(typeof v==='number' && isNaN(v)))
+        .map(v => (typeof v === 'object')
+          ? { total: v.total, frames: v.frames }
+          : { total: Math.max(0, Math.min(300, Math.round(Number(v)))), frames: null });
+      if (games.length){ anyGames = true; bowlersOut.push({ name: s.name, bid: s.bid, games }); }
+    });
+    if (!anyGames){ hint.textContent = 'Enter at least one game score.'; return; }
+    const sess = {
+      id: String(Date.now()) + Math.random().toString(36).slice(2,6),
+      date: combineDateInput(dateVal, new Date().toISOString()),
+      event: document.getElementById('lpEvent').value.trim(),
+      type: lpType,
+      note: document.getElementById('lpNote').value.trim(),
+      oilCategory: lpOilCat,
+      oilPattern: lpOilCat ? lpOilPat : '',
+      bowlers: bowlersOut
+    };
+    await archivePut(sess);
+    histSessions = await archiveAll();
+    document.getElementById('logPastView').classList.remove('open');
+    showHistPane('home'); renderHistHome();
+    toast('Session logged', true);
+  };
   function showHistPane(which){
     document.getElementById('histHome').style.display    = which==='home' ? 'block':'none';
     document.getElementById('histBowler').style.display  = which==='bowler' ? 'block':'none';
@@ -3356,7 +3881,7 @@
         list.innerHTML = `<div class="noData">No saved sessions yet. Finish a session and it will show up here.</div>`;
         return;
       }
-      const sorted = histSessions.slice().sort((a,b)=>b.id.localeCompare(a.id));
+      const sorted = histSessions.slice().sort((a,b)=> (b.date||'').localeCompare(a.date||'') || b.id.localeCompare(a.id));
       list.innerHTML = sorted.map(s=>{
         const d = new Date(s.date);
         const games = s.bowlers.reduce((a,b)=>a+b.games.length,0);
@@ -3447,7 +3972,7 @@
     // this bowler's own sessions, most recent first, so their scoresheets are one tap away
     const mySessions = histSessions
       .filter(s => s.bowlers.some(b => sameBowler(b, ident)))
-      .sort((a,b) => b.id.localeCompare(a.id));
+      .sort((a,b) => (b.date||'').localeCompare(a.date||'') || b.id.localeCompare(a.id));
 
     // deep stats (Tier 1)
     const ds = deepStats(games);
@@ -3600,6 +4125,8 @@
       ${s.note ? `<div class="sessNote">📝 ${esc(s.note)}</div>` : ''}
       <button class="editLabelBtn" id="editLabelBtn">✎ Edit label${s.type?'':' · add type'}</button>
       <div id="labelEditor" class="labelEditor" style="display:none">
+        <div class="anaHead">DATE</div>
+        <input id="editDate" type="date" class="eventInput" value="${dateInputVal(s.date)}">
         <div class="anaHead">SESSION TYPE</div>
         <div class="typeSeg" id="editTypeSeg">
           ${['Practice','League','Tournament','Baker'].map(t=>
@@ -3666,6 +4193,8 @@
       s.note = document.getElementById('editNote').value.trim();
       s.oilCategory = pickedOil;
       s.oilPattern = pickedOil ? editOilField.value.trim() : '';
+      const dateVal = document.getElementById('editDate').value;   // YYYY-MM-DD or ''
+      if (dateVal) s.date = combineDateInput(dateVal, s.date);
       await archivePut(s);
       histSessions = await archiveAll();
       openSessionPage(id, returnCtx);   // re-render with updated label
@@ -4182,6 +4711,7 @@
 
   /* ---------- start screen ---------- */
   const startView = document.getElementById('startView');
+  const menuView = document.getElementById('menuView');
   const introView = document.getElementById('introView');
   const sopView = document.getElementById('sopView');
   let startSel = [];   // [{bid, name}] chosen for the next session
@@ -4189,7 +4719,13 @@
   function sessionLive(){
     return gameNum > 1 || bowlers.some(b => b.past.length || b.frames.some(fr => fr.length));
   }
-  async function openStart(){
+  async function openMenu(){
+    document.getElementById('startClose').style.display = sessionLive() ? 'block' : 'none';
+    renderBackupPill();
+    menuView.classList.add('open');
+    menuView.scrollTop = 0;
+  }
+  async function openSessionSetup(){
     // preselect the current roster, then union with everyone from history
     startSel = bowlers.map(b=>({bid:b.bid, name:b.name}));
     const sessions = await archiveAll();
@@ -4205,8 +4741,7 @@
     document.querySelectorAll('#startOilSeg button').forEach(x=>x.classList.toggle('on', x.dataset.oil===oilCategory));
     syncOilPatternField();
     document.getElementById('startOilPattern').value = oilPattern;
-    document.getElementById('startClose').style.display = sessionLive() ? 'block' : 'none';
-    renderBackupPill();
+    menuView.classList.remove('open');
     startView.classList.add('open');
     startView.scrollTop = 0;
     // First run (nobody known yet): put the cursor in the name box so they can just type.
@@ -4432,6 +4967,8 @@
     render(); showIntro();
   }
   document.getElementById('startBowlBtn').onclick = beginSession;
+  document.getElementById('menuStartBtn').onclick = openSessionSetup;
+  document.getElementById('setupBack').onclick = ()=>{ startView.classList.remove('open'); openMenu(); };
   document.querySelectorAll('#startTypeSeg button').forEach(btn=>btn.onclick = ()=>{
     sessionType = btn.dataset.type;
     document.querySelectorAll('#startTypeSeg button').forEach(x=>x.classList.toggle('on', x===btn));
@@ -4451,7 +4988,7 @@
   document.getElementById('startHistBtn').onclick = ()=>openHistory();
   document.getElementById('startSopBtn').onclick = ()=>{ sopView.classList.add('open'); sopView.scrollTop = 0; };
   document.getElementById('sopClose').onclick = ()=>sopView.classList.remove('open');
-  document.getElementById('startClose').onclick = ()=>startView.classList.remove('open');
+  document.getElementById('startClose').onclick = ()=>menuView.classList.remove('open');
 
   const versionText = 'Strikebook v' + APP_VERSION + ' · built ' +
     new Date(APP_BUILD_DATE + 'T00:00:00').toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'});
@@ -4473,6 +5010,11 @@
   document.getElementById('oilGuideBtn').onclick = openOilGuide;
   document.getElementById('oilGuideBtn2').onclick = ()=>{ sopView.classList.remove('open'); openOilGuide(); };
   document.getElementById('oilGuideClose').onclick = ()=>oilGuideView.classList.remove('open');
+  const howtoView = document.getElementById('howtoView');
+  function openHowto(){ howtoView.classList.add('open'); howtoView.scrollTop = 0; }
+  document.getElementById('startHowtoBtn').onclick = openHowto;
+  document.getElementById('howtoBtn2').onclick = ()=>{ sopView.classList.remove('open'); openHowto(); };
+  document.getElementById('howtoClose').onclick = ()=>howtoView.classList.remove('open');
   document.getElementById('oilLenInput').addEventListener('input', e=>{
     const len = Number(e.target.value);
     const out = document.getElementById('oilBoardOut');
@@ -4520,13 +5062,12 @@
   function onboardedGet(){ try{ return localStorage.getItem(ONBOARDED_KEY); }catch(e){ return null; } }
   function onboardedSet(){ try{ localStorage.setItem(ONBOARDED_KEY, '1'); }catch(e){} }
   document.getElementById('replayTourBtn').onclick = ()=>{ sopView.classList.remove('open'); showOnboarding(); };
-  document.getElementById('obDone').onclick = ()=>{    onboardedSet();
+  document.getElementById('obDone').onclick = ()=>{
+    onboardedSet();
     document.getElementById('onboardView').classList.remove('open');
-    // land them in the name box, since a fresh install has no bowlers yet
-    setTimeout(()=>{ try{
-      const inp = document.getElementById('newBowlerInput');
-      if (inp && !document.querySelectorAll('.rchip').length) inp.focus();
-    }catch(e){} }, 150);
+    // a brand-new user's only real next step is to add a bowler and start —
+    // skip the menu and drop them straight into setup, cursor ready to type
+    openSessionSetup();
   };
 
   function maybeShowWhatsNew(){
@@ -4645,7 +5186,7 @@
   };
 
   if (!loadSession()) resetSession(); else render();
-  if (!sessionLive()) openStart();
+  if (!sessionLive()) openMenu();
   wireFrameLongPress();
   // A brand-new user gets onboarding; a returning user gets "what's new". Never both.
   (async ()=>{
