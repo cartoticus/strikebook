@@ -294,6 +294,53 @@
   .wnFoot{text-align:center;font-size:11.5px;color:var(--cream-dim);opacity:.6;margin-top:12px}
   #drillView{z-index:74}
   #logPastView{z-index:75}
+  .row2{display:flex;gap:8px}
+  .row2 .eventInput{min-width:0}
+  .row2 .eventInput{flex:1}
+  .newLeagueBtn{
+    width:100%;height:48px;border-radius:10px;cursor:pointer;background:var(--amber);color:var(--ink);
+    border:none;font-family:'Bowlby One SC',cursive;font-size:14px;margin-bottom:14px;
+  }
+  .leagueCard{
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.14);border-radius:12px;
+    padding:13px 14px;margin-bottom:9px;cursor:pointer;
+  }
+  .leagueCard.closed{opacity:.62}
+  .lTop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .lName{font-size:15px;font-weight:700;color:var(--cream)}
+  .lBadge{font-size:10px;font-weight:700;letter-spacing:.5px;padding:3px 9px;border-radius:999px;text-transform:uppercase;flex:none}
+  .lBadge.open{background:var(--green);color:var(--ink)}
+  .lBadge.closed{background:rgba(245,239,224,.15);color:var(--cream-dim)}
+  .lMeta{font-size:12px;color:var(--cream-dim);margin-top:5px;line-height:1.5}
+  .lMeta b{color:var(--cream)}
+  .presetList{display:flex;flex-direction:column;gap:7px}
+  .presetCard{
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.2);border-radius:10px;
+    padding:11px 13px;cursor:pointer;
+  }
+  .presetCard.on{border-color:var(--amber);background:rgba(227,155,45,.08)}
+  .presetTop{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .presetName{font-weight:700;font-size:14px;color:var(--cream)}
+  .presetSub{font-size:11px;color:var(--cream-dim);opacity:.75;margin-top:2px}
+  .radio{width:16px;height:16px;border-radius:50%;border:2px solid rgba(245,239,224,.4);flex:none}
+  .radio.on{border-color:var(--amber);background:radial-gradient(var(--amber) 0 40%, transparent 42%)}
+  .lfDangerBtn{
+    width:100%;height:46px;margin-top:9px;background:none;border:1.5px solid rgba(222,74,46,.4);
+    color:var(--red);border-radius:10px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;
+  }
+  .lfDangerBtn.good{border-color:rgba(93,202,165,.45);color:var(--green)}
+  .leaguePickWrap{background:var(--navy-2);border:1.5px solid rgba(227,155,45,.35);border-radius:12px;padding:12px;margin-top:8px}
+  .leaguePickHint{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--cream-dim);opacity:.8;text-transform:uppercase;margin-bottom:9px}
+  .leagueRow{
+    display:flex;justify-content:space-between;align-items:center;gap:8px;
+    background:var(--navy);border:1.5px solid rgba(245,239,224,.18);border-radius:10px;
+    padding:11px 13px;margin-bottom:7px;cursor:pointer;
+  }
+  .leagueRow.sel{border-color:var(--amber);background:rgba(227,155,45,.08)}
+  .leagueRowName{font-weight:700;font-size:14px;color:var(--cream)}
+  .leagueRowMeta{font-size:11px;color:var(--cream-dim);margin-top:2px}
+  .check{width:18px;height:18px;border-radius:5px;border:2px solid rgba(245,239,224,.35);flex:none}
+  .check.on{border-color:var(--amber);background:var(--amber)}
   .lpBowlerGames{
     background:var(--navy-2);border:1.5px solid rgba(245,239,224,.15);border-radius:12px;
     padding:12px;margin-bottom:10px;
@@ -981,6 +1028,7 @@
     </div>
     <button id="menuStartBtn" class="menuStartBtn">🎳 Start a session</button>
     <div class="menuList">
+      <button id="menuLeaguesBtn">🏆 Leagues</button>
       <button id="startHistBtn">📊 History &amp; analytics</button>
       <button id="startSopBtn">📖 Owner's manual</button>
       <button id="startHowtoBtn">📋 How to</button>
@@ -1012,6 +1060,7 @@
       <button data-type="Tournament">Tournament</button>
       <button data-type="Baker">Baker</button>
     </div>
+    <div id="leaguePickWrap" style="display:none"></div>
     <div class="anaHead">LANE CONDITION <span style="opacity:.5;letter-spacing:0;font-weight:600">(optional)</span></div>
     <div class="typeSeg" id="startOilSeg">
       <button data-oil="" class="on">—</button>
@@ -1285,7 +1334,7 @@
     </div>
     <div class="sop">
       <h4>1 · What this is, where your data lives</h4>
-      <p>Strikebook is a single self-contained file. Everything — sessions, history, analytics — is stored <b>on this device, in this browser</b>. Nothing is uploaded anywhere. That means privacy by default, and it means <b>backups are your responsibility</b> (see §4). New users see a short welcome tour the first time they open the app, covering home-screen install, backups, and where to find this manual.<br><br>
+      <p>Strikebook is a single self-contained file. Everything — sessions, history, analytics — is stored <b>on this device, in this browser</b>. <b>No bowling data is ever uploaded anywhere</b> — no scores, no bowler names, nothing personal, ever. The one optional exception is a visit counter (see §13) that a coach can turn on to see rough usage over time; it's off by default, and even switched on it never carries names, scores, or anything else personal — just "the app opened, on this version." That means privacy by default, and it means <b>backups are your responsibility</b> (see §5). New users see a short welcome tour the first time they open the app, covering home-screen install, backups, and where to find this manual.<br><br>
       <b>Opening the app lands you on a menu</b> — one tap to <b>🎳 Start a session</b>, plus History, this manual, the How To guide, and feedback, all in one place. Tapping Start a session takes you to a dedicated screen for picking bowlers, turn order, session type, and lane condition before you begin; <b>← Menu</b> there takes you back without starting anything. For quick "how do I do X" lookups without reading the whole manual, the <b>📋 How To</b> guide on the menu has short numbered steps for every feature.</p>
       <button class="editLabelBtn" id="replayTourBtn" style="margin-top:8px">👋 Replay the welcome tour</button>
       <button class="editLabelBtn" id="howtoBtn2" style="margin-top:8px">📋 How to — step by step for every feature</button>
@@ -1303,7 +1352,13 @@
       <p>When the night's games are done, tap <b>🏁 Finish session</b>. That permanently banks everything into History and returns to the menu. <b>Reset</b> is the destructive one — it discards the current session without saving. Rule of thumb: Finish always, Reset only for do-overs.<br><br>
       <b>Forgot to score something live?</b> In History, tap <b>🗓 Log a past session</b> — pick who bowled, the date it actually happened, and each game's score. Type a final total for a quick entry, or tap the <b>🎳</b> next to any game to walk through it frame by frame on a number pad — same rules as live scoring, strikes and spares included, just no pin rack, so exact pin leaves aren't captured for these games (the scoresheet, strike count, and spare count all are). Mix and match freely: some games quick, others frame by frame, in the same session. Everything counts fully toward averages, highs, and session history either way. <b>Any saved session's date can be changed too</b> — open it and tap <b>✎ Edit label</b>. Session lists sort by that real date, so a backdated entry lands where it actually happened, not at the top just because it was typed in today.</p>
 
-      <h4>4 · Backup SOP — do this after every tournament</h4>
+      <h4>4 · Leagues</h4>
+      <p>Tap <b>🏆 Leagues</b> on the menu to set one up: name, number of weeks, start and end dates, and Scratch or Handicap. For Handicap, pick one of three real-world presets — <b>90% of 220</b> (most common in adult sanctioned leagues), <b>90% of 200</b> (typical for youth leagues), or <b>80% of 220</b> (more competitive) — or <b>Custom</b> to set your own basis and percentage.<br><br>
+      <b>Bowling in it:</b> pick <b>League</b> as the session type when starting a session, and a <b>WHICH LEAGUE?</b> list appears showing every open league — tap one before you can bowl. No open leagues yet? A shortcut drops you straight into league setup and brings you right back with it selected, no detour required.<br><br>
+      <b>Closing a league</b> (from its card in the Leagues list) moves it to a separate closed section — it drops off the picker for new sessions, but every session already linked to it stays exactly as it is in History. Closed leagues can be <b>reopened</b> any time from the same screen.<br><br>
+      <b>What's not here yet:</b> this covers creating and picking leagues. League-specific averages, handicap calculations, standings, and records are planned as a follow-up.</p>
+
+      <h4>5 · Backup SOP — do this after every tournament</h4>
       <p><b>Auto-backup (desktop Chrome/Edge only):</b> on the menu, tap the backup status pill and choose
       a folder — ideally your synced Google Drive/iCloud/Dropbox folder. From then on, every <b>Finish session</b>
       writes a dated backup file there automatically. This isn't available on iPhone or in most mobile browsers —
@@ -1314,23 +1369,23 @@
       clearing browser data (or iOS storage housekeeping) can erase on-device history without warning. A backup
       file — auto or manual — cannot be erased by a browser.</p>
 
-      <h4>5 · How the analytics compute</h4>
+      <h4>6 · How the analytics compute</h4>
       <p>Career stats group by a hidden bowler ID, so renaming a bowler never splits their history. Leave percentages count only pin-rack entries. A leave needs <b>4 attempts</b> before it's ranked (under that, it's held in the "keep bowling" note). <b>Splits are tracked separately</b> so they don't drag down the makeable-spare percentage. The drill list estimates ~11 pins of scoring cost per missed spare — an approximation, flagged as such. <b>Game Craft</b> adds Clean Frame % (marks per frame, works even for keypad games) and Bounce-Back % (how often a mark follows an open). <b>Spare Classes</b> rolls every leave into three difficulty tiers — singles, makeable multi-pin, splits — and the <b>Nemesis Pin</b> is simply the single-pin leave you see most. The <b>Ball-by-Ball</b> block adds first-ball average (the strongest predictor of scoring), strike rate, double rate (strikes that follow strikes), clean-10th %, and a consistency figure (± your game-to-game swing). <b>Game-Position Average</b> compares your 1st vs 2nd vs 3rd game to reveal warm-up or fatigue patterns; it needs a few multi-game sessions before it appears. <b>Lane condition</b> (House / Sport / Challenge, plus an optional pattern name) can be set on the setup screen or added later by editing any session's label — it's stored so future analytics can compare how a bowler scores across easy house shots vs tough sport patterns. You can pick a known pattern from the list or free-type any name, which matters because tournament patterns like Junior Gold are kept secret until after the block. When a pattern name is set, the session page shows a <b>🔍 Look up in the Kegel pattern library</b> link that opens Kegel's official library (and copies the name so you can paste it into their search) — handy for pulling the actual pattern sheet before practice.</p>
 
-      <h4>6 · Baker mode, drills &amp; report cards</h4>
+      <h4>7 · Baker mode, drills &amp; report cards</h4>
       <p><b>Baker mode:</b> pick "Baker" as the session type on the setup screen with 2+ bowlers. You'll score one shared sheet where bowlers alternate frames (lead-off throws frames 1, 6; second throws 2, 7; and so on). The app shows whose turn it is on every ball. Baker games don't produce individual game scores, but each frame's pin leaves are still credited to the bowler who threw it — so a kid's spare practice data keeps building even from Baker play.<br><br>
       <b>Spare drill:</b> on any bowler's page, tap <b>🎯 Start spare drill</b>. The app deals target leaves weighted toward that bowler's weakest spares, you set them up (or shoot them on a full rack) and tap made/missed. Drill results are stored separately from match play, so they don't inflate real game stats.<br><br>
       <b>Coach report card:</b> tap <b>📋 Coach report card</b> to generate a one-page image of a bowler's key stats — perfect for texting a parent or printing for a practice folder. It uses the phone's share sheet, or downloads if sharing isn't available.</p>
 
-      <h4>7 · Sharing a bowler's data (handoff)</h4>
+      <h4>8 · Sharing a bowler's data (handoff)</h4>
       <p>Score a kid on your phone, then hand off <i>just their</i> games so they land on the kid's own device — separate from the all-in backup. On any bowler's page, at the bottom, tap <b>📤 Send [name]'s data</b>. That produces a small file with only that bowler's sessions; send it however you like (text, AirDrop, email). On their phone, they open History → <b>⬆ Load / import</b> and pick the file. Strikebook detects it's a single-bowler file and asks whether to <b>merge into their existing history</b> or <b>import as new</b> — always a confirmation, never automatic. Sessions already on their phone are skipped, so sending the same file twice never duplicates anything. After the first merge, both devices share that bowler's hidden ID, so future handoffs line up automatically.<br><br>
       <b>Remove from this device:</b> the red button beside it deletes only that bowler's data from <i>your</i> phone — useful once you've handed a kid off and don't need to carry them anymore. It never touches their copy. If the bowler shared a session with others, only their part is removed and the rest stays.<br><br>
       <b>Backup vs handoff — the difference:</b> <b>Save backup file</b> is everyone at once, for protecting <i>your</i> data. <b>Send [name]'s data</b> is one person, for giving it to <i>them</i>. Load / import accepts either kind.</p>
 
-      <h4>8 · Maintaining the app file</h4>
+      <h4>9 · Maintaining the app file</h4>
       <p>Keep one <b>master copy</b> of strikebook.html in your cloud drive. Your data is keyed to <i>where the file lives</i> — browser storage belongs to the page's location. So: replacing the file at the <b>same location</b> with a newer version keeps all history; <b>moving</b> it (new folder, new host, new domain) orphans the old data. Before any move: export a backup, move, then import. To modify the app, give the current file to Claude and describe the change; test with a throwaway session before trusting a new version at a tournament.</p>
 
-      <h4>9 · Installing on a phone (iPhone &amp; Android)</h4>
+      <h4>10 · Installing on a phone (iPhone &amp; Android)</h4>
       <p>Strikebook lives at a web address, so there's no app store and no download — you "install" it by saving the page to your home screen. It then opens fullscreen with its own icon, works offline, and stores history right on the device. Send your team the Strikebook URL and these steps.<br><br>
 
       <b>iPhone / iPad (must use Safari):</b><br>
@@ -1349,19 +1404,24 @@
 
       <b>First-launch note:</b> because the app runs from a web address, the very first open needs a connection (after that it works offline). If nothing loads at an alley, it's almost always wifi — try again on cell data.</p>
 
-      <h4>10 · Hosting &amp; updates (GitHub Pages)</h4>
+      <h4>11 · Hosting &amp; updates (GitHub Pages)</h4>
       <p>Strikebook is hosted at a GitHub Pages URL — that's the address you send people to install (§9).<br><br>
-      <b>To publish an update:</b> in your GitHub repo, upload the new <i>index.html</i> and click <b>"Commit changes"</b> — same filename, same repo, so it replaces the old version at the same URL. That's what keeps everyone's on-device history intact (see §8): the URL never changes, only the file behind it does. Pages usually rebuilds within a minute; hard-refresh the phone to see the new version. <b>Never rename the repo or change the URL</b> once the team is using it — that's the "moving the file" scenario in §8, and it orphans history until everyone re-imports a backup.</p>
+      <b>To publish an update:</b> in your GitHub repo, upload the new <i>index.html</i> and click <b>"Commit changes"</b> — same filename, same repo, so it replaces the old version at the same URL. That's what keeps everyone's on-device history intact (see §9): the URL never changes, only the file behind it does. Pages usually rebuilds within a minute; hard-refresh the phone to see the new version. <b>Never rename the repo or change the URL</b> once the team is using it — that's the "moving the file" scenario in §9, and it orphans history until everyone re-imports a backup.</p>
 
-      <h4>11 · Troubleshooting</h4>
+      <h4>12 · Troubleshooting</h4>
       <p><b>Share button does nothing:</b> some in-app browsers block the share sheet — the card downloads instead; share the PNG manually. <b>History looks empty:</b> you may have opened the file from a different location — import your latest backup. <b>Buttons unresponsive after an update:</b> fully close and reopen the browser tab. When in doubt: export a backup <i>first</i>, then investigate.</p>
 
-      <h4>12 · Sending feedback</h4>
+      <h4>13 · Visit counter (optional, off by default)</h4>
+      <p>Strikebook can send one anonymous ping each time it opens — "the app was opened, running v1.17.0" — to a free counter you'd own, so you can see rough usage over time without asking anyone. <b>It carries no names, no scores, no bowler data of any kind</b>, and it's the only network call the app ever makes besides loading itself.<br><br>
+      <b>Turning it on:</b> create a free account at <i>goatcounter.com</i> (no credit card, non-commercial use is free), which gives you a short "site code." Put that code into <i>VISIT_COUNTER_CODE</i> near the top of the app file. Leave it blank — the default — and the app never makes this call at all; nothing about its behavior changes.<br><br>
+      <b>Reading it:</b> your GoatCounter dashboard shows visits over time automatically. Because every ping is tagged with the version number, its "Pages" view breaks visits down by version too — so you can see, for example, how many opens happened on v1.16.0 versus v1.17.0 as people update.</p>
+
+      <h4>14 · Sending feedback</h4>
       <p>On the menu, <b>💬 Send feedback or request a feature</b> opens a short form: pick the area it's about (scoring, analytics, Baker mode, and so on — or <i>Feature request</i>), mark it as a bug, idea, praise, or question, and write your message. Leaving the <b>include app version &amp; device info</b> box ticked attaches the version, phone type, browser, and whether it's running as a home-screen app — that context solves most bug reports without a round of questions. Untick it if you'd rather not send it.<br><br>
       <b>Where it goes:</b> tapping <b>Send</b> opens your mail app with everything already filled in and addressed to the coach — you just hit send. If that doesn't work on your device — some phones have no mail app set up — tap <b>📋 Copy instead</b> and paste it into a text message. Copy always works, including with no signal.<br><br>
       <b>For the coach (setup):</b> the destination is two lines near the top of the app file — <i>FEEDBACK_EMAIL</i> (currently set) and <i>FEEDBACK_FORM</i>. Swap in a Google Form URL in the second if you'd rather collect responses in a spreadsheet; the form takes priority if both are filled. If both are ever emptied, the Send button hides and only Copy is offered, so nothing breaks.</p>
 
-      <h4>13 · Version history</h4>
+      <h4>15 · Version history</h4>
       <p>The version you're running shows at the bottom of the menu. To confirm everyone's current, have them check that number against the top of this list. After an update, the first launch shows a <b>What's New</b> screen listing only what changed since the version that device was on — so nobody has to read the whole history to catch up. A brand-new install skips it.</p>
       <div class="changelog" id="changelogList"></div>
       <p style="margin-top:10px;opacity:.7">Older layout and reliability fixes were folded into 1.0.0 and aren't listed separately.</p>
@@ -1436,7 +1496,7 @@
       <div class="obNum">2</div>
       <div class="obBody">
         <div class="obH">Your scores stay on this device</div>
-        <div class="obP">Nothing is uploaded anywhere — no account, no sign-in, works with no signal.
+        <div class="obP">No bowling data is ever uploaded — no account, no sign-in, works with no signal.
         The flip side: <b>backups are on you.</b> After a tournament, open History and tap
         <b>Save backup file</b>, then keep it in iCloud or Drive. That file is the only thing
         a cleared browser can't erase.</div>
@@ -1477,6 +1537,60 @@
     <div class="changelog" id="wnList"></div>
     <button id="wnDone" class="wnDoneBtn">Got it — let's bowl 🎳</button>
     <div class="wnFoot">You can always find the full history in the Owner's Manual.</div>
+  </div>
+</div>
+
+<div class="recap" id="leaguesView">
+  <div class="recapInner">
+    <div class="recapHead">
+      <div><div class="recapTitle">LEAGUES</div>
+      <div class="recapWho">Manage this team's leagues</div></div>
+      <button id="leaguesClose">✕ Close</button>
+    </div>
+    <button id="newLeagueBtn" class="newLeagueBtn">＋ New league</button>
+    <div id="leaguesListWrap"></div>
+  </div>
+</div>
+
+<div class="recap" id="leagueFormView">
+  <div class="recapInner">
+    <div class="recapHead">
+      <div><div class="recapTitle" id="lfTitle">NEW LEAGUE</div>
+      <div class="recapWho" id="lfSub">Set it up once, pick it every week</div></div>
+      <button id="lfCancel">✕ Cancel</button>
+    </div>
+
+    <div class="anaHead">League name</div>
+    <input id="lfName" class="eventInput" maxlength="40" placeholder="e.g. Tuesday Night Classic" autocomplete="off">
+
+    <div class="anaHead">Number of weeks</div>
+    <input id="lfWeeks" class="eventInput" type="number" min="1" max="52" placeholder="e.g. 18">
+
+    <div class="anaHead">Start &amp; end dates</div>
+    <div class="row2">
+      <input id="lfStart" class="eventInput" type="date">
+      <input id="lfEnd" class="eventInput" type="date">
+    </div>
+
+    <div class="anaHead">Scoring</div>
+    <div class="typeSeg" id="lfScoringSeg" style="grid-template-columns:1fr 1fr">
+      <button data-scoring="scratch">Scratch</button>
+      <button data-scoring="handicap" class="on">Handicap</button>
+    </div>
+
+    <div id="lfHcpWrap">
+      <div class="anaHead">Handicap formula</div>
+      <div class="presetList" id="lfPresetList"></div>
+      <div class="row2" id="lfCustomRow" style="display:none;margin-top:8px">
+        <input id="lfCustomBasis" class="eventInput" type="number" min="100" max="300" placeholder="Basis e.g. 220">
+        <input id="lfCustomPct" class="eventInput" type="number" min="1" max="100" placeholder="Percent e.g. 90">
+      </div>
+    </div>
+
+    <button id="lfSave" class="fbSendBtn" style="margin-top:16px">Create league</button>
+    <button id="lfCloseLeagueBtn" class="lfDangerBtn" style="display:none">Close this league</button>
+    <button id="lfReopenBtn" class="lfDangerBtn good" style="display:none">Reopen this league</button>
+    <div class="fbHint" id="lfHint"></div>
   </div>
 </div>
 
@@ -1612,9 +1726,11 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.17.0';  // Single source of truth for the version history: renders BOTH the manual's
+  const APP_VERSION = '1.19.0';  // Single source of truth for the version history: renders BOTH the manual's
   // section 12 and the "what's new" overlay shown after an update.
   const CHANGELOG = [
+    {v:'1.19.0', d:"Leagues \u2014 create named leagues with weeks, dates, and scratch or handicap scoring (three researched presets plus Custom). Pick from open leagues when starting a League session; closed leagues stay in history but drop off the picker, and can be reopened any time from \ud83c\udfc6 Leagues on the menu."},
+    {v:'1.18.0', d:"An optional, anonymous visit counter \u2014 off by default, and even switched on it never carries names, scores, or bowler data, just \u2018the app opened, on this version.\u2019 See \u00a712 of the manual to turn it on."},
     {v:'1.17.0', d:"A cleaner start \u2014 the busy start screen is now a simple menu (Start a session, History, Manual, How To, Feedback), with roster and session setup moved to their own screen reached by tapping Start a session."},
     {v:'1.16.0', d:"A How To guide \u2014 short numbered steps for every feature in the app, from starting a session to Baker mode to sending feedback. Open it from the start screen or from inside the Owner's Manual."},
     {v:'1.15.0', d:"Log a past session now supports frame-by-frame, ball-by-ball entry \u2014 tap the \ud83c\udfb3 next to any game to walk through all 10 frames with the same number pad used to fix a mistake, strikes and spares included. No pin rack for backfilled games, so exact pin leaves aren't captured, but the full scoresheet, strike count, and spare count all are. Quick totals are still there for when that level of detail isn't needed."},
@@ -1658,6 +1774,15 @@
      If BOTH are empty, the Send button hides and only "Copy" is offered — which always works. */
   const FEEDBACK_EMAIL = 'wootechservices@gmail.com';
   const FEEDBACK_FORM  = '';
+
+  /* ---------- VISIT COUNTER — off until you set this ----------
+     A free GoatCounter account (goatcounter.com) gives you a "site code" like "strikebook123".
+     Put it below to turn on a single anonymous ping each time the app opens: no names, no scores,
+     no bowler data — just "the app opened, running v1.17.0", tagged by date automatically in
+     GoatCounter's own dashboard. Leave this '' and nothing is ever sent — the app behaves exactly
+     as it does today. This is the ONLY network call Strikebook ever makes besides loading itself;
+     see §1 of the Owner's Manual, which states this plainly. */
+  const VISIT_COUNTER_CODE = '';
 
   /* ---------- state ---------- */
   let bowlers = [];           // {name, frames:[[rolls]...x10], past:[game totals...]}
@@ -2394,6 +2519,8 @@
   let saveMode = 'ANALYTICS';        // 'ANALYTICS' | 'SUMMARY_ONLY'
   let eventLabel = '';               // tournament layer: "Junior Gold · Minneapolis"
   let sessionType = 'Practice';      // Practice | League | Tournament | Baker
+  let sessionLeagueId = '';          // set when sessionType==='League' and a specific league is picked
+  let sessionLeagueRequired = false; // true once League type is picked and at least one open league exists
   let sessionNote = '';              // free-text coach note attached at Finish
   let oilCategory = '';              // '' | House | Sport | Challenge
   let oilPattern = '';              // optional specific pattern name
@@ -3189,6 +3316,244 @@
     }catch(e){}
   }
 
+  /* ================= LEAGUES ================= */
+  const LEAGUES_KEY = 'leagues_v1';
+  // The three real-world presets researched from USBC/league sources, plus Custom.
+  const HCP_PRESETS = [
+    {basis:220, pct:90, label:'90% of 220', sub:'Most common in adult sanctioned leagues'},
+    {basis:200, pct:90, label:'90% of 200', sub:'Typical for youth leagues'},
+    {basis:220, pct:80, label:'80% of 220', sub:'More competitive — smaller handicaps'}
+  ];
+  async function leaguesGetAll(){
+    const v = await kvGet(LEAGUES_KEY);
+    return Array.isArray(v) ? v : [];
+  }
+  async function leaguesSaveAll(list){ await kvSet(LEAGUES_KEY, list); }
+  // Standard bowling handicap formula: (basis − average) × percentage, FLOORED not rounded —
+  // this exact rule was verified against real handicap-calculator sources before building.
+  function calcHandicap(basis, pct, avg){
+    return Math.max(0, Math.floor((basis - avg) * (pct/100)));
+  }
+  function leagueScoringLabel(lg){
+    return lg.scoringType !== 'handicap' ? 'Scratch' : `Handicap — ${lg.hcpPercent}% of ${lg.hcpBasis}`;
+  }
+  function leagueWeekLabel(lg){
+    if (!lg.startDate || !lg.weeks) return '';
+    const start = new Date(lg.startDate + 'T00:00:00');
+    const diffDays = Math.floor((new Date() - start) / 86400000);
+    const wk = Math.max(1, Math.min(lg.weeks, Math.floor(diffDays/7) + 1));
+    return `Week ${wk} of ${lg.weeks}`;
+  }
+  function dateRangeLabel(lg){
+    const fmt = d => new Date(d+'T00:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric'});
+    return lg.startDate && lg.endDate ? `${fmt(lg.startDate)} – ${fmt(lg.endDate)}` : '';
+  }
+
+  /* ---------- leagues: management screen ---------- */
+  let leaguesCache = [];
+  async function openLeagues(){
+    leaguesCache = await leaguesGetAll();
+    renderLeaguesList();
+    document.getElementById('leaguesView').classList.add('open');
+    document.getElementById('leaguesView').scrollTop = 0;
+  }
+  function renderLeaguesList(){
+    const wrap = document.getElementById('leaguesListWrap');
+    const open = leaguesCache.filter(l=>l.status==='open');
+    const closed = leaguesCache.filter(l=>l.status==='closed');
+    let html = `<div class="anaHead">Open — pickable when starting a session</div>`;
+    html += open.length ? open.map(leagueCardHTML).join('')
+      : `<div class="noData">No open leagues yet. Tap + New league to add one.</div>`;
+    if (closed.length){
+      html += `<div class="anaHead">Closed — history only</div>`;
+      html += closed.map(leagueCardHTML).join('');
+    }
+    wrap.innerHTML = html;
+    wrap.querySelectorAll('.leagueCard').forEach(el=>el.onclick = ()=>openLeagueForm(el.dataset.id));
+  }
+  function leagueCardHTML(lg){
+    const wk = lg.status==='open' ? leagueWeekLabel(lg) : '';
+    return `<div class="leagueCard${lg.status==='closed'?' closed':''}" data-id="${esc(lg.id)}">
+      <div class="lTop"><div class="lName">${esc(lg.name)}</div><div class="lBadge ${lg.status}">${lg.status==='open'?'OPEN':'CLOSED'}</div></div>
+      <div class="lMeta">${lg.weeks} weeks · ${esc(dateRangeLabel(lg))} · <b>${esc(leagueScoringLabel(lg))}</b>${wk?' · '+esc(wk):''}</div>
+    </div>`;
+  }
+  document.getElementById('menuLeaguesBtn').onclick = openLeagues;
+  document.getElementById('leaguesClose').onclick = ()=>document.getElementById('leaguesView').classList.remove('open');
+  document.getElementById('newLeagueBtn').onclick = ()=>openLeagueForm(null);
+
+  /* ---------- leagues: create/edit form ---------- */
+  let lfEditingId = null;
+  let lfReturnTo = 'leagues';        // 'leagues' | 'setup' — where Save/Cancel should return to
+  let lfScoring = 'handicap';
+  let lfPresetIdx = 0;   // index into HCP_PRESETS, or -1 for Custom
+  function renderLfPresets(){
+    const wrap = document.getElementById('lfPresetList');
+    const cards = HCP_PRESETS.map((p,i)=>({i, name:p.label, sub:p.sub}))
+      .concat([{i:-1, name:'Custom', sub:'Set your own basis and percentage'}]);
+    wrap.innerHTML = cards.map(c=>`
+      <div class="presetCard${lfPresetIdx===c.i?' on':''}" data-i="${c.i}">
+        <div class="presetTop">
+          <div><div class="presetName">${esc(c.name)}</div><div class="presetSub">${esc(c.sub)}</div></div>
+          <div class="radio${lfPresetIdx===c.i?' on':''}"></div>
+        </div>
+      </div>`).join('');
+    wrap.querySelectorAll('.presetCard').forEach(el=>el.onclick = ()=>{
+      lfPresetIdx = Number(el.dataset.i);
+      document.getElementById('lfCustomRow').style.display = lfPresetIdx===-1 ? 'flex' : 'none';
+      renderLfPresets();
+    });
+  }
+  function openLeagueForm(id, returnTo){
+    lfEditingId = id;
+    lfReturnTo = returnTo || 'leagues';
+    const existing = id ? leaguesCache.find(l=>l.id===id) : null;
+    document.getElementById('lfTitle').textContent = existing ? 'EDIT LEAGUE' : 'NEW LEAGUE';
+    document.getElementById('lfSub').textContent = existing ? existing.name : "Set it up once, pick it every week";
+    document.getElementById('lfName').value = existing ? existing.name : '';
+    document.getElementById('lfWeeks').value = existing ? existing.weeks : '';
+    document.getElementById('lfStart').value = existing ? existing.startDate : '';
+    document.getElementById('lfEnd').value = existing ? existing.endDate : '';
+    lfScoring = existing ? existing.scoringType : 'handicap';
+    document.querySelectorAll('#lfScoringSeg button').forEach(b=>b.classList.toggle('on', b.dataset.scoring===lfScoring));
+    document.getElementById('lfHcpWrap').style.display = lfScoring==='handicap' ? 'block' : 'none';
+    if (existing && existing.scoringType==='handicap'){
+      const idx = HCP_PRESETS.findIndex(p=>p.basis===existing.hcpBasis && p.pct===existing.hcpPercent);
+      lfPresetIdx = idx;
+      document.getElementById('lfCustomBasis').value = idx===-1 ? existing.hcpBasis : '';
+      document.getElementById('lfCustomPct').value = idx===-1 ? existing.hcpPercent : '';
+    } else {
+      lfPresetIdx = 0;
+      document.getElementById('lfCustomBasis').value = '';
+      document.getElementById('lfCustomPct').value = '';
+    }
+    document.getElementById('lfCustomRow').style.display = lfPresetIdx===-1 ? 'flex' : 'none';
+    renderLfPresets();
+    document.getElementById('lfSave').textContent = existing ? 'Save changes' : 'Create league';
+    document.getElementById('lfCloseLeagueBtn').style.display = existing && existing.status==='open' ? 'block' : 'none';
+    document.getElementById('lfReopenBtn').style.display = existing && existing.status==='closed' ? 'block' : 'none';
+    document.getElementById('lfHint').textContent = '';
+    document.getElementById('leaguesView').classList.remove('open');
+    document.getElementById('leagueFormView').classList.add('open');
+    document.getElementById('leagueFormView').scrollTop = 0;
+  }
+  function leagueFormExit(){
+    document.getElementById('leagueFormView').classList.remove('open');
+    if (lfReturnTo === 'setup') startView.classList.add('open');
+    else document.getElementById('leaguesView').classList.add('open');
+  }
+  document.getElementById('lfCancel').onclick = leagueFormExit;
+  document.querySelectorAll('#lfScoringSeg button').forEach(btn=>btn.onclick = ()=>{
+    lfScoring = btn.dataset.scoring;
+    document.querySelectorAll('#lfScoringSeg button').forEach(b=>b.classList.toggle('on', b===btn));
+    document.getElementById('lfHcpWrap').style.display = lfScoring==='handicap' ? 'block' : 'none';
+  });
+  document.getElementById('lfSave').onclick = async ()=>{
+    const hint = document.getElementById('lfHint');
+    const name = document.getElementById('lfName').value.trim();
+    const weeks = Number(document.getElementById('lfWeeks').value);
+    const start = document.getElementById('lfStart').value;
+    const end = document.getElementById('lfEnd').value;
+    if (!name){ hint.textContent = 'Give the league a name.'; return; }
+    if (!weeks || weeks < 1){ hint.textContent = 'Enter a number of weeks.'; return; }
+    if (!start || !end){ hint.textContent = 'Pick a start and end date.'; return; }
+    let hcpBasis = null, hcpPercent = null;
+    if (lfScoring === 'handicap'){
+      if (lfPresetIdx === -1){
+        hcpBasis = Number(document.getElementById('lfCustomBasis').value);
+        hcpPercent = Number(document.getElementById('lfCustomPct').value);
+        if (!hcpBasis || !hcpPercent){ hint.textContent = 'Enter a custom basis and percentage.'; return; }
+      } else {
+        hcpBasis = HCP_PRESETS[lfPresetIdx].basis;
+        hcpPercent = HCP_PRESETS[lfPresetIdx].pct;
+      }
+    }
+    let newId = lfEditingId;
+    if (lfEditingId){
+      const lg = leaguesCache.find(l=>l.id===lfEditingId);
+      Object.assign(lg, { name, weeks, startDate:start, endDate:end, scoringType:lfScoring, hcpBasis, hcpPercent });
+    } else {
+      newId = 'lg'+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+      leaguesCache.push({
+        id: newId,
+        name, weeks, startDate:start, endDate:end, scoringType:lfScoring, hcpBasis, hcpPercent,
+        status: 'open', createdAt: new Date().toISOString()
+      });
+    }
+    await leaguesSaveAll(leaguesCache);
+    const goingToSetup = lfReturnTo === 'setup';
+    leagueFormExit();
+    if (goingToSetup){
+      // came from the "no open leagues yet" prompt mid session-setup — land back there
+      // with the league they just made already selected, not on the leagues list
+      sessionLeagueId = newId;
+      refreshLeaguePicker();
+    } else {
+      renderLeaguesList();
+    }
+    toast('League saved', true);
+  };
+  document.getElementById('lfCloseLeagueBtn').onclick = async ()=>{
+    if (!await askConfirm(`Close this league? It moves to history and won't be pickable for new sessions — you can reopen it later if you need to.`, 'Close league')) return;
+    const lg = leaguesCache.find(l=>l.id===lfEditingId);
+    lg.status = 'closed';
+    await leaguesSaveAll(leaguesCache);
+    document.getElementById('leagueFormView').classList.remove('open');
+    document.getElementById('leaguesView').classList.add('open');
+    renderLeaguesList();
+    toast('League closed', true);
+  };
+  document.getElementById('lfReopenBtn').onclick = async ()=>{
+    const lg = leaguesCache.find(l=>l.id===lfEditingId);
+    lg.status = 'open';
+    await leaguesSaveAll(leaguesCache);
+    document.getElementById('leagueFormView').classList.remove('open');
+    document.getElementById('leaguesView').classList.add('open');
+    renderLeaguesList();
+    toast('League reopened', true);
+  };
+
+  /* ---------- leagues: "which league?" picker on the session-setup screen ---------- */
+  async function refreshLeaguePicker(){
+    const wrap = document.getElementById('leaguePickWrap');
+    if (sessionType !== 'League'){
+      wrap.style.display = 'none';
+      sessionLeagueId = ''; sessionLeagueRequired = false;
+      updateStartBtn();
+      return;
+    }
+    const all = await leaguesGetAll();
+    const open = all.filter(l=>l.status==='open');
+    wrap.style.display = 'block';
+    sessionLeagueRequired = open.length > 0;
+    if (!open.length){
+      wrap.innerHTML = `<div class="leaguePickHint">WHICH LEAGUE?</div>
+        <div class="noData">No open leagues yet.</div>
+        <button class="lfDangerBtn good" id="jumpToNewLeague" style="margin-top:2px">＋ Create a league</button>`;
+      document.getElementById('jumpToNewLeague').onclick = async ()=>{
+        startView.classList.remove('open');
+        leaguesCache = await leaguesGetAll();
+        openLeagueForm(null, 'setup');
+      };
+      sessionLeagueId = '';
+      updateStartBtn();
+      return;
+    }
+    if (sessionLeagueId && !open.some(l=>l.id===sessionLeagueId)) sessionLeagueId = '';
+    wrap.innerHTML = `<div class="leaguePickHint">WHICH LEAGUE?</div>` + open.map(lg=>{
+      const wk = leagueWeekLabel(lg);
+      return `<div class="leagueRow${sessionLeagueId===lg.id?' sel':''}" data-id="${esc(lg.id)}">
+        <div><div class="leagueRowName">${esc(lg.name)}</div><div class="leagueRowMeta">${wk?esc(wk)+' · ':''}${esc(leagueScoringLabel(lg))}</div></div>
+        <div class="check${sessionLeagueId===lg.id?' on':''}"></div>
+      </div>`;
+    }).join('');
+    wrap.querySelectorAll('.leagueRow').forEach(el=>el.onclick = ()=>{
+      sessionLeagueId = sessionLeagueId===el.dataset.id ? '' : el.dataset.id;
+      refreshLeaguePicker();
+    });
+    updateStartBtn();
+  }
+
   /* ---------- auto-backup: a user-chosen folder, written on every Finish ----------
      Uses the File System Access API — desktop Chrome/Edge only. Safari and iOS have
      no equivalent, so this is an addition to manual backup, never a replacement:
@@ -3289,6 +3654,7 @@
       type: sessionType,
       note: sessionNote,
       oilCategory, oilPattern,
+      leagueId: sessionType === 'League' ? sessionLeagueId : '',
       bowlers: bowlers.map(b=>({
         name: b.name,
         bid: b.bid,
@@ -3316,7 +3682,7 @@
 
     bakerRoster = []; bakerFrameOwners = []; bakerGameOwners = [];
     bowlers = bowlers.map(b=>newBowler(b.name, b.bid));
-    cur = 0; history = []; gameNum = 1; eventLabel = ''; sessionNote = ''; oilCategory=''; oilPattern='';
+    cur = 0; history = []; gameNum = 1; eventLabel = ''; sessionNote = ''; oilCategory=''; oilPattern=''; sessionLeagueId='';
     lastCall = 'In the books! Session saved to history.' + backupNote;
     render();
     openMenu();
@@ -3846,7 +4212,7 @@
     document.getElementById('histBowler').style.display  = which==='bowler' ? 'block':'none';
     document.getElementById('histSession').style.display = which==='session' ? 'block':'none';
   }
-  function renderHistHome(){
+  async function renderHistHome(){
     const nSess = histSessions.length;
     document.getElementById('histSub').textContent =
       nSess ? `${nSess} saved session${nSess===1?'':'s'} on this device` : 'No saved sessions yet';
@@ -3882,12 +4248,15 @@
         return;
       }
       const sorted = histSessions.slice().sort((a,b)=> (b.date||'').localeCompare(a.date||'') || b.id.localeCompare(a.id));
+      const leagueNameById = {};
+      (await leaguesGetAll()).forEach(lg=>{ leagueNameById[lg.id] = lg.name; });
       list.innerHTML = sorted.map(s=>{
         const d = new Date(s.date);
         const games = s.bowlers.reduce((a,b)=>a+b.games.length,0);
         const line = s.bowlers.map(b=>`${b.name} ${b.games.reduce((a,g)=>a+g.total,0)}`).join(' · ');
+        const lgName = s.leagueId ? leagueNameById[s.leagueId] : '';
         return `<button class="sessRow" data-s="${s.id}">
-          <div class="st">${esc(s.event || 'Session')} · ${d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</div>
+          <div class="st">${esc(lgName || s.event || 'Session')} · ${d.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</div>
           <div class="sd">${games} game${games===1?'':'s'} · ${esc(line)}</div>
         </button>`;
       }).join('');
@@ -4087,13 +4456,21 @@
   }
 
   /* ---------- archived session detail ---------- */
-  function openSessionPage(id, returnCtx){
+  async function openSessionPage(id, returnCtx){
     const s = histSessions.find(x=>x.id===id);
     if (!s) return;
     const pane = document.getElementById('histSession');
     const d = new Date(s.date);
     const backLabel = returnCtx && returnCtx.back==='bowler' ? `← ${esc(returnCtx.ident.name)}` : '← All sessions';
     const isBaker = s.type === 'Baker' && s.baker;
+    // resolve the linked league's current name (leagues can be renamed after the fact,
+    // so this always shows the up-to-date name rather than one frozen at save time)
+    let linkedLeagueName = '';
+    if (s.leagueId){
+      const allLeagues = await leaguesGetAll();
+      const lg = allLeagues.find(l=>l.id===s.leagueId);
+      if (lg) linkedLeagueName = lg.name;
+    }
     const bodyHTML = isBaker
       ? `<div class="recapWho" style="margin:6px 0 10px">🎳 <b>Baker format</b> · ${s.baker.team.map(t=>esc(t.name)).join(' → ')}</div>` +
         s.baker.games.map((g,i)=>{
@@ -4120,7 +4497,7 @@
     pane.innerHTML = `
       <button class="histBack" id="histBack2">${backLabel}</button>
       <div class="recapTitle" style="font-size:17px">${esc(s.event || (isBaker?'BAKER SESSION':'SESSION'))}</div>
-      <div class="recapWho" style="margin-bottom:4px">${d.toLocaleDateString(undefined,{weekday:'short',month:'long',day:'numeric',year:'numeric'})}${s.type?` · ${esc(s.type)}`:' · <span style="opacity:.6">no type set</span>'}${s.oilCategory?` · <span style="color:var(--teal)">${esc(s.oilCategory)}${s.oilPattern?': '+esc(s.oilPattern):''}</span>`:''}</div>
+      <div class="recapWho" style="margin-bottom:4px">${d.toLocaleDateString(undefined,{weekday:'short',month:'long',day:'numeric',year:'numeric'})}${s.type?` · ${esc(s.type)}`:' · <span style="opacity:.6">no type set</span>'}${linkedLeagueName?` · <span style="color:var(--amber)">🏆 ${esc(linkedLeagueName)}</span>`:''}${s.oilCategory?` · <span style="color:var(--teal)">${esc(s.oilCategory)}${s.oilPattern?': '+esc(s.oilPattern):''}</span>`:''}</div>
       ${s.oilPattern ? `<a class="kegelLink" href="https://patternlibrary.kegel.net/" target="_blank" rel="noopener">🔍 Look up "${esc(s.oilPattern)}" in the Kegel pattern library ↗</a>` : ''}
       ${s.note ? `<div class="sessNote">📝 ${esc(s.note)}</div>` : ''}
       <button class="editLabelBtn" id="editLabelBtn">✎ Edit label${s.type?'':' · add type'}</button>
@@ -4738,6 +5115,7 @@
     renderRoster(known);
     document.getElementById('startEvent').value = eventLabel;
     document.querySelectorAll('#startTypeSeg button').forEach(x=>x.classList.toggle('on', x.dataset.type===sessionType));
+    refreshLeaguePicker();
     document.querySelectorAll('#startOilSeg button').forEach(x=>x.classList.toggle('on', x.dataset.oil===oilCategory));
     syncOilPatternField();
     document.getElementById('startOilPattern').value = oilPattern;
@@ -4799,7 +5177,8 @@
     renderTurnOrder();
   }
   function updateStartBtn(){
-    document.getElementById('startBowlBtn').disabled = startSel.length === 0;
+    document.getElementById('startBowlBtn').disabled =
+      startSel.length === 0 || (sessionLeagueRequired && !sessionLeagueId);
   }
 
   /* ---------- turn order: drag to set who bowls in what sequence ---------- */
@@ -4974,6 +5353,7 @@
     document.querySelectorAll('#startTypeSeg button').forEach(x=>x.classList.toggle('on', x===btn));
     // Baker mode wants the roster to feel like a team ordering; hint via button label
     document.getElementById('startBowlBtn').textContent = sessionType==='Baker' ? '🎳 Start Baker game' : "🎳 Let's bowl";
+    refreshLeaguePicker();
   });
   document.querySelectorAll('#startOilSeg button').forEach(btn=>btn.onclick = ()=>{
     oilCategory = btn.dataset.oil;
@@ -5185,9 +5565,22 @@
     document.getElementById('whatsNewView').classList.remove('open');
   };
 
+  // One anonymous, best-effort ping per app open. No-op entirely when VISIT_COUNTER_CODE is ''.
+  // Uses a plain Image() (a pixel request), never a script tag — matches the app's single-file,
+  // zero-dependency approach, and can never throw or block anything else if it fails or times out.
+  function pingVisitCounter(){
+    if (!VISIT_COUNTER_CODE) return;
+    try{
+      const img = new Image();
+      const path = encodeURIComponent('/v/' + APP_VERSION);
+      img.src = `https://${VISIT_COUNTER_CODE}.goatcounter.com/count?p=${path}&t=${encodeURIComponent('Strikebook v'+APP_VERSION)}`;
+    }catch(e){}
+  }
+
   if (!loadSession()) resetSession(); else render();
   if (!sessionLive()) openMenu();
   wireFrameLongPress();
+  pingVisitCounter();
   // A brand-new user gets onboarding; a returning user gets "what's new". Never both.
   (async ()=>{
     const firstRun = !onboardedGet() && (await archiveAll()).length === 0;
