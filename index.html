@@ -128,7 +128,7 @@
   .prompt b{color:var(--amber)}
 
   /* Pin pad */
-  .pad{padding:8px 14px 6px;margin-top:auto}
+  .pad{padding:8px 14px 6px;margin-top:auto;position:relative}
   .numgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
   .numgrid button{
     font-family:'Barlow Semi Condensed',sans-serif;font-weight:700;font-size:22px;
@@ -344,12 +344,12 @@
   .lgMetaRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
   .lgPill{background:var(--navy-2);border:1.5px solid rgba(245,239,224,.2);border-radius:999px;padding:5px 12px;font-size:11.5px;color:var(--cream-dim);font-weight:600}
   .lgPill.week{border-color:var(--green);color:var(--green)}
-  .standRow{
+  .lgStandRow{
     display:flex;align-items:center;gap:11px;
     background:var(--navy-2);border:1.5px solid rgba(245,239,224,.14);border-radius:12px;
     padding:11px 13px;margin-bottom:8px;cursor:pointer;
   }
-  .standRow.sel{border-color:var(--amber)}
+  .lgStandRow.sel{border-color:var(--amber)}
   .standAvatar{
     width:34px;height:34px;border-radius:50%;background:var(--amber);color:var(--ink);
     display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none;font-family:'Bowlby One SC',cursive;
@@ -801,6 +801,18 @@
   .maxLine.finalState{background:#FBE7C2;border-style:solid}
   .maxLine.finalState .mx{color:var(--ink)}
   .maxLine.perfectAlive .mx{color:#1E8A3C}
+  .hcpLine{
+    margin-top:6px;padding:9px 12px;border-radius:8px;
+    background:rgba(227,155,45,.14);border:1.25px solid rgba(227,155,45,.4);
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;
+  }
+  .hcpLine .hcpTag{font-size:9.5px;font-weight:800;letter-spacing:1px;color:#8a6d2e;text-transform:uppercase}
+  .hcpLine .hcpNums{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+  .hcpLine .hcpScratch{font-size:15px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums}
+  .hcpLine .hcpPlus{font-size:12px;color:#8a6d2e;opacity:.7}
+  .hcpLine .hcpVal{font-size:15px;font-weight:700;color:#8a6d2e;font-variant-numeric:tabular-nums}
+  .hcpLine .hcpEq{font-size:12px;color:#8a6d2e;opacity:.7}
+  .hcpLine .hcpTotal{font-size:20px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
   .sessionLine{
     padding:6px 2px 0;font-size:12px;font-weight:600;color:#6E5B33;
     display:none;justify-content:space-between;align-items:baseline;
@@ -822,7 +834,7 @@
 
   /* Toast */
   #toast{
-    position:fixed;left:50%;top:34%;transform:translate(-50%,-50%) scale(.6) rotate(-4deg);
+    position:absolute;left:50%;top:48%;transform:translate(-50%,-50%) scale(.6) rotate(-4deg);
     font-family:'Bowlby One SC',cursive;font-size:52px;color:var(--red);
     text-shadow:0 3px 0 rgba(0,0,0,.5), 0 0 30px rgba(222,74,46,.5);
     opacity:0;pointer-events:none;z-index:50;white-space:nowrap;
@@ -927,6 +939,7 @@
     <div class="who"><span id="whoName">Bowler</span><span class="status" id="whoStatus"></span></div>
     <div class="sheetScroll"><div class="frames" id="framesEl"></div></div>
     <div class="maxLine" id="maxLine"></div>
+    <div class="hcpLine" id="hcpLine" style="display:none"></div>
     <div class="sessionLine" id="sessionLine"></div>
   </div>
 </div>
@@ -956,6 +969,7 @@
     <button id="foulBtn">F</button>
     <button id="undoBtn">↩</button>
   </div>
+  <div id="toast">STRIKE!</div>
 </div>
 
 <div class="actions">
@@ -981,8 +995,6 @@
     </div>
   </div>
 </div>
-
-<div id="toast">STRIKE!</div>
 
 <div class="modal" id="nameModal">
   <div class="card">
@@ -1387,7 +1399,8 @@
       <b>Bowling in it:</b> pick <b>League</b> as the session type when starting a session, and a <b>WHICH LEAGUE?</b> list appears showing every open league — tap one before you can bowl. No open leagues yet? A shortcut drops you straight into league setup and brings you right back with it selected, no detour required.<br><br>
       <b>Closing a league</b> (from its card in the Leagues list) moves it to a separate closed section — it drops off the picker for new sessions, but every session already linked to it stays exactly as it is in History. Closed leagues can be <b>reopened</b> any time from the same screen.<br><br>
       <b>Tap into any league</b> to see its own numbers, separate from every other league or practice game: <b>standings</b> — everyone who's bowled in it, their average using just this league's games (the same 21-game window as everywhere else in the app — a growing average until 21 games, a trailing 21 after), and their handicap if the league is scored that way; <b>league records</b> — the high scratch game and high scratch series set in this league specifically, kept apart from a bowler's career-wide Personal Records; and an <b>average trend</b> by week for whichever bowler you tap in standings, once they've played 2 or more weeks. <b>✎ Edit league</b> from the same screen changes any setting, including closing or reopening it.<br><br>
-      <b>Deliberately not tracked per league:</b> the practice rack, Nemesis Pin, spare-class tiers, the drill list, and game-position average all stay pooled across every game a bowler has ever played, not split up by league — they're skill-development numbers that are more useful with the biggest sample size available, not fragmented by which league a game happened to be part of.</p>
+      <b>Deliberately not tracked per league:</b> the practice rack, Nemesis Pin, spare-class tiers, the drill list, and game-position average all stay pooled across every game a bowler has ever played, not split up by league — they're skill-development numbers that are more useful with the biggest sample size available, not fragmented by which league a game happened to be part of.<br><br>
+      <b>While bowling</b> in a handicap league, the scoresheet shows a scratch + handicap row right below MAX POSSIBLE — the handicap is set once, from that bowler's entering average going into tonight, and never changes mid-session, same as a real league sheet would work. It only shows up once a bowler has an established average from a prior night in that league; their very first night, it's scratch-only until next time. The same scratch + handicap breakdown appears again on the session recap afterward.</p>
 
       <h4>5 · Backup SOP — do this after every tournament</h4>
       <p><b>Auto-backup (desktop Chrome/Edge only):</b> on the menu, tap the backup status pill and choose
@@ -1781,9 +1794,11 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.20.0';  // Single source of truth for the version history: renders BOTH the manual's
+  const APP_VERSION = '1.21.1';  // Single source of truth for the version history: renders BOTH the manual's
   // section 12 and the "what's new" overlay shown after an update.
   const CHANGELOG = [
+    {v:'1.21.1', d:"Fixed a real, measured overlap between the strike/spare celebration and the new live handicap row \u2014 the celebration now appears over the pin rack/keypad area instead of a fixed screen position, so it can't collide with anything on the scoresheet above it, regardless of screen size or what's showing there."},
+    {v:'1.21.0', d:"Handicap during live play \u2014 in a handicap league, the scoresheet now shows scratch, handicap, and the running league total while you bowl. The handicap is set once at the start of the night from your entering average and never changes mid-session, same as a real league sheet. It only appears once you have an established average from a prior night. The same scratch+handicap breakdown now also shows on the session recap."},
     {v:'1.20.0', d:"League math \u2014 tap into any league to see standings (league-only average and handicap for everyone in it), league records kept separate from career bests, and a week-by-week average trend per bowler. Averages use the same 21-game window as everywhere else in the app."},
     {v:'1.19.0', d:"Leagues \u2014 create named leagues with weeks, dates, and scratch or handicap scoring (three researched presets plus Custom). Pick from open leagues when starting a League session; closed leagues stay in history but drop off the picker, and can be reopened any time from \ud83c\udfc6 Leagues on the menu."},
     {v:'1.18.0', d:"An optional, anonymous visit counter \u2014 off by default, and even switched on it never carries names, scores, or bowler data, just \u2018the app opened, on this version.\u2019 See \u00a712 of the manual to turn it on."},
@@ -2577,6 +2592,10 @@
   let sessionType = 'Practice';      // Practice | League | Tournament | Baker
   let sessionLeagueId = '';          // set when sessionType==='League' and a specific league is picked
   let sessionLeagueRequired = false; // true once League type is picked and at least one open league exists
+  let sessionHandicaps = {};         // key: bid||normName(name) -> {avg, hcp}, frozen once at session start —
+                                      // never recalculated mid-session, matching a real league sheet
+  let sessionLeagueName = '';        // cached alongside sessionHandicaps so the live row never depends on
+                                      // leaguesCache possibly being stale or empty this page load
   let sessionNote = '';              // free-text coach note attached at Finish
   let oilCategory = '';              // '' | House | Sport | Challenge
   let oilPattern = '';              // optional specific pattern name
@@ -2814,6 +2833,24 @@
     maxEl.innerHTML = over
       ? `<span>FINAL SCORE</span><span class="mx">${liveTotal(b)}</span>`
       : `<span>MAX POSSIBLE${mx===300 ? ' — PERFECT GAME ALIVE' : ''}</span><span class="mx">${mx}</span>`;
+
+    // live scratch + handicap row — only for this bowler, only in a handicap league,
+    // and only once they have an established entering average from a prior night
+    const hcpEl = document.getElementById('hcpLine');
+    const hcpKey = b.bid || normName(b.name);
+    const hcpData = sessionHandicaps[hcpKey];
+    if (sessionType === 'League' && sessionLeagueId && hcpData){
+      const scratch = liveTotal(b);
+      hcpEl.style.display = 'flex';
+      hcpEl.innerHTML = `<span class="hcpTag">🏆 ${esc(sessionLeagueName || 'League')}</span>
+        <span class="hcpNums">
+          <span class="hcpScratch">${scratch}</span><span class="hcpPlus">scratch +</span>
+          <span class="hcpVal">${hcpData.hcp}</span><span class="hcpEq">hcp =</span>
+          <span class="hcpTotal">${scratch + hcpData.hcp}</span>
+        </span>`;
+    } else {
+      hcpEl.style.display = 'none';
+    }
 
     // session line: past games + series
     const sl = document.getElementById('sessionLine');
@@ -3238,11 +3275,20 @@
 
     // stacked game sheets
     const gw = document.getElementById('recapGames');
+    const recapHcpKey = b.bid || normName(b.name);
+    const recapHcpInfo = sessionHandicaps[recapHcpKey];
     gw.innerHTML = s.games.map((g,i)=>{
       const best = g.total === s.high && s.games.length > 1;
       const head = `<div class="gh"><b>Game ${i+1}</b><span class="gt${best?' best':''}">${g.total}</span></div>`;
-      if (!g.frames) return `<div class="gameCard">${head}<div class="noframes">Summary only — sheet not archived</div></div>`;
-      return `<div class="gameCard">${head}<div class="sheetScroll"><div class="frames">${framesHTML(g.frames, -1)}</div>${pinLeaveRowHTML(g.frames)}</div></div>`;
+      const hcpRow = recapHcpInfo ? `<div class="hcpLine" style="margin-top:8px">
+        <span class="hcpTag">🏆 ${esc(sessionLeagueName)}</span>
+        <span class="hcpNums">
+          <span class="hcpScratch">${g.total}</span><span class="hcpPlus">scratch +</span>
+          <span class="hcpVal">${recapHcpInfo.hcp}</span><span class="hcpEq">hcp =</span>
+          <span class="hcpTotal">${g.total + recapHcpInfo.hcp}</span>
+        </span></div>` : '';
+      if (!g.frames) return `<div class="gameCard">${head}<div class="noframes">Summary only — sheet not archived</div>${hcpRow}</div>`;
+      return `<div class="gameCard">${head}<div class="sheetScroll"><div class="frames">${framesHTML(g.frames, -1)}</div>${pinLeaveRowHTML(g.frames)}</div>${hcpRow}</div>`;
     }).join('');
 
     // stats — split analytics appear once any pin-by-pin data exists
@@ -3619,6 +3665,26 @@
     updateStartBtn();
   }
 
+  /* ---------- leagues Phase 3: freeze each bowler's handicap once, at the start of the night ---------- */
+  // Computed from every game already logged in this league BEFORE tonight — the current session
+  // hasn't been saved yet at this point, so leagueGamesByBowler() naturally only sees prior nights.
+  // A bowler with no prior games in this league gets no entry here; the live row simply doesn't
+  // show for them yet rather than inventing a number, same as a real house would flag "no average".
+  async function computeEnteringHandicaps(){
+    sessionHandicaps = {}; sessionLeagueName = '';
+    if (sessionType !== 'League' || !sessionLeagueId) return;
+    const league = (await leaguesGetAll()).find(l=>l.id===sessionLeagueId);
+    if (!league || league.scoringType !== 'handicap') return;
+    sessionLeagueName = league.name;
+    const { byBowler } = await leagueGamesByBowler(sessionLeagueId);
+    bowlers.forEach(b=>{
+      const key = b.bid || normName(b.name);
+      const entry = byBowler[key];
+      const avg = entry ? leagueRollingAvg(entry.entries) : null;
+      if (avg !== null) sessionHandicaps[key] = { avg, hcp: calcHandicap(league.hcpBasis, league.hcpPercent, avg) };
+    });
+  }
+
   /* ---------- leagues Phase 2: per-league math and the League Detail screen ---------- */
   // Gathers every game a bowler played within one specific league, in true chronological
   // order (oldest first), grouped by bowler identity (bid, falling back to normalized name).
@@ -3684,15 +3750,15 @@
 
     document.getElementById('ldStandings').innerHTML = rows.length
       ? rows.map(r=>`
-        <div class="standRow${ldSelectedBowlerKey===r.key?' sel':''}" data-key="${esc(r.key)}">
+        <div class="lgStandRow${ldSelectedBowlerKey===r.key?' sel':''}" data-key="${esc(r.key)}">
           <div class="standAvatar">${esc((r.name||'?')[0].toUpperCase())}</div>
           <div class="standInfo"><div class="standName">${esc(r.name)}</div><div class="standSub">${r.gamesCount} game${r.gamesCount===1?'':'s'} in this league</div></div>
           <div class="standNums"><div class="standAvg">${r.avg===null?'—':r.avg}</div>${r.hcp!==null?`<div class="standHcp">+${r.hcp} hcp</div>`:''}</div>
         </div>`).join('')
       : `<div class="noData">No games logged in this league yet.</div>`;
-    document.querySelectorAll('#ldStandings .standRow').forEach(el=>el.onclick = ()=>{
+    document.querySelectorAll('#ldStandings .lgStandRow').forEach(el=>el.onclick = ()=>{
       ldSelectedBowlerKey = el.dataset.key;
-      document.querySelectorAll('#ldStandings .standRow').forEach(x=>x.classList.toggle('sel', x.dataset.key===ldSelectedBowlerKey));
+      document.querySelectorAll('#ldStandings .lgStandRow').forEach(x=>x.classList.toggle('sel', x.dataset.key===ldSelectedBowlerKey));
       renderLdTrend(rows, sessions);
     });
 
@@ -3718,7 +3784,7 @@
 
     if (!ldSelectedBowlerKey || !rows.some(r=>r.key===ldSelectedBowlerKey))
       ldSelectedBowlerKey = rows.length ? rows[0].key : null;
-    document.querySelectorAll('#ldStandings .standRow').forEach(x=>x.classList.toggle('sel', x.dataset.key===ldSelectedBowlerKey));
+    document.querySelectorAll('#ldStandings .lgStandRow').forEach(x=>x.classList.toggle('sel', x.dataset.key===ldSelectedBowlerKey));
     renderLdTrend(rows, sessions);
 
     document.getElementById('ldEditBtn').onclick = ()=>{
@@ -3889,7 +3955,7 @@
 
     bakerRoster = []; bakerFrameOwners = []; bakerGameOwners = [];
     bowlers = bowlers.map(b=>newBowler(b.name, b.bid));
-    cur = 0; history = []; gameNum = 1; eventLabel = ''; sessionNote = ''; oilCategory=''; oilPattern=''; sessionLeagueId='';
+    cur = 0; history = []; gameNum = 1; eventLabel = ''; sessionNote = ''; oilCategory=''; oilPattern=''; sessionLeagueId=''; sessionHandicaps={}; sessionLeagueName='';
     lastCall = 'In the books! Session saved to history.' + backupNote;
     render();
     openMenu();
@@ -5513,7 +5579,7 @@
     });
     renderRoster(known);
   }
-  function beginSession(){
+  async function beginSession(){
     if (!startSel.length) return;
     eventLabel = document.getElementById('startEvent').value.trim();
     sessionNote = '';
@@ -5525,6 +5591,7 @@
     }
     bowlers = startSel.map(s=>newBowler(s.name, s.bid));
     cur = 0; history = []; gameNum = 1;
+    await computeEnteringHandicaps();
     lastCall = 'Lace up — first ball of the game.';
     startView.classList.remove('open');
     render();
