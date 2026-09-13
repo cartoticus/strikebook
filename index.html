@@ -294,6 +294,7 @@
   .wnFoot{text-align:center;font-size:11.5px;color:var(--cream-dim);opacity:.6;margin-top:12px}
   #drillView{z-index:74}
   #logPastView{z-index:75}
+  #leagueDetailView{z-index:71}
   .row2{display:flex;gap:8px}
   .row2 .eventInput{min-width:0}
   .row2 .eventInput{flex:1}
@@ -339,6 +340,35 @@
   .leagueRow.sel{border-color:var(--amber);background:rgba(227,155,45,.08)}
   .leagueRowName{font-weight:700;font-size:14px;color:var(--cream)}
   .leagueRowMeta{font-size:11px;color:var(--cream-dim);margin-top:2px}
+  .lgTitle{font-size:22px;color:var(--amber);letter-spacing:.3px;margin-top:10px}
+  .lgMetaRow{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .lgPill{background:var(--navy-2);border:1.5px solid rgba(245,239,224,.2);border-radius:999px;padding:5px 12px;font-size:11.5px;color:var(--cream-dim);font-weight:600}
+  .lgPill.week{border-color:var(--green);color:var(--green)}
+  .standRow{
+    display:flex;align-items:center;gap:11px;
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.14);border-radius:12px;
+    padding:11px 13px;margin-bottom:8px;cursor:pointer;
+  }
+  .standRow.sel{border-color:var(--amber)}
+  .standAvatar{
+    width:34px;height:34px;border-radius:50%;background:var(--amber);color:var(--ink);
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none;font-family:'Bowlby One SC',cursive;
+  }
+  .standInfo{flex:1}
+  .standName{font-weight:700;font-size:14.5px;color:var(--cream)}
+  .standSub{font-size:11px;color:var(--cream-dim);margin-top:1px}
+  .standNums{text-align:right}
+  .standAvg{font-family:'Bowlby One SC',cursive;font-size:17px;color:var(--cream)}
+  .standHcp{font-size:11px;color:var(--green);font-weight:700}
+  .recCard{
+    background:var(--navy-2);border:1.5px solid rgba(245,239,224,.14);border-radius:12px;
+    padding:12px 14px;display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;
+  }
+  .recLabel{font-size:12.5px;color:var(--cream-dim)}
+  .recVal{font-family:'Bowlby One SC',cursive;font-size:17px;color:var(--amber)}
+  .recWho{font-size:11px;color:var(--cream-dim);opacity:.8}
+  .trendCard{background:var(--navy-2);border:1.5px solid rgba(245,239,224,.14);border-radius:12px;padding:14px}
+  .trendTitle{font-size:13px;font-weight:700;color:var(--cream);margin-bottom:8px}
   .check{width:18px;height:18px;border-radius:5px;border:2px solid rgba(245,239,224,.35);flex:none}
   .check.on{border-color:var(--amber);background:var(--amber)}
   .lpBowlerGames{
@@ -1356,7 +1386,8 @@
       <p>Tap <b>🏆 Leagues</b> on the menu to set one up: name, number of weeks, start and end dates, and Scratch or Handicap. For Handicap, pick one of three real-world presets — <b>90% of 220</b> (most common in adult sanctioned leagues), <b>90% of 200</b> (typical for youth leagues), or <b>80% of 220</b> (more competitive) — or <b>Custom</b> to set your own basis and percentage.<br><br>
       <b>Bowling in it:</b> pick <b>League</b> as the session type when starting a session, and a <b>WHICH LEAGUE?</b> list appears showing every open league — tap one before you can bowl. No open leagues yet? A shortcut drops you straight into league setup and brings you right back with it selected, no detour required.<br><br>
       <b>Closing a league</b> (from its card in the Leagues list) moves it to a separate closed section — it drops off the picker for new sessions, but every session already linked to it stays exactly as it is in History. Closed leagues can be <b>reopened</b> any time from the same screen.<br><br>
-      <b>What's not here yet:</b> this covers creating and picking leagues. League-specific averages, handicap calculations, standings, and records are planned as a follow-up.</p>
+      <b>Tap into any league</b> to see its own numbers, separate from every other league or practice game: <b>standings</b> — everyone who's bowled in it, their average using just this league's games (the same 21-game window as everywhere else in the app — a growing average until 21 games, a trailing 21 after), and their handicap if the league is scored that way; <b>league records</b> — the high scratch game and high scratch series set in this league specifically, kept apart from a bowler's career-wide Personal Records; and an <b>average trend</b> by week for whichever bowler you tap in standings, once they've played 2 or more weeks. <b>✎ Edit league</b> from the same screen changes any setting, including closing or reopening it.<br><br>
+      <b>Deliberately not tracked per league:</b> the practice rack, Nemesis Pin, spare-class tiers, the drill list, and game-position average all stay pooled across every game a bowler has ever played, not split up by league — they're skill-development numbers that are more useful with the biggest sample size available, not fragmented by which league a game happened to be part of.</p>
 
       <h4>5 · Backup SOP — do this after every tournament</h4>
       <p><b>Auto-backup (desktop Chrome/Edge only):</b> on the menu, tap the backup status pill and choose
@@ -1552,6 +1583,30 @@
   </div>
 </div>
 
+<div class="recap" id="leagueDetailView">
+  <div class="recapInner">
+    <div class="recapHead">
+      <div></div>
+      <button id="ldClose">← Leagues</button>
+    </div>
+    <div class="lgTitle disp" id="ldTitle"></div>
+    <div class="lgMetaRow" id="ldMetaRow"></div>
+    <button class="editLabelBtn" id="ldEditBtn" style="margin-top:10px">✎ Edit league</button>
+
+    <div class="anaHead">Standings — this league only</div>
+    <div id="ldStandings"></div>
+
+    <div class="anaHead">League records</div>
+    <div id="ldRecords"></div>
+
+    <div class="anaHead" id="ldTrendHead" style="display:none">Average trend — this league</div>
+    <div class="trendCard" id="ldTrendCard" style="display:none">
+      <div class="trendTitle" id="ldTrendTitle"></div>
+      <svg id="ldTrendChart" viewBox="0 0 358 110" width="100%"></svg>
+    </div>
+  </div>
+</div>
+
 <div class="recap" id="leagueFormView">
   <div class="recapInner">
     <div class="recapHead">
@@ -1726,9 +1781,10 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.19.0';  // Single source of truth for the version history: renders BOTH the manual's
+  const APP_VERSION = '1.20.0';  // Single source of truth for the version history: renders BOTH the manual's
   // section 12 and the "what's new" overlay shown after an update.
   const CHANGELOG = [
+    {v:'1.20.0', d:"League math \u2014 tap into any league to see standings (league-only average and handicap for everyone in it), league records kept separate from career bests, and a week-by-week average trend per bowler. Averages use the same 21-game window as everywhere else in the app."},
     {v:'1.19.0', d:"Leagues \u2014 create named leagues with weeks, dates, and scratch or handicap scoring (three researched presets plus Custom). Pick from open leagues when starting a League session; closed leagues stay in history but drop off the picker, and can be reopened any time from \ud83c\udfc6 Leagues on the menu."},
     {v:'1.18.0', d:"An optional, anonymous visit counter \u2014 off by default, and even switched on it never carries names, scores, or bowler data, just \u2018the app opened, on this version.\u2019 See \u00a712 of the manual to turn it on."},
     {v:'1.17.0', d:"A cleaner start \u2014 the busy start screen is now a simple menu (Start a session, History, Manual, How To, Feedback), with roster and session setup moved to their own screen reached by tapping Start a session."},
@@ -3354,6 +3410,7 @@
   async function openLeagues(){
     leaguesCache = await leaguesGetAll();
     renderLeaguesList();
+    menuView.classList.remove('open');
     document.getElementById('leaguesView').classList.add('open');
     document.getElementById('leaguesView').scrollTop = 0;
   }
@@ -3369,7 +3426,7 @@
       html += closed.map(leagueCardHTML).join('');
     }
     wrap.innerHTML = html;
-    wrap.querySelectorAll('.leagueCard').forEach(el=>el.onclick = ()=>openLeagueForm(el.dataset.id));
+    wrap.querySelectorAll('.leagueCard').forEach(el=>el.onclick = ()=>openLeagueDetail(el.dataset.id));
   }
   function leagueCardHTML(lg){
     const wk = lg.status==='open' ? leagueWeekLabel(lg) : '';
@@ -3379,12 +3436,16 @@
     </div>`;
   }
   document.getElementById('menuLeaguesBtn').onclick = openLeagues;
-  document.getElementById('leaguesClose').onclick = ()=>document.getElementById('leaguesView').classList.remove('open');
+  document.getElementById('leaguesClose').onclick = ()=>{
+    document.getElementById('leaguesView').classList.remove('open');
+    openMenu();
+  };
   document.getElementById('newLeagueBtn').onclick = ()=>openLeagueForm(null);
 
   /* ---------- leagues: create/edit form ---------- */
   let lfEditingId = null;
-  let lfReturnTo = 'leagues';        // 'leagues' | 'setup' — where Save/Cancel should return to
+  let lfReturnTo = 'leagues';        // 'leagues' | 'setup' | 'detail' — where Save/Cancel should return to
+  let lfReturnLeagueId = null;       // which league's detail page to return to, when lfReturnTo==='detail'
   let lfScoring = 'handicap';
   let lfPresetIdx = 0;   // index into HCP_PRESETS, or -1 for Custom
   function renderLfPresets(){
@@ -3434,12 +3495,14 @@
     document.getElementById('lfReopenBtn').style.display = existing && existing.status==='closed' ? 'block' : 'none';
     document.getElementById('lfHint').textContent = '';
     document.getElementById('leaguesView').classList.remove('open');
+    document.getElementById('leagueDetailView').classList.remove('open');
     document.getElementById('leagueFormView').classList.add('open');
     document.getElementById('leagueFormView').scrollTop = 0;
   }
   function leagueFormExit(){
     document.getElementById('leagueFormView').classList.remove('open');
     if (lfReturnTo === 'setup') startView.classList.add('open');
+    else if (lfReturnTo === 'detail' && lfReturnLeagueId) openLeagueDetail(lfReturnLeagueId);
     else document.getElementById('leaguesView').classList.add('open');
   }
   document.getElementById('lfCancel').onclick = leagueFormExit;
@@ -3481,16 +3544,18 @@
       });
     }
     await leaguesSaveAll(leaguesCache);
-    const goingToSetup = lfReturnTo === 'setup';
+    const returnTarget = lfReturnTo;
     leagueFormExit();
-    if (goingToSetup){
+    if (returnTarget === 'setup'){
       // came from the "no open leagues yet" prompt mid session-setup — land back there
       // with the league they just made already selected, not on the leagues list
       sessionLeagueId = newId;
       refreshLeaguePicker();
-    } else {
+    } else if (returnTarget === 'leagues'){
       renderLeaguesList();
     }
+    // 'detail' case: leagueFormExit() already called openLeagueDetail(), which
+    // re-renders standings/records/trend fresh — nothing more to do here.
     toast('League saved', true);
   };
   document.getElementById('lfCloseLeagueBtn').onclick = async ()=>{
@@ -3554,6 +3619,148 @@
     updateStartBtn();
   }
 
+  /* ---------- leagues Phase 2: per-league math and the League Detail screen ---------- */
+  // Gathers every game a bowler played within one specific league, in true chronological
+  // order (oldest first), grouped by bowler identity (bid, falling back to normalized name).
+  async function leagueGamesByBowler(leagueId){
+    const sessions = (await archiveAll()).filter(s => s.leagueId === leagueId);
+    sessions.sort((a,b) => (a.date||'').localeCompare(b.date||'') || a.id.localeCompare(b.id));
+    const byBowler = {};
+    sessions.forEach(s=>{
+      (s.bowlers||[]).forEach(b=>{
+        const key = b.bid || normName(b.name);
+        if (!byBowler[key]) byBowler[key] = { name: b.name, bid: b.bid, entries: [] };
+        byBowler[key].name = b.name;   // keep the most recent spelling seen
+        (b.games||[]).forEach(g=>{
+          if (typeof g.total === 'number') byBowler[key].entries.push({ total:g.total, sessionId:s.id });
+        });
+      });
+    });
+    return { sessions, byBowler };
+  }
+  // Same growing-then-trailing-21 window as the rest of the app, applied to a
+  // chronologically-ordered list of entries — the last (up to) 21 games count.
+  function leagueRollingAvg(entries){
+    if (!entries || !entries.length) return null;
+    const window = entries.slice(-21);
+    return Math.round(window.reduce((a,e)=>a+e.total,0) / window.length);
+  }
+  // One point per week actually played, each the rolling average AS OF the end of that week.
+  function leagueWeeklyTrend(entries, sessions){
+    const weekOf = {}; sessions.forEach((s,i)=>{ weekOf[s.id] = i+1; });
+    const order = []; const bucket = {};
+    entries.forEach(e=>{
+      if (!bucket[e.sessionId]){ bucket[e.sessionId]=[]; order.push(e.sessionId); }
+      bucket[e.sessionId].push(e);
+    });
+    const points = []; let cumulative = [];
+    order.forEach(sid=>{
+      cumulative = cumulative.concat(bucket[sid]);
+      points.push({ week: weekOf[sid]||null, avg: leagueRollingAvg(cumulative) });
+    });
+    return points;
+  }
+
+  let ldLeagueId = null;
+  let ldSelectedBowlerKey = null;
+  async function openLeagueDetail(id){
+    ldLeagueId = id;
+    leaguesCache = await leaguesGetAll();
+    const lg = leaguesCache.find(l=>l.id===id);
+    if (!lg) return;
+    document.getElementById('ldTitle').textContent = lg.name;
+    const wk = lg.status==='open' ? leagueWeekLabel(lg) : '';
+    document.getElementById('ldMetaRow').innerHTML =
+      (wk ? `<div class="lgPill week">${esc(wk)}</div>` : '') +
+      `<div class="lgPill">${esc(dateRangeLabel(lg))}</div>` +
+      `<div class="lgPill">${esc(leagueScoringLabel(lg))}</div>`;
+
+    const { sessions, byBowler } = await leagueGamesByBowler(id);
+    const rows = Object.entries(byBowler).map(([key,b])=>{
+      const avg = leagueRollingAvg(b.entries);
+      const hcp = (lg.scoringType==='handicap' && avg!==null) ? calcHandicap(lg.hcpBasis, lg.hcpPercent, avg) : null;
+      return { key, name:b.name, entries:b.entries, gamesCount:b.entries.length, avg, hcp };
+    }).filter(r=>r.gamesCount>0).sort((a,b)=>(b.avg||0)-(a.avg||0));
+
+    document.getElementById('ldStandings').innerHTML = rows.length
+      ? rows.map(r=>`
+        <div class="standRow${ldSelectedBowlerKey===r.key?' sel':''}" data-key="${esc(r.key)}">
+          <div class="standAvatar">${esc((r.name||'?')[0].toUpperCase())}</div>
+          <div class="standInfo"><div class="standName">${esc(r.name)}</div><div class="standSub">${r.gamesCount} game${r.gamesCount===1?'':'s'} in this league</div></div>
+          <div class="standNums"><div class="standAvg">${r.avg===null?'—':r.avg}</div>${r.hcp!==null?`<div class="standHcp">+${r.hcp} hcp</div>`:''}</div>
+        </div>`).join('')
+      : `<div class="noData">No games logged in this league yet.</div>`;
+    document.querySelectorAll('#ldStandings .standRow').forEach(el=>el.onclick = ()=>{
+      ldSelectedBowlerKey = el.dataset.key;
+      document.querySelectorAll('#ldStandings .standRow').forEach(x=>x.classList.toggle('sel', x.dataset.key===ldSelectedBowlerKey));
+      renderLdTrend(rows, sessions);
+    });
+
+    // records: highest single scratch game, and highest scratch series (one session's total)
+    const weekOf = {}; sessions.forEach((s,i)=>{ weekOf[s.id]=i+1; });
+    let bestGame=null, bestSeries=null;
+    rows.forEach(r=>{
+      const bySession = {};
+      r.entries.forEach(e=>{
+        if (!bySession[e.sessionId]) bySession[e.sessionId]=[];
+        bySession[e.sessionId].push(e);
+        if (!bestGame || e.total > bestGame.total) bestGame = {total:e.total, name:r.name, week:weekOf[e.sessionId]};
+      });
+      Object.entries(bySession).forEach(([sid,arr])=>{
+        const t = arr.reduce((a,x)=>a+x.total,0);
+        if (!bestSeries || t > bestSeries.total) bestSeries = {total:t, name:r.name, week:weekOf[sid]};
+      });
+    });
+    document.getElementById('ldRecords').innerHTML = (bestGame || bestSeries)
+      ? (bestGame ? `<div class="recCard"><div><div class="recLabel">High scratch game</div><div class="recWho">${esc(bestGame.name)}${bestGame.week?' · Week '+bestGame.week:''}</div></div><div class="recVal">${bestGame.total}</div></div>` : '') +
+        (bestSeries ? `<div class="recCard"><div><div class="recLabel">High scratch series</div><div class="recWho">${esc(bestSeries.name)}${bestSeries.week?' · Week '+bestSeries.week:''}</div></div><div class="recVal">${bestSeries.total}</div></div>` : '')
+      : `<div class="noData">No games logged in this league yet.</div>`;
+
+    if (!ldSelectedBowlerKey || !rows.some(r=>r.key===ldSelectedBowlerKey))
+      ldSelectedBowlerKey = rows.length ? rows[0].key : null;
+    document.querySelectorAll('#ldStandings .standRow').forEach(x=>x.classList.toggle('sel', x.dataset.key===ldSelectedBowlerKey));
+    renderLdTrend(rows, sessions);
+
+    document.getElementById('ldEditBtn').onclick = ()=>{
+      lfReturnLeagueId = id;
+      openLeagueForm(id, 'detail');
+    };
+    document.getElementById('leaguesView').classList.remove('open');
+    document.getElementById('leagueDetailView').classList.add('open');
+    document.getElementById('leagueDetailView').scrollTop = 0;
+  }
+  function renderLdTrend(rows, sessions){
+    const head = document.getElementById('ldTrendHead');
+    const card = document.getElementById('ldTrendCard');
+    const sel = rows.find(r=>r.key===ldSelectedBowlerKey);
+    if (!sel || sel.gamesCount < 2){ head.style.display='none'; card.style.display='none'; return; }
+    head.style.display='block'; card.style.display='block';
+    document.getElementById('ldTrendTitle').textContent = `${sel.name}'s league average by week`;
+    const points = leagueWeeklyTrend(sel.entries, sessions);
+    const W=358,H=110,padL=30,padR=10,padT=10,padB=20;
+    const plotW=W-padL-padR, plotH=H-padT-padB;
+    const vals = points.map(p=>p.avg).filter(v=>v!==null);
+    const yMin = Math.max(0, Math.min(...vals)-15);
+    const yMax = Math.max(...vals)+15;
+    const x = i => padL + (points.length<=1?0:(i/(points.length-1))*plotW);
+    const y = v => padT + plotH - ((v-yMin)/((yMax-yMin)||1))*plotH;
+    let svg = '';
+    const step = Math.max(20, Math.ceil((yMax-yMin)/4/20)*20);
+    for (let gy=Math.ceil(yMin/step)*step; gy<=yMax; gy+=step){
+      svg += `<line x1="${padL}" y1="${y(gy)}" x2="${W-padR}" y2="${y(gy)}" stroke="rgba(245,239,224,.08)"/>`;
+      svg += `<text x="${padL-6}" y="${y(gy)+3}" text-anchor="end" font-size="8.5" fill="#D8D0BC" opacity=".6">${gy}</text>`;
+    }
+    let path = points.map((p,i)=>(i===0?'M':'L')+x(i).toFixed(1)+' '+y(p.avg).toFixed(1)).join(' ');
+    svg += `<path d="${path}" fill="none" stroke="#E39B2D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    points.forEach((p,i)=> svg += `<circle cx="${x(i).toFixed(1)}" cy="${y(p.avg).toFixed(1)}" r="${i===points.length-1?4.5:3}" fill="#E39B2D" stroke="#181E2E" stroke-width="1.5"/>`);
+    points.forEach((p,i)=> svg += `<text x="${x(i).toFixed(1)}" y="${H-6}" text-anchor="middle" font-size="8.5" fill="#D8D0BC" opacity=".6">${p.week?'Wk'+p.week:''}</text>`);
+    document.getElementById('ldTrendChart').innerHTML = svg;
+  }
+  document.getElementById('ldClose').onclick = ()=>{
+    document.getElementById('leagueDetailView').classList.remove('open');
+    document.getElementById('leaguesView').classList.add('open');
+    renderLeaguesList();
+  };
   /* ---------- auto-backup: a user-chosen folder, written on every Finish ----------
      Uses the File System Access API — desktop Chrome/Edge only. Safari and iOS have
      no equivalent, so this is an addition to manual backup, never a replacement:
