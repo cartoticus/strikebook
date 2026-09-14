@@ -1795,9 +1795,10 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.22.0';  // Single source of truth for the version history: renders BOTH the manual's
+  const APP_VERSION = '1.22.1';  // Single source of truth for the version history: renders BOTH the manual's
   // section 12 and the "what's new" overlay shown after an update.
   const CHANGELOG = [
+    {v:'1.22.1', d:"Fixed a real dead end on a bowler's page \u2014 tapping Tonight (or Last 5) with nothing logged used to drop the Career/Last 5/Tonight toggle entirely, leaving only a full exit back to the bowler list. The toggle now stays put so you can just tap Career to get back, and the empty message names the actual scope (\u2018tonight\u2019, not \u2018this scope\u2019)."},
     {v:'1.22.0', d:"Progress graphs \u2014 every bowler's page now has an AVERAGES card: switch between Score, Strike %, and Spare %, each shown as a 21-game rolling average for Overall, Tournament, and every league they've bowled in by name (not a generic \u2018League\u2019 bucket). Strike % and Spare % use the exact same per-frame math as the rest of the app, so the numbers always agree with what's shown elsewhere on the page."},
     {v:'1.21.1', d:"Fixed a real, measured overlap between the strike/spare celebration and the new live handicap row \u2014 the celebration now appears over the pin rack/keypad area instead of a fixed screen position, so it can't collide with anything on the scoresheet above it, regardless of screen size or what's showing there."},
     {v:'1.21.0', d:"Handicap during live play \u2014 in a handicap league, the scoresheet now shows scratch, handicap, and the running league total while you bowl. The handicap is set once at the start of the night from your entering average and never changes mid-session, same as a real league sheet. It only appears once you have an established average from a prior night. The same scratch+handicap breakdown now also shows on the session recap."},
@@ -4690,9 +4691,19 @@
     const c = careerLine(games);
     const displayName = ident.name;
     if (!c){
+      const scopeLabel = anaScope==='tonight' ? 'tonight' : anaScope==='last5' ? "in the last 5 sessions" : 'yet';
       pane.innerHTML = `<button class="histBack" id="histBack1">← All bowlers</button>
-        <div class="noData">No games for ${esc(displayName)} in this scope.</div>`;
+        <div class="recapTitle" style="font-size:17px;margin-bottom:2px">${esc(displayName.toUpperCase())}</div>
+        <div class="scopeSeg">
+          <button data-sc="career"${anaScope==='career'?' class="on"':''}>Career</button>
+          <button data-sc="last5"${anaScope==='last5'?' class="on"':''}>Last 5 sessions</button>
+          <button data-sc="tonight"${anaScope==='tonight'?' class="on"':''}>Tonight</button>
+        </div>
+        <div class="noData">No games logged for ${esc(displayName)} ${scopeLabel}. ${anaScope!=='career' ? 'Tap <b>Career</b> above to see their full history.' : ''}</div>`;
       document.getElementById('histBack1').onclick = ()=>{ showHistPane('home'); renderHistHome(); };
+      pane.querySelectorAll('.scopeSeg button').forEach(btn=>btn.onclick = ()=>{
+        anaScope = btn.dataset.sc; openBowlerPage(ident);
+      });
       showHistPane('bowler');
       return;
     }
