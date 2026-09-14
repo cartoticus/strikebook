@@ -350,6 +350,7 @@
     padding:11px 13px;margin-bottom:8px;cursor:pointer;
   }
   .lgStandRow.sel{border-color:var(--amber)}
+  #progMetricSeg button{font-size:11.5px;padding:7px 10px;white-space:nowrap}
   .standAvatar{
     width:34px;height:34px;border-radius:50%;background:var(--amber);color:var(--ink);
     display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none;font-family:'Bowlby One SC',cursive;
@@ -1414,7 +1415,7 @@
       file — auto or manual — cannot be erased by a browser.</p>
 
       <h4>6 · How the analytics compute</h4>
-      <p>Career stats group by a hidden bowler ID, so renaming a bowler never splits their history. Leave percentages count only pin-rack entries. A leave needs <b>4 attempts</b> before it's ranked (under that, it's held in the "keep bowling" note). <b>Splits are tracked separately</b> so they don't drag down the makeable-spare percentage. The drill list estimates ~11 pins of scoring cost per missed spare — an approximation, flagged as such. <b>Game Craft</b> adds Clean Frame % (marks per frame, works even for keypad games) and Bounce-Back % (how often a mark follows an open). <b>Spare Classes</b> rolls every leave into three difficulty tiers — singles, makeable multi-pin, splits — and the <b>Nemesis Pin</b> is simply the single-pin leave you see most. The <b>Ball-by-Ball</b> block adds first-ball average (the strongest predictor of scoring), strike rate, double rate (strikes that follow strikes), clean-10th %, and a consistency figure (± your game-to-game swing). <b>Game-Position Average</b> compares your 1st vs 2nd vs 3rd game to reveal warm-up or fatigue patterns; it needs a few multi-game sessions before it appears. <b>Lane condition</b> (House / Sport / Challenge, plus an optional pattern name) can be set on the setup screen or added later by editing any session's label — it's stored so future analytics can compare how a bowler scores across easy house shots vs tough sport patterns. You can pick a known pattern from the list or free-type any name, which matters because tournament patterns like Junior Gold are kept secret until after the block. When a pattern name is set, the session page shows a <b>🔍 Look up in the Kegel pattern library</b> link that opens Kegel's official library (and copies the name so you can paste it into their search) — handy for pulling the actual pattern sheet before practice.</p>
+      <p>Career stats group by a hidden bowler ID, so renaming a bowler never splits their history. Leave percentages count only pin-rack entries. A leave needs <b>4 attempts</b> before it's ranked (under that, it's held in the "keep bowling" note). <b>Splits are tracked separately</b> so they don't drag down the makeable-spare percentage. The drill list estimates ~11 pins of scoring cost per missed spare — an approximation, flagged as such. <b>Game Craft</b> adds Clean Frame % (marks per frame, works even for keypad games) and Bounce-Back % (how often a mark follows an open). <b>Spare Classes</b> rolls every leave into three difficulty tiers — singles, makeable multi-pin, splits — and the <b>Nemesis Pin</b> is simply the single-pin leave you see most. The <b>Ball-by-Ball</b> block adds first-ball average (the strongest predictor of scoring), strike rate, double rate (strikes that follow strikes), clean-10th %, and a consistency figure (± your game-to-game swing). <b>Game-Position Average</b> compares your 1st vs 2nd vs 3rd game to reveal warm-up or fatigue patterns; it needs a few multi-game sessions before it appears. <b>Progress</b> is the AVERAGES card near the top of a bowler's page — switch between Score, Strike %, and Spare % to see a 21-game rolling average (growing under 21 games, trailing 21 after) for Overall, Tournament, and every league they've bowled in by name. It always shows the bowler's full history regardless of the Career/Last 5/Tonight scope above it, since a trend needs the long view. Strike % and Spare % use the same per-frame math as the Ball-by-Ball and Game Craft numbers elsewhere on the page, so a line here never disagrees with a number shown anywhere else. <b>Lane condition</b> (House / Sport / Challenge, plus an optional pattern name) can be set on the setup screen or added later by editing any session's label — it's stored so future analytics can compare how a bowler scores across easy house shots vs tough sport patterns. You can pick a known pattern from the list or free-type any name, which matters because tournament patterns like Junior Gold are kept secret until after the block. When a pattern name is set, the session page shows a <b>🔍 Look up in the Kegel pattern library</b> link that opens Kegel's official library (and copies the name so you can paste it into their search) — handy for pulling the actual pattern sheet before practice.</p>
 
       <h4>7 · Baker mode, drills &amp; report cards</h4>
       <p><b>Baker mode:</b> pick "Baker" as the session type on the setup screen with 2+ bowlers. You'll score one shared sheet where bowlers alternate frames (lead-off throws frames 1, 6; second throws 2, 7; and so on). The app shows whose turn it is on every ball. Baker games don't produce individual game scores, but each frame's pin leaves are still credited to the bowler who threw it — so a kid's spare practice data keeps building even from Baker play.<br><br>
@@ -1794,9 +1795,10 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.21.1';  // Single source of truth for the version history: renders BOTH the manual's
+  const APP_VERSION = '1.22.0';  // Single source of truth for the version history: renders BOTH the manual's
   // section 12 and the "what's new" overlay shown after an update.
   const CHANGELOG = [
+    {v:'1.22.0', d:"Progress graphs \u2014 every bowler's page now has an AVERAGES card: switch between Score, Strike %, and Spare %, each shown as a 21-game rolling average for Overall, Tournament, and every league they've bowled in by name (not a generic \u2018League\u2019 bucket). Strike % and Spare % use the exact same per-frame math as the rest of the app, so the numbers always agree with what's shown elsewhere on the page."},
     {v:'1.21.1', d:"Fixed a real, measured overlap between the strike/spare celebration and the new live handicap row \u2014 the celebration now appears over the pin rack/keypad area instead of a fixed screen position, so it can't collide with anything on the scoresheet above it, regardless of screen size or what's showing there."},
     {v:'1.21.0', d:"Handicap during live play \u2014 in a handicap league, the scoresheet now shows scratch, handicap, and the running league total while you bowl. The handicap is set once at the start of the night from your entering average and never changes mid-session, same as a real league sheet. It only appears once you have an established average from a prior night. The same scratch+handicap breakdown now also shows on the session recap."},
     {v:'1.20.0', d:"League math \u2014 tap into any league to see standings (league-only average and handicap for everyone in it), league records kept separate from career bests, and a week-by-week average trend per bowler. Averages use the same 21-game window as everywhere else in the app."},
@@ -3453,6 +3455,8 @@
 
   /* ---------- leagues: management screen ---------- */
   let leaguesCache = [];
+  let progGamesCache = [];    // this bowler's full game history, cached per page-open for the progress graph
+  let progLeaguesCache = [];  // all leagues, for name lookups when building per-league progress lines
   async function openLeagues(){
     leaguesCache = await leaguesGetAll();
     renderLeaguesList();
@@ -3725,6 +3729,147 @@
       points.push({ week: weekOf[sid]||null, avg: leagueRollingAvg(cumulative) });
     });
     return points;
+  }
+
+  /* ---------- Phase 4: progress graphs (Score / Strike% / Spare%, Overall / Tournament / per-league) ---------- */
+  // One chronologically-ordered list of every game a bowler has played, each tagged with
+  // its session's type and (if any) league — the single shared source for every line the
+  // progress graph can draw, so Overall/Tournament/League views are all just filters of it.
+  async function allGamesForProgress(ident){
+    const sessions = (await archiveAll()).slice();
+    const liveExtra = [];
+    bowlers.forEach(b=>{
+      if (sameBowler(b, ident)){
+        const gs = gamesForRecap(b);
+        if (gs.length) liveExtra.push({
+          id: '__live__', date: new Date().toISOString(), type: sessionType,
+          leagueId: sessionType==='League' ? sessionLeagueId : '',
+          bowlers: [{ ...b, games: gs }]
+        });
+      }
+    });
+    const all = sessions.concat(liveExtra);
+    all.sort((a,b)=> (a.date||'').localeCompare(b.date||'') || a.id.localeCompare(b.id));
+    const out = [];
+    all.forEach(s=>{
+      (s.bowlers||[]).forEach(b=>{
+        if (sameBowler(b, ident)){
+          (b.games||[]).forEach(g=>{
+            if (typeof g.total === 'number')
+              out.push({ total:g.total, frames:g.frames, type:s.type||'', leagueId:s.leagueId||'' });
+          });
+        }
+      });
+    });
+    return out;
+  }
+  // Per-game {num, den} for one metric — strike%/spare% reuse the exact same per-frame rules
+  // as careerLine()/deepStats() so this graph can never show a different number than the
+  // rest of the app for the same games. Score has no frame-data requirement.
+  function gameToNumDen(g, metric){
+    if (metric === 'score') return { num:g.total, den:1 };
+    if (!g.frames) return null;
+    if (metric === 'strike'){
+      let strikes=0, strikeOpps=0;
+      g.frames.forEach((r,fi)=>{
+        if (!frameComplete(fi, r)) return;
+        if (fi < 9){ strikeOpps++; if (P(r[0])===10) strikes++; }
+        else r.forEach((rl,i)=>{ if (freshRackAt(9,r,i)){ strikeOpps++; if (rl.p===10) strikes++; } });
+      });
+      return strikeOpps ? { num:strikes, den:strikeOpps } : null;
+    }
+    if (metric === 'spare'){
+      const c = counts({frames:g.frames});
+      let spOpp=0;
+      g.frames.forEach((r,fi)=>{ if (fi<9 && P(r[0])!==undefined && P(r[0])!==10 && r.length===2) spOpp++; });
+      return spOpp ? { num:c.sp, den:spOpp } : null;
+    }
+    return null;
+  }
+  // 21-game growing-then-trailing window, as an aggregate ratio (sum/sum) not an average of
+  // percentages — matches how strike%/spare% are already computed everywhere else in the app.
+  function rollingRatio(games, metric, scale){
+    const usable = games.map(g=>gameToNumDen(g, metric)).filter(e=>e!==null);
+    return usable.map((_,i)=>{
+      const slice = usable.slice(Math.max(0,i-20), i+1);
+      const den = slice.reduce((a,e)=>a+e.den,0);
+      if (!den) return null;
+      const num = slice.reduce((a,e)=>a+e.num,0);
+      return Math.round(scale*num/den);
+    });
+  }
+  // Every distinct league this bowler has games in, most-recently-played first.
+  function progressLeagueIds(games){
+    const seen = [];
+    for (let i=games.length-1; i>=0; i--){
+      const id = games[i].leagueId;
+      if (id && !seen.includes(id)) seen.push(id);
+    }
+    return seen;
+  }
+  function renderProgressGraph(metric){
+    const scale = metric === 'score' ? 1 : 100;
+    const games = progGamesCache;
+    const palette = ['#2E8FA3','#5DCAA5','#DE4A2E','#E39B2D'];   // teal, green, red, amber — cycles for 3+ leagues
+
+    const lines = [{ label:'Overall', color:'#F5EFE0', series: rollingRatio(games, metric, scale) }];
+    const tGames = games.filter(g=>g.type==='Tournament');
+    if (tGames.length){
+      const s = rollingRatio(tGames, metric, scale);
+      if (s.some(v=>v!==null)) lines.push({ label:'Tournament', color:'#E39B2D', series:s });
+    }
+    progressLeagueIds(games).forEach((lid,i)=>{
+      const lgGames = games.filter(g=>g.leagueId===lid);
+      const s = rollingRatio(lgGames, metric, scale);
+      if (s.some(v=>v!==null)){
+        const lg = progLeaguesCache.find(l=>l.id===lid);
+        lines.push({ label: lg ? lg.name : 'League', color: palette[i % palette.length], series:s });
+      }
+    });
+    const usable = lines.filter(l => l.series.some(v=>v!==null));
+
+    const W=358,H=190, padL=34,padR=10,padT=14,padB=26;
+    const plotW=W-padL-padR, plotH=H-padT-padB;
+    const maxLen = Math.max(...usable.map(l=>l.series.length), 1);
+    const allVals = usable.flatMap(l=>l.series).filter(v=>v!==null);
+    let yMin, yMax;
+    if (metric === 'score'){
+      yMin = Math.max(0, Math.min(...allVals, 100) - 15);
+      yMax = Math.max(...allVals, 100) + 15;
+    } else {
+      yMin = 0; yMax = Math.min(100, Math.max(...allVals, 20) + 15);
+    }
+    const x = i => padL + (maxLen<=1 ? 0 : (i/(maxLen-1))*plotW);
+    const y = v => padT + plotH - ((v-yMin)/((yMax-yMin)||1))*plotH;
+
+    let svg = '';
+    const step = Math.max(metric==='score'?20:10, Math.round((yMax-yMin)/4/10)*10 || 10);
+    for (let gy=Math.ceil(yMin/step)*step; gy<=yMax; gy+=step){
+      svg += `<line x1="${padL}" y1="${y(gy)}" x2="${W-padR}" y2="${y(gy)}" stroke="rgba(245,239,224,.08)"/>`;
+      svg += `<text x="${padL-6}" y="${y(gy)+3}" text-anchor="end" font-size="8.5" fill="#D8D0BC" opacity=".6">${gy}${metric==='score'?'':'%'}</text>`;
+    }
+    usable.forEach(l=>{
+      const pts = l.series.map((v,i)=> v===null ? null : [x(i),y(v)]);
+      let path = '';
+      pts.forEach((p,i)=>{ if (p) path += (path===''?'M':'L') + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ' '; });
+      if (path) svg += `<path d="${path.trim()}" fill="none" stroke="${l.color}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".95"/>`;
+      const lastIdx = pts.map((p,i)=>p?i:-1).filter(i=>i>=0).pop();
+      if (lastIdx !== undefined) svg += `<circle cx="${pts[lastIdx][0].toFixed(1)}" cy="${pts[lastIdx][1].toFixed(1)}" r="4.5" fill="${l.color}" stroke="#181E2E" stroke-width="1.5"/>`;
+    });
+    for (let i=0; i<maxLen; i+=Math.max(1,Math.round(maxLen/6))){
+      svg += `<text x="${x(i).toFixed(1)}" y="${H-8}" text-anchor="middle" font-size="9" fill="#D8D0BC" opacity=".6">G${i+1}</text>`;
+    }
+    document.getElementById('progChart').innerHTML = svg;
+
+    document.getElementById('progChips').innerHTML = usable.map(l=>{
+      const last = [...l.series].reverse().find(v=>v!==null);
+      return `<div class="statChip" style="flex:1;min-width:88px;background:var(--navy);border-radius:10px;padding:10px 8px;text-align:center">
+        <div class="statChipLabel" style="font-size:9.5px;font-weight:700;letter-spacing:.5px;color:var(--cream-dim);text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:4px;margin-bottom:4px">
+          <i style="width:7px;height:7px;border-radius:50%;background:${l.color};display:inline-block"></i>${esc(l.label)}
+        </div>
+        <div class="statChipVal" style="font-family:'Bowlby One SC',cursive;font-weight:800;font-size:18px;color:${l.color}">${last===null||last===undefined?'—':last+(metric==='score'?'':'%')}</div>
+      </div>`;
+    }).join('');
   }
 
   let ldLeagueId = null;
@@ -4539,7 +4684,7 @@
 
   /* ---------- bowler analytics page: practice rack + spare ledger ---------- */
   let anaScope = 'career';
-  function openBowlerPage(ident){
+  async function openBowlerPage(ident){
     const pane = document.getElementById('histBowler');
     const games = bowlerGames(ident, histSessions, anaScope);
     const c = careerLine(games);
@@ -4555,6 +4700,27 @@
     const craft = craftStats(games);
     const sc = spareClasses(leaves);
     const nem = nemesisPin(leaves);
+    // Progress graphs (Phase 4): always the bowler's FULL history, independent of the
+    // Career/Last 5/Tonight scope above — a trend is only meaningful over the long run.
+    progGamesCache = await allGamesForProgress(ident);
+    progLeaguesCache = await leaguesGetAll();
+    const progBlock = progGamesCache.length ? `
+      <div class="anaHead">Progress</div>
+      <div class="card" style="background:var(--navy-2);border:1.5px solid rgba(245,239,224,.12);border-radius:14px;padding:16px;margin-bottom:8px">
+        <div class="titleRow" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;gap:10px">
+          <div class="cardTitle" style="font-size:15px;font-weight:700;color:var(--cream)">AVERAGES</div>
+          <div class="seg" id="progMetricSeg" style="display:flex;background:var(--navy);border-radius:9px;padding:3px;gap:2px">
+            <button data-metric="score" class="on">Score</button>
+            <button data-metric="strike">Strike %</button>
+            <button data-metric="spare">Spare %</button>
+          </div>
+        </div>
+        <div class="subhead" style="font-size:11px;color:var(--cream-dim);opacity:.7;margin-bottom:10px">21-game rolling average, by context</div>
+        <svg id="progChart" viewBox="0 0 358 190" width="100%"></svg>
+        <div class="statRow" id="progChips" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px"></div>
+        <div class="windowNote" style="font-size:10.5px;color:var(--cream-dim);opacity:.65;margin-top:12px;line-height:1.4">Each line is a growing average until 21 games, a trailing 21 after — same rule USBC uses for an established average. Game order, not calendar date, spaces the games out.</div>
+      </div>
+    ` : '';
     const clsRow = (label, d, hint) => {
       if (!d.att) return '';
       const pct = Math.round(100*d.made/d.att);
@@ -4670,6 +4836,7 @@
         <button class="drillStartBtn" id="drillStartBtn">🎯 Start spare drill</button>
         <button class="reportBtn" id="reportBtn">📋 Coach report card</button>
       </div>
+      ${progBlock}
       ${recBlock}
       ${craftBlock}
       ${deepBlock}
@@ -4712,6 +4879,13 @@
       <div class="dataHint">Sends only ${esc(displayName.split(' ')[0])}'s games as a file to share — they import it into their own Strikebook and it merges with their history. Removing affects only this phone.</div>
     `;
     document.getElementById('histBack1').onclick = ()=>{ showHistPane('home'); renderHistHome(); };
+    if (progGamesCache.length){
+      renderProgressGraph('score');
+      document.querySelectorAll('#progMetricSeg button').forEach(btn=>btn.onclick = ()=>{
+        document.querySelectorAll('#progMetricSeg button').forEach(x=>x.classList.toggle('on', x===btn));
+        renderProgressGraph(btn.dataset.metric);
+      });
+    }
     const dsb = document.getElementById('drillStartBtn');
     if (dsb) dsb.onclick = ()=>openDrill(ident);
     const rpt = document.getElementById('reportBtn');
