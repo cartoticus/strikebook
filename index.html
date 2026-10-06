@@ -154,12 +154,12 @@
   #specialBtn.spare{background:var(--teal)}
   #specialBtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.4)}
   #specialBtn:disabled{opacity:.25;pointer-events:none;box-shadow:none}
-  #undoBtn{
+  #missBtn{
     background:none;border:1.5px solid rgba(245,239,224,.3);color:var(--cream-dim);
-    border-radius:12px;font-family:inherit;font-weight:700;font-size:15px;cursor:pointer;
+    border-radius:12px;font-family:inherit;font-weight:700;font-size:15px;letter-spacing:.5px;cursor:pointer;
   }
-  #undoBtn:active{background:rgba(245,239,224,.1)}
-  #undoBtn:disabled{opacity:.3;pointer-events:none}
+  #missBtn:active{background:rgba(245,239,224,.1)}
+  #missBtn:disabled{opacity:.3;pointer-events:none}
 
   /* Announcer booth */
   .booth{
@@ -968,7 +968,7 @@
   <div class="bigrow">
     <button id="specialBtn">STRIKE</button>
     <button id="foulBtn">F</button>
-    <button id="undoBtn">↩</button>
+    <button id="missBtn" title="Miss — no pins down this ball">MISS</button>
   </div>
   <div id="toast">STRIKE!</div>
 </div>
@@ -1158,8 +1158,8 @@
         </ol></div>
       <div class="htTask"><div class="htTaskName">Mark a foul</div>
         <ol class="htSteps"><li>Tap <b>F</b> instead of a pin count — it scores zero and respots the full rack per the rule.</li></ol></div>
-      <div class="htTask"><div class="htTaskName">Undo the last ball</div>
-        <ol class="htSteps"><li>Tap <b>↩</b>. It undoes whichever bowler's tab you're currently viewing — their own last ball, without switching you to anyone else.</li></ol></div>
+      <div class="htTask"><div class="htTaskName">Mark a miss</div>
+        <ol class="htSteps"><li>Tap <b>MISS</b> when the ball knocks down nothing — it scores zero (–) in one tap, and in pin rack mode it keeps every pin standing so the leave is still recorded.</li></ol></div>
       <div class="htTask"><div class="htTaskName">Reorder turns mid-game</div>
         <ol class="htSteps">
           <li>Tap <b>⇅ Reorder turns</b> above the scoresheet.</li>
@@ -1171,6 +1171,11 @@
           <li>Press and hold that frame on the live scoresheet, even several frames back.</li>
           <li>Tap the pins left standing for each ball (or switch to <b>🔢 Quick numbers</b> for a fast fix).</li>
           <li>Tap <b>Save</b> — every score after that frame recalculates automatically.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Take back a ball (wrong tab, or wrong ball 1)</div>
+        <ol class="htSteps">
+          <li>Go to the bowler's tab where the ball landed, then press and hold their most recent frame.</li>
+          <li>Tap <b>Clear this frame</b> and confirm — the frame empties and is bowled again from ball 1.</li>
         </ol></div>
       <div class="htTask"><div class="htTaskName">Move to the next game</div>
         <ol class="htSteps"><li>Once everyone's game is complete, tap <b>Start Game 2</b> (or Game 3, etc.) to keep the same session going.</li></ol></div>
@@ -1386,10 +1391,11 @@
       <h4>2 · Scoring: the daily drill</h4>
       <p><b>Pin rack mode</b> (default): tap the pins <b>left standing</b> after each ball, then hit the big count button. Tap nothing = strike. This mode feeds all leave/spare analytics.<br>
       <b>Keypad mode</b>: faster, counts only — those frames score perfectly but can't appear in the practice rack or spare ledger.<br>
-      <b>F</b> records a foul (scores zero, full rack respotted per rule). <b>↩</b> undoes whichever bowler's tab you're currently viewing — their own last ball, specifically, without switching you to whoever bowled most recently. It dims when the bowler on screen has nothing of their own to undo yet. The announcer and share cards run themselves.<br><br>
+      <b>F</b> records a foul (scores zero, full rack respotted per rule). <b>MISS</b> records a ball that knocked nothing down (scores zero, shown as –) in one tap. To correct a ball, press and hold its frame (see <i>Fixing a mistake</i> below). The announcer and share cards run themselves.<br><br>
       <b>Turn order:</b> once 2 or more bowlers are selected on the setup screen, a <b>TURN ORDER</b> list appears — drag a name by its ☰ handle to change who bowls first, second, and so on. This sets both the normal rotation and, for Baker sessions, the frame-by-frame throwing order.<br><br>
       <b>Reordering mid-game:</b> a <b>⇅ Reorder turns</b> button sits above the scoresheet any time 2+ bowlers are in the session — a late arrival, a kid who needs a break, anything. Drag to reorder the same way. Whoever is mid-frame right now keeps their turn; the new order takes over starting with the next bowler up. In Baker mode, any frame that's already been thrown keeps the bowler it was thrown by, permanently — reordering only changes who's next, never who threw what.<br><br>
-      <b>Fixing a mistake:</b> press and hold any frame on the live sheet — even one from several frames back — to re-enter it. Every score from that point forward recalculates automatically, and wherever the bowler currently is in the game is completely undisturbed. The editor opens on the same <b>pin rack</b> used for live scoring, so tapping the exact pins left standing keeps that frame's leave detail fully accurate in the practice rack and spare ledger. There's also a <b>🔢 Quick numbers</b> toggle for when you just need the score fixed fast and don't care about pin detail for that one frame.</p>
+      <b>Fixing a mistake:</b> press and hold any frame on the live sheet — even one from several frames back — to re-enter it. Every score from that point forward recalculates automatically, and wherever the bowler currently is in the game is completely undisturbed. The editor opens on the same <b>pin rack</b> used for live scoring, so tapping the exact pins left standing keeps that frame's leave detail fully accurate in the practice rack and spare ledger. There's also a <b>🔢 Quick numbers</b> toggle for when you just need the score fixed fast and don't care about pin detail for that one frame.<br><br>
+      <b>Clearing a frame:</b> on a bowler's most recent frame, the editor also offers <b>Clear this frame</b>. It removes every ball in that frame so it's bowled again from ball 1 — use it when a ball went on the wrong bowler's tab, or when ball 1 was entered wrong and ball 2 hasn't been thrown yet. Earlier frames can't be cleared (that would leave a gap mid-game); re-score them instead.</p>
 
       <h4>3 · Sessions: finish, don't reset</h4>
       <p>When the night's games are done, tap <b>🏁 Finish session</b>. That permanently banks everything into History and returns to the menu. <b>Reset</b> is the destructive one — it discards the current session without saving. Rule of thumb: Finish always, Reset only for do-overs.<br><br>
@@ -1751,6 +1757,7 @@
       <button id="feX" class="bkXBtn">✕</button>
     </div>
     <div id="feBody"></div>
+    <button class="removeBtn" id="feClear">Clear this frame — bowl it again from ball 1</button>
   </div>
 </div>
 
@@ -1795,9 +1802,10 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.22.1';  // Single source of truth for the version history: renders BOTH the manual's
+  const APP_VERSION = '1.23.0';  // Single source of truth for the version history: renders BOTH the manual's
   // section 12 and the "what's new" overlay shown after an update.
   const CHANGELOG = [
+    {v:'1.23.0', d:"A MISS button \u2014 the button beside F now records a gutter or clean miss (zero, shown as \u2013) in one tap; in pin rack mode it keeps every pin standing so the leave is still tracked. It replaces \u21a9 undo: to correct a ball, press and hold its frame. On a bowler's latest frame you can also Clear this frame \u2014 the fix for a ball scored on the wrong tab, or a wrong first ball before the second is thrown. Also fixed two 10th-frame display mix-ups: 9, /, 9 showed a false spare (9 / /), and a 10-count on a spare ball (like a gutter then all ten) showed X instead of / \u2014 scores were always right, only the marks were wrong."},
     {v:'1.22.1', d:"Fixed a real dead end on a bowler's page \u2014 tapping Tonight (or Last 5) with nothing logged used to drop the Career/Last 5/Tonight toggle entirely, leaving only a full exit back to the bowler list. The toggle now stays put so you can just tap Career to get back, and the empty message names the actual scope (\u2018tonight\u2019, not \u2018this scope\u2019)."},
     {v:'1.22.0', d:"Progress graphs \u2014 every bowler's page now has an AVERAGES card: switch between Score, Strike %, and Spare %, each shown as a 21-game rolling average for Overall, Tournament, and every league they've bowled in by name (not a generic \u2018League\u2019 bucket). Strike % and Spare % use the exact same per-frame math as the rest of the app, so the numbers always agree with what's shown elsewhere on the page."},
     {v:'1.21.1', d:"Fixed a real, measured overlap between the strike/spare celebration and the new live handicap row \u2014 the celebration now appears over the pin rack/keypad area instead of a fixed screen position, so it can't collide with anything on the scoresheet above it, regardless of screen size or what's showing there."},
@@ -2381,20 +2389,6 @@
       if (!gameOver(bowlers[n])){ cur = n; return; }
     }
   }
-  function undo(){
-    // Rolls from every bowler share one chronological log, but undo should only ever
-    // touch the bowler currently on screen — find THEIR last roll, wherever it sits
-    // in that shared log, and leave cur (who's being viewed) untouched.
-    let idx = -1;
-    for (let i = history.length - 1; i >= 0; i--){
-      if (history[i].b === cur){ idx = i; break; }
-    }
-    if (idx === -1) return;   // nothing of this bowler's to undo
-    const last = history.splice(idx, 1)[0];
-    bowlers[last.b].frames[last.f].pop();
-    render();
-  }
-  function hasUndo(){ return history.some(h => h.b === cur); }
 
   /* ---------- fix-a-frame: long-press any live frame to re-score it from scratch ---------- */
   let feFi = null;
@@ -2424,6 +2418,8 @@
     const b = bowlers[cur];
     if (!b || !b.frames[fi] || !b.frames[fi].length) return;   // nothing thrown yet — nothing to edit
     feFi = fi; feRolls = []; feTapped = new Set();
+    const isLatest = b.frames.slice(fi+1).every(fr => !fr.length);
+    document.getElementById('feClear').classList.toggle('show', isLatest);
     const who = bakerActive() ? bakerOwner(fi).name : b.name;
     document.getElementById('feTitle').textContent = `${who} · Frame ${fi+1}`;
     renderFrameEditor();
@@ -2559,6 +2555,30 @@
   }
   document.getElementById('feX').onclick = ()=>document.getElementById('frameEditModal').classList.remove('open');
 
+  // Clear the bowler's latest frame entirely — the fix for a ball scored on the wrong
+  // bowler's tab, or a wrong ball 1 before ball 2 has been thrown (the editor itself only
+  // saves a complete frame, and can't empty one).
+  async function clearFrame(){
+    const b = bowlers[cur];
+    const fi = feFi;
+    if (!b || !b.frames[fi] || !b.frames[fi].length) return;
+    if (b.frames.slice(fi+1).some(fr => fr.length)) return;   // only the latest frame
+    const who = bakerActive() ? bakerOwner(fi).name : b.name;
+    const editor = document.getElementById('frameEditModal');
+    editor.classList.remove('open');
+    if (!await askConfirm(`Clear frame ${fi+1} for ${who}? Every ball in it is removed and the frame is bowled again from ball 1.`, 'Clear frame')){
+      editor.classList.add('open');
+      return;
+    }
+    b.frames[fi] = [];
+    history = history.filter(h => !(h.b === cur && h.f === fi));
+    // Baker: an emptied frame hasn't started, so it goes back to following the live order
+    if (bakerActive() && bakerFrameOwners[fi]) bakerFrameOwners[fi] = null;
+    lastCall = `Frame ${fi+1} cleared for ${who} — bowl it again.`;
+    render();
+  }
+  document.getElementById('feClear').onclick = clearFrame;
+
   // Long-press (or click-and-hold) any frame in the LIVE sheet to fix a scoring mistake,
   // even frames from several turns ago. History/recap views don't get this — they're
   // read-only records of what already happened.
@@ -2692,6 +2712,8 @@
     };
     foulBtn.disabled = false;
     foulBtn.onclick = ()=>addRoll(0, true, {d: [], s: target.slice()});
+    missBtn.disabled = false;
+    missBtn.onclick = ()=>addRoll(0, false, {d: [], s: target.slice()});
     return true;
   }
 
@@ -2738,6 +2760,7 @@
   const numgrid = document.getElementById('numgrid');
   const specialBtn = document.getElementById('specialBtn');
   const foulBtn = document.getElementById('foulBtn');
+  const missBtn = document.getElementById('missBtn');
   const whoName = document.getElementById('whoName');
   const whoStatus = document.getElementById('whoStatus');
   const shareBtn = document.getElementById('shareBtn');
@@ -2752,9 +2775,15 @@
       if (i===1 && P(r[0])+v===10) return {t:'/', cls:'mark-s'};
       return {t: v===0?'–':String(v), cls:''};
     }
-    // 10th frame marks
-    if (v===10) return {t:'X', cls:'mark-x'};
-    if (i>0 && P(r[i-1])!==10 && P(r[i-1])+v===10) return {t:'/', cls:'mark-s'};
+    // 10th frame marks. A ball is thrown at a FRESH rack (where 10 = strike) when it's
+    // ball 1, follows a strike, or follows a spare. Otherwise it shares a rack with the
+    // ball before it, and finishing that rack is a spare — even when it's a 10-count
+    // (0 then 10 is a spare, not a strike). Mirrors rollContext()'s rack rules.
+    const fresh = i===0
+      || (i===1 && P(r[0])===10)
+      || (i===2 && (P(r[0])===10 ? P(r[1])===10 : P(r[0])+P(r[1])===10));
+    if (fresh) return v===10 ? {t:'X', cls:'mark-x'} : {t: v===0?'–':String(v), cls:''};
+    if (P(r[i-1])+v===10) return {t:'/', cls:'mark-s'};
     return {t: v===0?'–':String(v), cls:''};
   }
 
@@ -2793,6 +2822,8 @@
     }
     foulBtn.disabled = false;
     foulBtn.onclick = ()=>addRoll(0, true);
+    missBtn.disabled = false;
+    missBtn.onclick = ()=>addRoll(0);
   }
 
   function render(){
@@ -2801,7 +2832,6 @@
     if (!bowlers.length){ tabsEl.innerHTML = ''; refreshReorderTrigger(); return; }
     const b = bowlers[cur];
     refreshReorderTrigger();
-    document.getElementById('undoBtn').disabled = !hasUndo();
     // tabs
     tabsEl.innerHTML = '';
     bowlers.forEach((bw,i)=>{
@@ -2877,6 +2907,7 @@
       }
       specialBtn.disabled = true; specialBtn.textContent='STRIKE'; specialBtn.classList.remove('spare');
       foulBtn.disabled = true;
+      missBtn.disabled = true;
       document.getElementById('pinstage').classList.remove('show');
       numgrid.classList.remove('hide');
     } else {
@@ -3337,10 +3368,6 @@
   document.getElementById('recapFb').onclick = ()=>shareCard('My bowling series', true);
 
   document.getElementById('nextGameBtn').onclick = nextGame;
-  document.getElementById('undoBtn').onclick = ()=>{
-    lastCall = 'Scratch that — re-mark the ball.';
-    undo();
-  };
   document.getElementById('newGame').onclick = async ()=>{
     if (await askConfirm('Reset the whole session WITHOUT saving? All games, scores, and series totals will be discarded. (Use Finish session to save instead.)', 'Discard')){
       lastCall = 'Fresh session — lace up, first ball of the game.';
