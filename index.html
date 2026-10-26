@@ -1270,12 +1270,33 @@
           <li>On the menu, tap the backup status pill.</li>
           <li>Tap <b>Choose folder</b> and pick your synced Drive/iCloud/Dropbox folder.</li>
         </ol></div>
-      <div class="htTask"><div class="htTaskName">Keep history the same on two devices (cloud sync)</div>
+      <div class="htTask"><div class="htTaskName">Cloud sync: set it up on the first device</div>
         <ol class="htSteps">
-          <li>On the menu, tap the backup status pill, then <b>Cloud sync ›</b> at the bottom.</li>
-          <li>First device: tap <b>New ID</b>, write the ID down, then tap <b>Turn on</b>.</li>
-          <li>Each other device: same screen, type that ID, tap <b>Turn on</b>. Saved history merges both ways.</li>
-          <li>From then on it syncs by itself; History shows <b>☁ Sync now</b> and the last sync time.</li>
+          <li>Finish any session in progress first — only saved sessions sync.</li>
+          <li>On the menu, tap the backup status pill, then <b>Cloud sync ›</b> at the bottom of that window.</li>
+          <li>If there's a <b>Sync server address</b> box, type the address the coach gave you.</li>
+          <li>Tap <b>New ID</b>. When the <b>Admin passcode</b> box appears, enter the coach's passcode and tap <b>Make ID</b>.</li>
+          <li>Write the new ID down somewhere safe (or tap <b>Copy ID</b> later). It's the only way to reach this history from another device — nobody can recover it.</li>
+          <li>Tap <b>Turn on</b>. When History shows <b>☁ Sync now</b> and “Synced …”, it's working.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Cloud sync: add another device (or a new phone)</div>
+        <ol class="htSteps">
+          <li>On the new device, open Strikebook from the same web address, then menu → backup status pill → <b>Cloud sync ›</b>.</li>
+          <li>Enter the sync server address if asked.</li>
+          <li>Type the same sync ID from the first device — dashes and capitals don't matter. Don't tap New ID; no passcode is needed.</li>
+          <li>Tap <b>Turn on</b>. Saved history and leagues from both devices merge together within a few seconds.</li>
+          <li>Repeat on every device that should share this history.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Cloud sync: give a bowler their own sync</div>
+        <ol class="htSteps">
+          <li>On the bowler's phone, follow <i>set it up on the first device</i> above — the coach enters the passcode for them.</li>
+          <li>Each person or family gets its own ID; everything on a device is shared with every other device using that same ID.</li>
+        </ol></div>
+      <div class="htTask"><div class="htTaskName">Cloud sync: check it, find your ID, or turn it off</div>
+        <ol class="htSteps">
+          <li>History shows the last sync time under <b>☁ Sync now</b>; tap it to sync right away. It also syncs by itself after every change and when the app opens.</li>
+          <li>To see the ID: menu → backup status pill → <b>Cloud sync ›</b> → <b>Show ID</b> or <b>Copy ID</b>.</li>
+          <li>To stop syncing one device: same screen → <b>Turn off sync on this device</b>. Its history stays on the device and the other devices keep syncing.</li>
         </ol></div>
 
       <h4>Lane conditions</h4>
@@ -1436,14 +1457,17 @@
       <b>Cloud sync (optional, set up once):</b> keeps saved history and leagues the same on every device that
       uses the same <b>sync ID</b> — a new phone, or a second device. It's hidden until it's set up: on the menu,
       tap the backup status pill, then <b>Cloud sync ›</b> at the bottom. Tap <b>New ID</b> (or type the ID from
-      your other device) and <b>Turn on</b>. <b>Write the ID down</b> — it's the only key to that synced copy;
+      your other device) and <b>Turn on</b>. While the coach has the admin gate on, <b>New ID</b> first asks
+      for the <b>admin passcode</b> — it's checked by the sync server, never saved in the app, and only needed
+      once per new ID; a device joining with an existing ID never needs it. <b>Write the ID down</b> — it's the only key to that synced copy;
       nobody can recover it for you. Everything is encrypted on the phone with that ID before upload, and the
       server only ever sees a scrambled file under an anonymous name. Once on, History shows <b>☁ Sync now</b>
       and when it last synced; it also syncs by itself after every change and each time the app opens, and
       catches up when you're back online. Only <i>saved</i> sessions sync — an unfinished session stays on the
       phone it's being scored on until you tap Finish. With sync on, deleting a session or removing a bowler
       applies to every device using that ID. Sync needs a free Cloudflare Worker that the coach sets up once
-      (<i>strikebook-sync-worker.js</i> in the repo has the steps); put its address in <i>SYNC_SERVER</i> near
+      (<i>strikebook-sync-worker.js</i> in the repo has the steps — the admin passcode is set there as the
+      <i>ADMIN_CODE</i> secret, and adding <i>OPEN_ENROLLMENT = true</i> later lets anyone make an ID); put its address in <i>SYNC_SERVER</i> near
       the top of the app file, or type it in the Cloud sync screen. Cloud sync is in addition to backup files,
       not a replacement — keep saving those.</p>
 
@@ -1839,9 +1863,10 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.24.0';  // Single source of truth for the version history: renders BOTH the manual's
+  const APP_VERSION = '1.25.0';  // Single source of truth for the version history: renders BOTH the manual's
   // section 12 and the "what's new" overlay shown after an update.
   const CHANGELOG = [
+    {v:'1.25.0', d:"Cloud sync is now invite-only while it's being tried out \u2014 making a new sync ID needs the coach's admin passcode, which is checked by the sync server and never stored in the app. Devices joining with an existing ID don't need it. The coach can open sync up to everyone later from the sync server's settings, with no app update needed."},
     {v:'1.24.0', d:"Optional cloud sync \u2014 keep the same saved history and leagues on more than one device. It's off and out of sight until it's set up (menu \u2192 backup status \u2192 Cloud sync at the bottom). Each person gets a private sync ID; everything is locked with that ID on the phone before it's sent, so the sync server only ever holds scrambled data with no names on it. Once on, a \u2601 Sync now button and status line appear in History, and syncing also happens on its own after every change and whenever the app opens. Scoring works exactly the same offline."},
     {v:'1.23.0', d:"A MISS button \u2014 the button beside F now records a gutter or clean miss (zero, shown as \u2013) in one tap; in pin rack mode it keeps every pin standing so the leave is still tracked. It replaces \u21a9 undo: to correct a ball, press and hold its frame. On a bowler's latest frame you can also Clear this frame \u2014 the fix for a ball scored on the wrong tab, or a wrong first ball before the second is thrown. Also fixed two 10th-frame display mix-ups: 9, /, 9 showed a false spare (9 / /), and a 10-count on a spare ball (like a gutter then all ten) showed X instead of / \u2014 scores were always right, only the marks were wrong."},
     {v:'1.22.1', d:"Fixed a real dead end on a bowler's page \u2014 tapping Tonight (or Last 5) with nothing logged used to drop the Career/Last 5/Tonight toggle entirely, leaving only a full exit back to the bowler list. The toggle now stays put so you can just tap Career to get back, and the empty message names the actual scope (\u2018tonight\u2019, not \u2018this scope\u2019)."},
@@ -4233,11 +4258,40 @@
     try{ return await fetch(url, {...opts, cache:'no-store', ...(ctl ? {signal:ctl.signal} : {})}); }
     finally{ if (timer) clearTimeout(timer); }
   }
+  // Returns null if no Strikebook sync server answers, else its enrollment mode:
+  // 'code' (new IDs need the admin passcode), 'open', or 'closed'.
   async function syncTestServer(server){
     try{
       const r = await syncFetch(server + '/', {method:'GET'});
       const j = await r.json();
-      return !!(r.ok && j && j.app === 'strikebook-sync');
+      if (!(r.ok && j && j.app === 'strikebook-sync')) return null;
+      return ['code','open','closed'].includes(j.enroll) ? j.enroll : 'open';   // pre-gate Worker = open
+    }catch(e){ return null; }
+  }
+  async function syncNotEnrolled(res){
+    if (res.status !== 403) return false;
+    try{ const j = await res.clone().json(); return j && j.error === 'not enrolled'; }catch(e){ return false; }
+  }
+  // 'enrolled' | 'new' | null (couldn't tell)
+  async function syncIdStatus(server, id){
+    try{
+      const {lookup} = await syncKeys(id);
+      const r = await syncFetch(server + '/v1/' + lookup, {method:'GET'});
+      if (r.status === 200 || r.status === 404) return 'enrolled';
+      if (await syncNotEnrolled(r)) return 'new';
+      return null;
+    }catch(e){ return null; }
+  }
+  // true | 'bad-code' | 'closed' | false
+  async function syncEnroll(server, id, code){
+    try{
+      const {lookup} = await syncKeys(id);
+      const r = await syncFetch(server + '/v1/' + lookup + '/enroll', {method:'POST',
+        headers:{'Content-Type':'application/json'}, body:JSON.stringify({code: code || ''})});
+      if (r.ok) return true;
+      if (r.status === 401) return 'bad-code';
+      if (r.status === 403) return 'closed';
+      return false;
     }catch(e){ return false; }
   }
 
@@ -4259,6 +4313,7 @@
 
       let remote = {sessions:[], leagues:[], tomb:{}}, remoteRaw = null;
       const g = await syncFetch(url, {method:'GET'});
+      if (await syncNotEnrolled(g)) throw new Error('not-enrolled');
       if (g.status === 200){
         let envl;
         try{ envl = await g.json(); }catch(e){ throw new Error('bad-reply'); }
@@ -4302,6 +4357,7 @@
       if (remoteRaw !== mergedRaw){
         const envl = await syncSeal(JSON.parse(mergedRaw), key);
         const p = await syncFetch(url, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(envl)});
+        if (await syncNotEnrolled(p)) throw new Error('not-enrolled');
         if (!p.ok) throw new Error('http-' + p.status);
         pushed = true;
       }
@@ -4316,7 +4372,7 @@
       }
     }catch(e){
       const msg = (e && e.name === 'AbortError') ? 'timeout' : (e && e.message) || 'failed';
-      const known = ['decrypt','old-browser','no-server','bad-reply','timeout'].includes(msg) || /^http-/.test(msg);
+      const known = ['decrypt','old-browser','no-server','bad-reply','timeout','not-enrolled'].includes(msg) || /^http-/.test(msg);
       await kvSet('syncLastErr', known ? msg : 'network');
       await kvSet('syncPending', true);
       result = {ok:false, reason: known ? msg : 'network'};
@@ -4336,6 +4392,7 @@
       'network':'no connection to the sync server',
       'bad-reply':'the sync server sent something unexpected',
       'http-403':'the sync server refused this app’s address',
+      'not-enrolled':'this sync ID isn’t set up on the sync server',
       'http-413':'the history is too big for the sync server',
       'http-429':'the sync server was busy'
     })[code] || (code ? 'the sync server had a problem (' + code + ')' : '');
@@ -5856,15 +5913,50 @@
         server only ever stores scrambled data with no names attached.</p>
         ${SYNC_SERVER ? '' : `<div class="bkMeta" style="margin:0 0 4px">Sync server address</div>
         <input id="syncServerIn" class="syncIn" placeholder="strikebook-sync.….workers.dev" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="url">`}
+        <div id="syncCodeWrap" style="display:none">
+          <div class="bkMeta" style="margin:10px 0 4px">Admin passcode — needed once to make a new ID</div>
+          <input id="syncCodeIn" class="syncIn" type="password" autocomplete="off" autocapitalize="off" spellcheck="false">
+        </div>
         <div class="bkMeta" style="margin:10px 0 4px">Sync ID — make a new one, or enter the one from your other device</div>
         <input id="syncIdIn" class="syncIn" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" maxlength="23" autocomplete="off" autocapitalize="characters" spellcheck="false">
         <div class="bkMeta" id="syncMsg" style="margin:8px 0 0;min-height:0">${esc(syncDraftMsg)}</div>
         <div class="btns">${btn('syncGen','cancel','New ID')}${btn('syncOn','ok','Turn on')}</div>`;
       const srv = await kvGet('syncLastServer');
       if (srv && document.getElementById('syncServerIn')) document.getElementById('syncServerIn').value = srv;
-      document.getElementById('syncGen').onclick = ()=>{
-        document.getElementById('syncIdIn').value = syncNewId();
-        document.getElementById('syncMsg').textContent = 'New ID made. Write it down somewhere safe — it’s the only way to unlock this history on another device.';
+      const syncServerNow = ()=> SYNC_SERVER ? syncNormServer(SYNC_SERVER) : syncNormServer((document.getElementById('syncServerIn')||{}).value);
+      // New ID: the ID is only generated after the sync server accepts it (and, while the
+      // admin gate is on, the passcode). The passcode is checked by the server, never stored here.
+      document.getElementById('syncGen').onclick = async ()=>{
+        const msg = document.getElementById('syncMsg');
+        const gen = document.getElementById('syncGen');
+        const codeWrap = document.getElementById('syncCodeWrap');
+        const server = syncServerNow();
+        if (!server){ msg.textContent = 'Enter the sync server address first.'; return; }
+        gen.disabled = true; gen.textContent = 'Checking…';
+        const done = label => { gen.disabled = false; gen.textContent = label; };
+        const mode = await syncTestServer(server);
+        if (!mode){ done('New ID'); msg.textContent = 'Couldn’t reach a Strikebook sync server at that address. Check it and your connection.'; return; }
+        if (mode === 'closed'){ done('New ID'); msg.textContent = 'New sync IDs are switched off on the sync server. You can still enter an existing ID.'; return; }
+        const code = document.getElementById('syncCodeIn').value;
+        if (mode === 'code' && !code){
+          codeWrap.style.display = 'block'; done('Make ID');
+          msg.textContent = 'Enter the admin passcode, then tap Make ID.';
+          document.getElementById('syncCodeIn').focus();
+          return;
+        }
+        const id = syncNewId();
+        const res = await syncEnroll(server, id, mode === 'code' ? code : '');
+        if (res === 'bad-code'){
+          codeWrap.style.display = 'block'; done('Make ID');
+          document.getElementById('syncCodeIn').value = '';
+          msg.textContent = 'That passcode isn’t right.';
+          return;
+        }
+        if (res !== true){ done('New ID'); msg.textContent = res === 'closed' ? 'New sync IDs are switched off on the sync server.' : 'Couldn’t set up a new ID — try again.'; return; }
+        document.getElementById('syncCodeIn').value = '';
+        codeWrap.style.display = 'none'; done('New ID');
+        document.getElementById('syncIdIn').value = id;
+        msg.textContent = 'New ID made. Write it down somewhere safe — it’s the only way to unlock this history on another device. Tap Turn on.';
       };
       document.getElementById('syncOn').onclick = async ()=>{
         const msg = document.getElementById('syncMsg');
@@ -5877,6 +5969,14 @@
         if (!await syncTestServer(server)){
           go.disabled = false; go.textContent = 'Turn on';
           msg.textContent = 'Couldn’t reach a Strikebook sync server at that address. Check it and your connection.';
+          return;
+        }
+        const st = await syncIdStatus(server, id);
+        if (st !== 'enrolled'){
+          go.disabled = false; go.textContent = 'Turn on';
+          msg.textContent = st === 'new'
+            ? 'That ID isn’t set up on the sync server. Check it for typos, or tap New ID to make one.'
+            : 'Couldn’t check that ID with the sync server — try again.';
           return;
         }
         if (!SYNC_SERVER) await kvSet('syncLastServer', server);
