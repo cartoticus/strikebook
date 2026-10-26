@@ -580,6 +580,10 @@
   .bkTxt{font-size:13.5px;color:var(--cream-dim);line-height:1.5;margin-bottom:10px}
   .bkTxt b{color:var(--cream)}
   .bkMeta{font-size:11.5px;color:var(--cream-dim);opacity:.75;margin:-4px 0 10px}
+  .bkSyncLink{display:block;margin:14px auto 0;background:none;border:none;color:var(--cream-dim);opacity:.6;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;padding:4px 8px}
+  .bkSyncLink:active{opacity:.9}
+  .modal input.syncIn{font-size:15px;letter-spacing:.5px}
+  .syncIdBox{background:var(--navy);border:1.5px solid rgba(245,239,224,.25);border-radius:10px;color:var(--cream);font-weight:700;font-size:16px;letter-spacing:1px;text-align:center;padding:10px 8px;font-variant-numeric:tabular-nums;user-select:all;-webkit-user-select:all;word-break:break-all}
   #confirmDlg{z-index:95}
   .sop h4{
     font-family:'Bowlby One SC',cursive;font-size:13px;color:var(--amber);
@@ -634,6 +638,7 @@
     flex:1;height:44px;background:var(--navy-2);border:1.5px solid rgba(245,239,224,.25);
     color:var(--cream);border-radius:10px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;
   }
+  .backupRow button:disabled{opacity:.55}
   .histBack{
     background:none;border:1.5px solid rgba(245,239,224,.3);color:var(--cream-dim);
     border-radius:999px;padding:5px 14px;font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;margin-bottom:12px;
@@ -1057,6 +1062,8 @@
         <input type="file" id="importFile" accept=".json,application/json" style="display:none">
       </div>
       <div class="ghosthint" id="backupHint">Backups hold everyone. To bring in one bowler's data they sent you, tap <b>Load / import</b> — it detects the file type and merges by bowler.</div>
+      <div class="backupRow" id="syncRow" style="display:none;margin-top:10px"><button id="syncNowBtn">☁ Sync now</button></div>
+      <div class="ghosthint" id="syncHint" style="display:none"></div>
     </div>
     <div id="histBowler" style="display:none"></div>
     <div id="histSession" style="display:none"></div>
@@ -1263,6 +1270,13 @@
           <li>On the menu, tap the backup status pill.</li>
           <li>Tap <b>Choose folder</b> and pick your synced Drive/iCloud/Dropbox folder.</li>
         </ol></div>
+      <div class="htTask"><div class="htTaskName">Keep history the same on two devices (cloud sync)</div>
+        <ol class="htSteps">
+          <li>On the menu, tap the backup status pill, then <b>Cloud sync ›</b> at the bottom.</li>
+          <li>First device: tap <b>New ID</b>, write the ID down, then tap <b>Turn on</b>.</li>
+          <li>Each other device: same screen, type that ID, tap <b>Turn on</b>. Saved history merges both ways.</li>
+          <li>From then on it syncs by itself; History shows <b>☁ Sync now</b> and the last sync time.</li>
+        </ol></div>
 
       <h4>Lane conditions</h4>
       <div class="htTask"><div class="htTaskName">Set the lane condition for a session</div>
@@ -1382,7 +1396,7 @@
     </div>
     <div class="sop">
       <h4>1 · What this is, where your data lives</h4>
-      <p>Strikebook is a single self-contained file. Everything — sessions, history, analytics — is stored <b>on this device, in this browser</b>. <b>No bowling data is ever uploaded anywhere</b> — no scores, no bowler names, nothing personal, ever. The one optional exception is a visit counter (see §13) that a coach can turn on to see rough usage over time; it's off by default, and even switched on it never carries names, scores, or anything else personal — just "the app opened, on this version." That means privacy by default, and it means <b>backups are your responsibility</b> (see §5). New users see a short welcome tour the first time they open the app, covering home-screen install, backups, and where to find this manual.<br><br>
+      <p>Strikebook is a single self-contained file. Everything — sessions, history, analytics — is stored <b>on this device, in this browser</b>. <b>No bowling data is ever uploaded anywhere</b> unless you turn on <b>cloud sync</b> (see §5) — and even then it's locked on this device with your private sync ID before it leaves, so the server can't read it. The other optional exception is a visit counter (see §13) that a coach can turn on to see rough usage over time; it's off by default, and even switched on it never carries names, scores, or anything else personal — just "the app opened, on this version." That means privacy by default, and it means <b>backups are your responsibility</b> (see §5). New users see a short welcome tour the first time they open the app, covering home-screen install, backups, and where to find this manual.<br><br>
       <b>Opening the app lands you on a menu</b> — one tap to <b>🎳 Start a session</b>, plus History, this manual, the How To guide, and feedback, all in one place. Tapping Start a session takes you to a dedicated screen for picking bowlers, turn order, session type, and lane condition before you begin; <b>← Menu</b> there takes you back without starting anything. For quick "how do I do X" lookups without reading the whole manual, the <b>📋 How To</b> guide on the menu has short numbered steps for every feature.</p>
       <button class="editLabelBtn" id="replayTourBtn" style="margin-top:8px">👋 Replay the welcome tour</button>
       <button class="editLabelBtn" id="howtoBtn2" style="margin-top:8px">📋 How to — step by step for every feature</button>
@@ -1418,7 +1432,20 @@
       folder you keep. To restore or move phones: open Strikebook on the new device → History → <b>⬆ Load
       backup</b>. Imports merge safely — loading the same file twice never duplicates. <b>Why this matters:</b>
       clearing browser data (or iOS storage housekeeping) can erase on-device history without warning. A backup
-      file — auto or manual — cannot be erased by a browser.</p>
+      file — auto or manual — cannot be erased by a browser.<br><br>
+      <b>Cloud sync (optional, set up once):</b> keeps saved history and leagues the same on every device that
+      uses the same <b>sync ID</b> — a new phone, or a second device. It's hidden until it's set up: on the menu,
+      tap the backup status pill, then <b>Cloud sync ›</b> at the bottom. Tap <b>New ID</b> (or type the ID from
+      your other device) and <b>Turn on</b>. <b>Write the ID down</b> — it's the only key to that synced copy;
+      nobody can recover it for you. Everything is encrypted on the phone with that ID before upload, and the
+      server only ever sees a scrambled file under an anonymous name. Once on, History shows <b>☁ Sync now</b>
+      and when it last synced; it also syncs by itself after every change and each time the app opens, and
+      catches up when you're back online. Only <i>saved</i> sessions sync — an unfinished session stays on the
+      phone it's being scored on until you tap Finish. With sync on, deleting a session or removing a bowler
+      applies to every device using that ID. Sync needs a free Cloudflare Worker that the coach sets up once
+      (<i>strikebook-sync-worker.js</i> in the repo has the steps); put its address in <i>SYNC_SERVER</i> near
+      the top of the app file, or type it in the Cloud sync screen. Cloud sync is in addition to backup files,
+      not a replacement — keep saving those.</p>
 
       <h4>6 · How the analytics compute</h4>
       <p>Career stats group by a hidden bowler ID, so renaming a bowler never splits their history. Leave percentages count only pin-rack entries. A leave needs <b>4 attempts</b> before it's ranked (under that, it's held in the "keep bowling" note). <b>Splits are tracked separately</b> so they don't drag down the makeable-spare percentage. The drill list estimates ~11 pins of scoring cost per missed spare — an approximation, flagged as such. <b>Game Craft</b> adds Clean Frame % (marks per frame, works even for keypad games) and Bounce-Back % (how often a mark follows an open). <b>Spare Classes</b> rolls every leave into three difficulty tiers — singles, makeable multi-pin, splits — and the <b>Nemesis Pin</b> is simply the single-pin leave you see most. The <b>Ball-by-Ball</b> block adds first-ball average (the strongest predictor of scoring), strike rate, double rate (strikes that follow strikes), clean-10th %, and a consistency figure (± your game-to-game swing). <b>Game-Position Average</b> compares your 1st vs 2nd vs 3rd game to reveal warm-up or fatigue patterns; it needs a few multi-game sessions before it appears. <b>Progress</b> is the AVERAGES card near the top of a bowler's page — switch between Score, Strike %, and Spare % to see a 21-game rolling average (growing under 21 games, trailing 21 after) for Overall, Tournament, and every league they've bowled in by name. It always shows the bowler's full history regardless of the Career/Last 5/Tonight scope above it, since a trend needs the long view. Strike % and Spare % use the same per-frame math as the Ball-by-Ball and Game Craft numbers elsewhere on the page, so a line here never disagrees with a number shown anywhere else. <b>Lane condition</b> (House / Sport / Challenge, plus an optional pattern name) can be set on the setup screen or added later by editing any session's label — it's stored so future analytics can compare how a bowler scores across easy house shots vs tough sport patterns. You can pick a known pattern from the list or free-type any name, which matters because tournament patterns like Junior Gold are kept secret until after the block. When a pattern name is set, the session page shows a <b>🔍 Look up in the Kegel pattern library</b> link that opens Kegel's official library (and copies the name so you can paste it into their search) — handy for pulling the actual pattern sheet before practice.</p>
@@ -1463,7 +1490,7 @@
       <p><b>Share button does nothing:</b> some in-app browsers block the share sheet — the card downloads instead; share the PNG manually. <b>History looks empty:</b> you may have opened the file from a different location — import your latest backup. <b>Buttons unresponsive after an update:</b> fully close and reopen the browser tab. When in doubt: export a backup <i>first</i>, then investigate.</p>
 
       <h4>13 · Visit counter (optional, off by default)</h4>
-      <p>Strikebook can send one anonymous ping each time it opens — "the app was opened, running v1.17.0" — to a free counter you'd own, so you can see rough usage over time without asking anyone. <b>It carries no names, no scores, no bowler data of any kind</b>, and it's the only network call the app ever makes besides loading itself.<br><br>
+      <p>Strikebook can send one anonymous ping each time it opens — "the app was opened, running v1.17.0" — to a free counter you'd own, so you can see rough usage over time without asking anyone. <b>It carries no names, no scores, no bowler data of any kind</b>, and apart from cloud sync (only if you set it up, §5) it's the only network call the app ever makes besides loading itself.<br><br>
       <b>Turning it on:</b> create a free account at <i>goatcounter.com</i> (no credit card, non-commercial use is free), which gives you a short "site code." Put that code into <i>VISIT_COUNTER_CODE</i> near the top of the app file. Leave it blank — the default — and the app never makes this call at all; nothing about its behavior changes.<br><br>
       <b>Reading it:</b> your GoatCounter dashboard shows visits over time automatically. Because every ping is tagged with the version number, its "Pages" view breaks visits down by version too — so you can see, for example, how many opens happened on v1.16.0 versus v1.17.0 as people update.</p>
 
@@ -1783,6 +1810,16 @@
   </div>
 </div>
 
+<div class="modal" id="syncModal">
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+      <h3 style="margin:0">Cloud sync</h3>
+      <button id="syncX" class="bkXBtn">✕</button>
+    </div>
+    <div id="syncBody"></div>
+  </div>
+</div>
+
 <div class="modal" id="confirmDlg">
   <div class="card">
     <h3>Are you sure?</h3>
@@ -1802,9 +1839,10 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.23.0';  // Single source of truth for the version history: renders BOTH the manual's
+  const APP_VERSION = '1.24.0';  // Single source of truth for the version history: renders BOTH the manual's
   // section 12 and the "what's new" overlay shown after an update.
   const CHANGELOG = [
+    {v:'1.24.0', d:"Optional cloud sync \u2014 keep the same saved history and leagues on more than one device. It's off and out of sight until it's set up (menu \u2192 backup status \u2192 Cloud sync at the bottom). Each person gets a private sync ID; everything is locked with that ID on the phone before it's sent, so the sync server only ever holds scrambled data with no names on it. Once on, a \u2601 Sync now button and status line appear in History, and syncing also happens on its own after every change and whenever the app opens. Scoring works exactly the same offline."},
     {v:'1.23.0', d:"A MISS button \u2014 the button beside F now records a gutter or clean miss (zero, shown as \u2013) in one tap; in pin rack mode it keeps every pin standing so the leave is still tracked. It replaces \u21a9 undo: to correct a ball, press and hold its frame. On a bowler's latest frame you can also Clear this frame \u2014 the fix for a ball scored on the wrong tab, or a wrong first ball before the second is thrown. Also fixed two 10th-frame display mix-ups: 9, /, 9 showed a false spare (9 / /), and a 10-count on a spare ball (like a gutter then all ten) showed X instead of / \u2014 scores were always right, only the marks were wrong."},
     {v:'1.22.1', d:"Fixed a real dead end on a bowler's page \u2014 tapping Tonight (or Last 5) with nothing logged used to drop the Career/Last 5/Tonight toggle entirely, leaving only a full exit back to the bowler list. The toggle now stays put so you can just tap Career to get back, and the empty message names the actual scope (\u2018tonight\u2019, not \u2018this scope\u2019)."},
     {v:'1.22.0', d:"Progress graphs \u2014 every bowler's page now has an AVERAGES card: switch between Score, Strike %, and Spare %, each shown as a 21-game rolling average for Overall, Tournament, and every league they've bowled in by name (not a generic \u2018League\u2019 bucket). Strike % and Spare % use the exact same per-frame math as the rest of the app, so the numbers always agree with what's shown elsewhere on the page."},
@@ -3396,6 +3434,7 @@
   function lsArchive(){ try{ return JSON.parse(localStorage.getItem(ARCHIVE_LS_KEY)) || []; }catch(e){ return []; } }
   function lsArchiveWrite(a){ try{ localStorage.setItem(ARCHIVE_LS_KEY, JSON.stringify(a)); }catch(e){} }
   async function archivePut(sess){
+    if (!syncApplying) sess._m = Date.now();   // edit stamp for cloud-sync merges (newest wins)
     try{
       const db = await idbOpen();
       await new Promise((res, rej)=>{
@@ -3406,6 +3445,7 @@
     }catch(e){
       const a = lsArchive().filter(s=>s.id!==sess.id); a.push(sess); lsArchiveWrite(a);
     }
+    syncScheduleSoon();
   }
   async function archiveAll(){
     try{
@@ -3417,6 +3457,7 @@
     }catch(e){ return lsArchive(); }
   }
   async function archiveDel(id){
+    await syncRecordDelete(id);   // tombstone, so a synced copy can't bring it back
     try{
       const db = await idbOpen();
       await new Promise((res, rej)=>{
@@ -3425,6 +3466,7 @@
         tx.oncomplete = res; tx.onerror = ()=>rej(tx.error);
       });
     }catch(e){ lsArchiveWrite(lsArchive().filter(s=>s.id!==id)); }
+    syncScheduleSoon();
   }
   // tiny key/value slot in the same DB, used only for the backup-folder handle + status
   async function kvGet(key){
@@ -3460,7 +3502,17 @@
     const v = await kvGet(LEAGUES_KEY);
     return Array.isArray(v) ? v : [];
   }
-  async function leaguesSaveAll(list){ await kvSet(LEAGUES_KEY, list); }
+  async function leaguesSaveAll(list){
+    if (!syncApplying){
+      // stamp only the leagues that actually changed, so a sync merge keeps the newest edit
+      const strip = l => JSON.stringify({...l, _m:0});
+      const prev = new Map((await leaguesGetAll()).map(l=>[l.id, strip(l)]));
+      const now = Date.now();
+      list.forEach(l=>{ if (prev.get(l.id) !== strip(l)) l._m = now; });
+    }
+    await kvSet(LEAGUES_KEY, list);
+    syncScheduleSoon();
+  }
   // Standard bowling handicap formula: (basis − average) × percentage, FLOORED not rounded —
   // this exact rule was verified against real handicap-calculator sources before building.
   function calcHandicap(basis, pct, avg){
@@ -4055,6 +4107,240 @@
     return {state:'on', folder:handle.name, lastOk: await kvGet('lastBackupOk'), lastAt: await kvGet('lastBackupAt')};
   }
 
+  /* ---------- cloud sync (optional; hidden everywhere until set up) ----------
+     One encrypted blob per sync ID, stored by a tiny Cloudflare Worker + KV
+     (strikebook-sync-worker.js in the repo). The sync ID never leaves the device:
+       - the server address for the blob is a SHA-256 hash of the ID
+       - the blob is AES-GCM encrypted with a key derived (PBKDF2) from the ID
+     so the server only ever holds scrambled data under an anonymous name.
+     Same ID on two devices = same history on both. Merge is by session id:
+     newest edit (_m) wins, deletes travel as tombstones so they don't come back.
+     The live (unfinished) session is never synced — only saved history + leagues. */
+  const SYNC_SERVER = '';   // Worker URL, e.g. 'https://strikebook-sync.yourname.workers.dev'. Blank = setup asks for it.
+  const SYNC_ALPH = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';   // no 0/O, 1/I/L — easy to read aloud and type
+  let syncCfgCache;          // undefined = not loaded yet, null = off, {id, server} = on
+  let syncBusy = false, syncAgain = false, syncTimer = null, syncApplying = false;
+  let syncKeyCache = null;   // {id, lookup, key}
+
+  function syncNewId(){
+    const out = [];
+    while (out.length < 20){
+      const bytes = crypto.getRandomValues(new Uint8Array(32));
+      for (const b of bytes){
+        if (b < 248 && out.length < 20) out.push(SYNC_ALPH[b % 31]);   // 248 = 31×8, no modulo bias
+      }
+    }
+    return out.join('').replace(/(.{5})(?=.)/g, '$1-');
+  }
+  function syncNormId(s){
+    const raw = String(s||'').toUpperCase().replace(/[^0-9A-Z]/g,'');
+    if (raw.length !== 20 || [...raw].some(c=>!SYNC_ALPH.includes(c))) return null;
+    return raw.replace(/(.{5})(?=.)/g, '$1-');
+  }
+  function syncNormServer(s){
+    let u = String(s||'').trim();
+    if (!u) return null;
+    if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
+    try{ const p = new URL(u); return p.origin; }catch(e){ return null; }
+  }
+  async function syncGetCfg(){
+    if (syncCfgCache === undefined){
+      const c = await kvGet('syncCfg');
+      syncCfgCache = (c && c.id) ? c : null;
+    }
+    return syncCfgCache;
+  }
+  async function syncSetCfg(c){ syncCfgCache = c; await kvSet('syncCfg', c); }
+  function syncServerFor(cfg){ return SYNC_SERVER ? syncNormServer(SYNC_SERVER) : cfg.server; }
+
+  const syncTE = new TextEncoder(), syncTD = new TextDecoder();
+  const syncHex = buf => Array.from(new Uint8Array(buf), b=>b.toString(16).padStart(2,'0')).join('');
+  function syncB64(u8){
+    let s = '';
+    for (let i=0; i<u8.length; i+=0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i+0x8000));
+    return btoa(s);
+  }
+  function syncUnB64(str){
+    const s = atob(str), u8 = new Uint8Array(s.length);
+    for (let i=0; i<s.length; i++) u8[i] = s.charCodeAt(i);
+    return u8;
+  }
+  async function syncKeys(id){
+    if (syncKeyCache && syncKeyCache.id === id) return syncKeyCache;
+    const lookup = syncHex(await crypto.subtle.digest('SHA-256', syncTE.encode('strikebook-sync-lookup:v1:' + id)));
+    const base = await crypto.subtle.importKey('raw', syncTE.encode(id), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey(
+      {name:'PBKDF2', salt:syncTE.encode('strikebook-sync-key:v1'), iterations:150000, hash:'SHA-256'},
+      base, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
+    syncKeyCache = {id, lookup, key};
+    return syncKeyCache;
+  }
+  async function syncPipe(u8, Stream){
+    const out = new Blob([u8]).stream().pipeThrough(new Stream('gzip'));
+    return new Uint8Array(await new Response(out).arrayBuffer());
+  }
+  async function syncSeal(obj, key){
+    let bytes = syncTE.encode(JSON.stringify(obj));
+    const z = typeof CompressionStream === 'function';
+    if (z) bytes = await syncPipe(bytes, CompressionStream);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, bytes));
+    return {v:1, iv:syncB64(iv), ct:syncB64(ct), at:new Date().toISOString(), ...(z ? {z:1} : {})};
+  }
+  async function syncOpen(env, key){
+    let bytes = new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv:syncUnB64(env.iv)}, key, syncUnB64(env.ct)));
+    if (env.z){
+      if (typeof DecompressionStream !== 'function') throw new Error('old-browser');
+      bytes = await syncPipe(bytes, DecompressionStream);
+    }
+    return JSON.parse(syncTD.decode(bytes));
+  }
+
+  // Pure merge — exercised directly by the tests. Inputs: {sessions, leagues, tomb}.
+  function syncMerge(local, remote){
+    const tomb = {...(remote.tomb||{})};
+    Object.entries(local.tomb||{}).forEach(([id,t])=>{ if (!(tomb[id] >= t)) tomb[id] = t; });
+    const pick = (listA, listB)=>{          // A = local (wins ties), B = remote
+      const m = new Map();
+      (listB||[]).forEach(x=>{ if (x && x.id) m.set(x.id, x); });
+      (listA||[]).forEach(x=>{
+        if (!x || !x.id) return;
+        const o = m.get(x.id);
+        if (!o || (x._m||0) >= (o._m||0)) m.set(x.id, x);
+      });
+      return m;
+    };
+    const sessMap = pick(local.sessions, remote.sessions);
+    for (const [id, s] of sessMap) if (tomb[id] && tomb[id] >= (s._m||0)) sessMap.delete(id);
+    const lgMap = pick(local.leagues, remote.leagues);
+    return { sessions:[...sessMap.values()], leagues:[...lgMap.values()], tomb };
+  }
+
+  function syncScheduleSoon(){
+    if (syncApplying || !syncCfgCache) return;
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(()=>syncNow(), 3000);
+  }
+  async function syncRecordDelete(id){
+    if (syncApplying) return;
+    const t = (await kvGet('syncTomb')) || {};
+    t[id] = Date.now();
+    await kvSet('syncTomb', t);
+  }
+  async function syncFetch(url, opts){
+    const ctl = typeof AbortController === 'function' ? new AbortController() : null;
+    const timer = ctl ? setTimeout(()=>ctl.abort(), 20000) : null;
+    try{ return await fetch(url, {...opts, cache:'no-store', ...(ctl ? {signal:ctl.signal} : {})}); }
+    finally{ if (timer) clearTimeout(timer); }
+  }
+  async function syncTestServer(server){
+    try{
+      const r = await syncFetch(server + '/', {method:'GET'});
+      const j = await r.json();
+      return !!(r.ok && j && j.app === 'strikebook-sync');
+    }catch(e){ return false; }
+  }
+
+  async function syncNow(){
+    const cfg = await syncGetCfg();
+    if (!cfg) return {ok:false, reason:'off'};
+    if (syncBusy){ syncAgain = true; return {ok:false, reason:'busy'}; }
+    if (typeof navigator !== 'undefined' && navigator.onLine === false){
+      await kvSet('syncPending', true); renderSyncUi();
+      return {ok:false, reason:'offline'};
+    }
+    syncBusy = true; renderSyncUi();
+    let result;
+    try{
+      const server = syncServerFor(cfg);
+      if (!server) throw new Error('no-server');
+      const {lookup, key} = await syncKeys(cfg.id);
+      const url = server + '/v1/' + lookup;
+
+      let remote = {sessions:[], leagues:[], tomb:{}}, remoteRaw = null;
+      const g = await syncFetch(url, {method:'GET'});
+      if (g.status === 200){
+        let envl;
+        try{ envl = await g.json(); }catch(e){ throw new Error('bad-reply'); }
+        try{ remote = await syncOpen(envl, key); }
+        catch(e){ throw new Error(e.message === 'old-browser' ? 'old-browser' : 'decrypt'); }
+        remoteRaw = JSON.stringify(remote);
+      } else if (g.status !== 404){
+        throw new Error('http-' + g.status);
+      }
+
+      const localSessions = await archiveAll();
+      const localLeagues = await leaguesGetAll();
+      const local = {sessions:localSessions, leagues:localLeagues, tomb:(await kvGet('syncTomb'))||{}};
+      const merged = syncMerge(local, remote);
+
+      // apply to this device
+      let pulled = 0;
+      syncApplying = true;
+      try{
+        const localById = new Map(localSessions.map(s=>[s.id, s]));
+        const mergedIds = new Set();
+        for (const s of merged.sessions){
+          mergedIds.add(s.id);
+          const mine = localById.get(s.id);
+          if (!mine || JSON.stringify(mine) !== JSON.stringify(s)){
+            if (s.bowlers) s.bowlers.forEach(b=>(b.games||[]).forEach(gm=>{ if (gm.frames) gm.frames = migrateFrames(gm.frames); }));
+            await archivePut(s); pulled++;
+          }
+        }
+        for (const s of localSessions) if (!mergedIds.has(s.id)){ await archiveDel(s.id); pulled++; }
+        if (JSON.stringify(localLeagues) !== JSON.stringify(merged.leagues)){
+          await kvSet(LEAGUES_KEY, merged.leagues);
+          leaguesCache = merged.leagues.slice();
+        }
+        await kvSet('syncTomb', merged.tomb);
+      } finally { syncApplying = false; }
+
+      // push if the server copy is behind
+      let pushed = false;
+      const mergedRaw = JSON.stringify({sessions:merged.sessions, leagues:merged.leagues, tomb:merged.tomb});
+      if (remoteRaw !== mergedRaw){
+        const envl = await syncSeal(JSON.parse(mergedRaw), key);
+        const p = await syncFetch(url, {method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(envl)});
+        if (!p.ok) throw new Error('http-' + p.status);
+        pushed = true;
+      }
+
+      await kvSet('syncLastAt', new Date().toISOString());
+      await kvSet('syncLastErr', '');
+      await kvSet('syncPending', false);
+      result = {ok:true, pulled, pushed};
+      if (pulled){
+        histSessions = await archiveAll();
+        if (historyView.classList.contains('open') && document.getElementById('histHome').style.display !== 'none') renderHistHome();
+      }
+    }catch(e){
+      const msg = (e && e.name === 'AbortError') ? 'timeout' : (e && e.message) || 'failed';
+      const known = ['decrypt','old-browser','no-server','bad-reply','timeout'].includes(msg) || /^http-/.test(msg);
+      await kvSet('syncLastErr', known ? msg : 'network');
+      await kvSet('syncPending', true);
+      result = {ok:false, reason: known ? msg : 'network'};
+    }finally{
+      syncBusy = false;
+    }
+    renderSyncUi();
+    if (syncAgain){ syncAgain = false; syncScheduleSoon(); }
+    return result;
+  }
+  function syncErrText(code){
+    return ({
+      'decrypt':'the saved copy couldn’t be unlocked with this ID',
+      'old-browser':'this browser is too old to read the synced copy',
+      'no-server':'no sync server is set',
+      'timeout':'the sync server didn’t answer',
+      'network':'no connection to the sync server',
+      'bad-reply':'the sync server sent something unexpected',
+      'http-403':'the sync server refused this app’s address',
+      'http-413':'the history is too big for the sync server',
+      'http-429':'the sync server was busy'
+    })[code] || (code ? 'the sync server had a problem (' + code + ')' : '');
+  }
+
   /* ---------- finish session: bank the whole outing into history ---------- */
   function sessionSnapshot(){
     if (bakerActive()){
@@ -4428,6 +4714,7 @@
     histSessions = await archiveAll();
     showHistPane('home');
     renderHistHome();
+    renderSyncUi();
     historyView.classList.add('open');
     historyView.scrollTop = 0;
   }
@@ -5522,6 +5809,8 @@
         await clearBackupFolder(); await renderBackupPill(); await renderBackupModal();
       };
     }
+    body.insertAdjacentHTML('beforeend', '<button class="bkSyncLink" id="bkSyncLink">Cloud sync \u203a</button>');
+    document.getElementById('bkSyncLink').onclick = openSyncModal;
   }
   function closeBackupModal(){ document.getElementById('backupModal').classList.remove('open'); }
   document.getElementById('backupStatus').onclick = async ()=>{
@@ -5529,6 +5818,115 @@
     document.getElementById('backupModal').classList.add('open');
   };
   document.getElementById('bkX').onclick = closeBackupModal;
+
+  /* ---------- cloud sync: setup modal (reached only from the bottom of Auto-backup)
+     and the History row (shown only once sync is on) ---------- */
+  let syncShowId = false, syncDraftMsg = '';
+  async function renderSyncUi(){
+    const cfg = await syncGetCfg();
+    // History row: absent unless sync is set up on this device
+    const row = document.getElementById('syncRow');
+    const hint = document.getElementById('syncHint');
+    if (row){
+      row.style.display = cfg ? 'flex' : 'none';
+      hint.style.display = cfg ? 'block' : 'none';
+      if (cfg){
+        const btn = document.getElementById('syncNowBtn');
+        btn.disabled = syncBusy;
+        btn.textContent = syncBusy ? '☁ Syncing…' : '☁ Sync now';
+        hint.textContent = await syncStatusLine();
+      }
+    }
+    if (document.getElementById('syncModal').classList.contains('open')) renderSyncModal();
+  }
+  async function syncStatusLine(){
+    if (syncBusy) return 'Syncing…';
+    const at = await kvGet('syncLastAt'), err = await kvGet('syncLastErr'), pending = await kvGet('syncPending');
+    if (err) return `Not synced — ${syncErrText(err)}. It’ll try again automatically.`;
+    if (pending && typeof navigator !== 'undefined' && navigator.onLine === false) return 'Offline — will sync when you’re back online.';
+    return at ? `Synced ${fmtWhen(at)}` : 'Not synced yet';
+  }
+  async function renderSyncModal(){
+    const cfg = await syncGetCfg();
+    const body = document.getElementById('syncBody');
+    const btn = (id, cls, label) => `<button class="${cls}" id="${id}" style="flex:1">${label}</button>`;
+    if (!cfg){
+      body.innerHTML = `<p class="bkTxt">Keeps saved history and leagues the same on every device that uses the
+        same <b>sync ID</b>. Everything is locked with that ID on this device before it leaves, so the sync
+        server only ever stores scrambled data with no names attached.</p>
+        ${SYNC_SERVER ? '' : `<div class="bkMeta" style="margin:0 0 4px">Sync server address</div>
+        <input id="syncServerIn" class="syncIn" placeholder="strikebook-sync.….workers.dev" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="url">`}
+        <div class="bkMeta" style="margin:10px 0 4px">Sync ID — make a new one, or enter the one from your other device</div>
+        <input id="syncIdIn" class="syncIn" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" maxlength="23" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <div class="bkMeta" id="syncMsg" style="margin:8px 0 0;min-height:0">${esc(syncDraftMsg)}</div>
+        <div class="btns">${btn('syncGen','cancel','New ID')}${btn('syncOn','ok','Turn on')}</div>`;
+      const srv = await kvGet('syncLastServer');
+      if (srv && document.getElementById('syncServerIn')) document.getElementById('syncServerIn').value = srv;
+      document.getElementById('syncGen').onclick = ()=>{
+        document.getElementById('syncIdIn').value = syncNewId();
+        document.getElementById('syncMsg').textContent = 'New ID made. Write it down somewhere safe — it’s the only way to unlock this history on another device.';
+      };
+      document.getElementById('syncOn').onclick = async ()=>{
+        const msg = document.getElementById('syncMsg');
+        const id = syncNormId(document.getElementById('syncIdIn').value);
+        const server = SYNC_SERVER ? syncNormServer(SYNC_SERVER) : syncNormServer((document.getElementById('syncServerIn')||{}).value);
+        if (!server){ msg.textContent = 'Enter the sync server address.'; return; }
+        if (!id){ msg.textContent = 'That ID isn’t complete — it’s 20 letters and numbers (dashes optional).'; return; }
+        const go = document.getElementById('syncOn');
+        go.disabled = true; go.textContent = 'Checking…';
+        if (!await syncTestServer(server)){
+          go.disabled = false; go.textContent = 'Turn on';
+          msg.textContent = 'Couldn’t reach a Strikebook sync server at that address. Check it and your connection.';
+          return;
+        }
+        if (!SYNC_SERVER) await kvSet('syncLastServer', server);
+        await syncSetCfg({id, server: SYNC_SERVER ? '' : server});
+        syncShowId = true; syncDraftMsg = '';
+        await syncNow();
+        renderSyncModal();
+      };
+      return;
+    }
+    const masked = cfg.id.replace(/[0-9A-Z]/g, '•');
+    body.innerHTML = `<p class="bkTxt">Sync is on. Saved history and leagues sync automatically after every change
+      and each time the app opens. To add another device, open Cloud sync there and enter this same ID.</p>
+      <div class="bkMeta">${esc(await syncStatusLine())}</div>
+      <div class="syncIdBox" id="syncIdBox">${esc(syncShowId ? cfg.id : masked)}</div>
+      <div class="btns">${btn('syncShow','cancel', syncShowId ? 'Hide ID' : 'Show ID')}${btn('syncCopy','cancel','Copy ID')}</div>
+      <div class="btns" style="margin-top:8px">${btn('syncGo','ok', syncBusy ? 'Syncing…' : 'Sync now')}</div>
+      <button class="removeBtn show" id="syncOff" style="margin-top:8px">Turn off sync on this device</button>`;
+    document.getElementById('syncShow').onclick = ()=>{ syncShowId = !syncShowId; renderSyncModal(); };
+    document.getElementById('syncCopy').onclick = async ()=>{
+      let ok = false;
+      try{ await navigator.clipboard.writeText(cfg.id); ok = true; }catch(e){}
+      if (!ok){ syncShowId = true; await renderSyncModal(); }
+      toast(ok ? 'Sync ID copied' : 'Copy it from the box above', true);
+    };
+    document.getElementById('syncGo').disabled = syncBusy;
+    document.getElementById('syncGo').onclick = ()=>syncNow();
+    document.getElementById('syncOff').onclick = async ()=>{
+      closeSyncModal();
+      if (!await askConfirm('Turn off sync on this device? Everything already saved here stays here, and the synced copy stays on the server for your other devices. Make sure the sync ID is written down before you do this.', 'Turn off')){
+        openSyncModal(); return;
+      }
+      clearTimeout(syncTimer);
+      await syncSetCfg(null);
+      syncKeyCache = null; syncShowId = false;
+      await kvSet('syncLastAt', ''); await kvSet('syncLastErr', ''); await kvSet('syncPending', false);
+      renderSyncUi();
+    };
+  }
+  function openSyncModal(){
+    closeBackupModal();
+    renderSyncModal();
+    document.getElementById('syncModal').classList.add('open');
+  }
+  function closeSyncModal(){ document.getElementById('syncModal').classList.remove('open'); syncShowId = false; }
+  document.getElementById('syncX').onclick = closeSyncModal;
+  document.getElementById('syncNowBtn').onclick = ()=>syncNow();
+  if (typeof window !== 'undefined'){
+    window.addEventListener('online', async ()=>{ if (await syncGetCfg() && await kvGet('syncPending')) syncNow(); });
+  }
 
   /* ---------- announcer intro: plays before the scoresheet on every session start ---------- */
   function introLine(names, evt){
@@ -6067,6 +6465,7 @@
   if (!sessionLive()) openMenu();
   wireFrameLongPress();
   pingVisitCounter();
+  syncGetCfg().then(c=>{ if (c) syncNow(); });   // cloud sync on open — no-op unless set up
   // A brand-new user gets onboarding; a returning user gets "what's new". Never both.
   (async ()=>{
     const firstRun = !onboardedGet() && (await archiveAll()).length === 0;
