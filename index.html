@@ -772,6 +772,12 @@
     background:rgba(227,155,45,.1);border-left:3px solid var(--amber);
     font-size:14px;font-style:italic;font-weight:500;color:var(--cream);line-height:1.35;
   }
+  .quoteCard{
+    margin-top:12px;padding:13px 15px;border-radius:10px;background:var(--cream);color:var(--ink);
+    box-shadow:0 6px 18px rgba(0,0,0,.45), inset 0 0 0 1px rgba(34,27,18,.15);
+  }
+  .quoteCard .qk{font-size:9.5px;font-weight:700;letter-spacing:1.4px;color:rgba(34,27,18,.55);margin-bottom:5px}
+  .quoteCard .qt{font-size:16px;font-weight:600;line-height:1.35}
   .recapStandings{margin-top:14px}
   .recapStandings .sh{font-size:10px;font-weight:700;letter-spacing:1.4px;color:var(--cream-dim);opacity:.7;margin-bottom:6px}
   .standRow{
@@ -1026,6 +1032,7 @@
     <div id="recapGames"></div>
     <div class="recapStats" id="recapStats"></div>
     <div class="recapCall" id="recapCall"></div>
+    <div class="quoteCard" id="quoteCard" style="display:none"><div class="qk">FROM THE LANES</div><div class="qt" id="quoteText"></div></div>
     <div class="recapStandings" id="recapStandings"></div>
     <div class="shareRow" style="margin-top:14px">
       <button id="recapSnap">
@@ -1237,7 +1244,7 @@
       <div class="htTask"><div class="htTaskName">Share a story-style score card</div>
         <ol class="htSteps"><li>After a game, tap <b>Snapchat</b> or <b>FB Stories</b> below the scoresheet to build and open the share sheet.</li></ol></div>
       <div class="htTask"><div class="htTaskName">View the full series recap</div>
-        <ol class="htSteps"><li>Tap <b>📋 View series recap</b> to see every bowler's stacked scoresheets and standings for the session so far.</li></ol></div>
+        <ol class="htSteps"><li>Tap <b>📋 View series recap</b> to see every bowler's stacked scoresheets and standings for the session so far, plus a short quote card picked to fit how the night went.</li></ol></div>
 
       <h4>Logging past scores</h4>
       <div class="htTask"><div class="htTaskName">Log a past session with quick totals</div>
@@ -1863,9 +1870,10 @@
 
   // Bump this whenever a new version is deployed — shown on the start screen and
   // in the Owner's Manual so anyone can confirm which build they're running.
-  const APP_VERSION = '1.25.0';  // Single source of truth for the version history: renders BOTH the manual's
+  const APP_VERSION = '1.26.0';  // Single source of truth for the version history: renders BOTH the manual's
   // section 12 and the "what's new" overlay shown after an update.
   const CHANGELOG = [
+    {v:'1.26.0', d:"A little encouragement — the series recap now has a quote card (bowling wisdom picked to fit how the night went: a big game, a rough one, or just a good night with friends), and the announcer's opening screen sometimes borrows one too. It only shows up on the recap and the opening screen, never mid-game, and it won't repeat the same line twice in a row."},
     {v:'1.25.0', d:"Cloud sync is now invite-only while it's being tried out \u2014 making a new sync ID needs the coach's admin passcode, which is checked by the sync server and never stored in the app. Devices joining with an existing ID don't need it. The coach can open sync up to everyone later from the sync server's settings, with no app update needed."},
     {v:'1.24.0', d:"Optional cloud sync \u2014 keep the same saved history and leagues on more than one device. It's off and out of sight until it's set up (menu \u2192 backup status \u2192 Cloud sync at the bottom). Each person gets a private sync ID; everything is locked with that ID on the phone before it's sent, so the sync server only ever holds scrambled data with no names on it. Once on, a \u2601 Sync now button and status line appear in History, and syncing also happens on its own after every change and whenever the app opens. Scoring works exactly the same offline."},
     {v:'1.23.0', d:"A MISS button \u2014 the button beside F now records a gutter or clean miss (zero, shown as \u2013) in one tap; in pin rack mode it keeps every pin standing so the leave is still tracked. It replaces \u21a9 undo: to correct a ball, press and hold its frame. On a bowler's latest frame you can also Clear this frame \u2014 the fix for a ball scored on the wrong tab, or a wrong first ball before the second is thrown. Also fixed two 10th-frame display mix-ups: 9, /, 9 showed a false spare (9 / /), and a 10-count on a spare ball (like a gutter then all ten) showed X instead of / \u2014 scores were always right, only the marks were wrong."},
@@ -2391,6 +2399,141 @@
     if (s.clean) return `${s.clean} clean game${s.clean===1?'':'s'} in the set — ${b.name} kept the sheet filled.`;
     return `${n} games, ${s.series} pins, high game of ${s.high}. That's the night for ${b.name}.`;
   }
+
+  /* ---------- quotes: original writing, tagged by moment (source: Daily Card deck) ----------
+     Shown only on the series recap and (sometimes) the intro screen — never mid-game.
+     Rows are [id, text, moments]. Moments: strike, spare, split, gutter, tenth-frame, adjusting,
+     mental-game, bad-game, practice, technique, team-and-fun, coaching, game-start, game-end, milestone. */
+  const QUOTES = [
+    ["BWL-001","Strikes get the cheers. Spares win the games.",["strike","spare","team-and-fun"]],
+    ["BWL-002","Life will leave you a 7-10 sometimes. Pick the pin you can make and take the count.",["split"]],
+    ["BWL-003","The lanes change as the night goes on. So should you.",["adjusting"]],
+    ["BWL-004","Whatever happened in frames one through nine, the tenth deserves your full attention.",["tenth-frame"]],
+    ["BWL-005","Hit your mark and trust the ball. You can't steer it once it's gone.",["mental-game"]],
+    ["BWL-006","An open frame isn't the end of the game. It's just a number you have to bowl past.",["spare","bad-game"]],
+    ["BWL-007","Three in a row starts with one. Throw this one well.",["strike"]],
+    ["BWL-008","Good bowlers read the lanes. Good people read the room.",["adjusting","team-and-fun"]],
+    ["BWL-009","Your follow-through says a lot about your commitment.",["mental-game"]],
+    ["BWL-010","When the lane goes dry, don't panic. Move, adjust, and find the pocket again.",["strike","adjusting"]],
+    ["BWL-011","Not every leave is fair. Every leave is yours.",["split"]],
+    ["BWL-012","Bowling teaches you that all ten things can fall down and it's still a good day.",["coaching"]],
+    ["BWL-013","Make your spares and the strikes will take care of themselves.",["strike","spare"]],
+    ["BWL-014","The ball goes where you send it. So do your words.",["technique","mental-game"]],
+    ["BWL-015","A bad game is one game. Bowl the next one like it's the first.",["bad-game"]],
+    ["BWL-016","The pocket isn't luck. It's a thousand practice shots paying you back.",["strike","practice"]],
+    ["BWL-017","Slow your feet down and the whole lane slows down with them.",["adjusting"]],
+    ["BWL-018","Look at the arrows, not the pins. Aim at what's close and let the rest follow.",["technique","adjusting"]],
+    ["BWL-019","Some leaves you convert. Some you learn from. Both count as experience.",["split","bad-game"]],
+    ["BWL-020","Gutter balls are free comedy. Laugh, reset, and roll the next one.",["gutter","team-and-fun"]],
+    ["BWL-021","The best part of league night isn't the score. It's the people on the bench.",["team-and-fun"]],
+    ["BWL-022","Pressure in the tenth is a privilege. It means you're still in it.",["tenth-frame","mental-game"]],
+    ["BWL-023","When the pattern breaks down, the bowlers who adjust keep scoring. The ones who complain keep complaining.",["adjusting"]],
+    ["BWL-024","Grip it lightly. Tension never helped a ball roll truer.",["mental-game"]],
+    ["BWL-025","You can't bowl a 300 in one throw. You can only make the next good shot.",["strike"]],
+    ["BWL-026","The pins don't know your average. Throw it like tonight's your night.",["game-start","mental-game"]],
+    ["BWL-027","Single-pin spares are where focus gets tested. Small target, big lesson.",["spare","mental-game"]],
+    ["BWL-028","Every great bowler started out with bumpers and somebody cheering anyway.",["team-and-fun","coaching"]],
+    ["BWL-029","Find your line. Then trust it until the lane tells you otherwise.",["adjusting","mental-game"]],
+    ["BWL-030","A big split isn't a reason to quit. It's a reason to pick a pin and play for every point.",["split"]],
+    ["BWL-031","Oil patterns are invisible, but they decide everything. So do habits.",["adjusting"]],
+    ["BWL-032","The approach matters as much as the release. How you get there decides where it goes.",["technique"]],
+    ["BWL-033","Cheer for the other team's strikes too. Good bowling is good bowling.",["strike","team-and-fun"]],
+    ["BWL-034","Doubles are built on one clean shot. Then another. That's the whole secret.",["strike"]],
+    ["BWL-035","Breathe on the approach. Your best shot comes from your calmest step.",["mental-game"]],
+    ["BWL-036","The pins reset every frame. So can you.",["bad-game"]],
+    ["BWL-037","You can't control the carry. You can control the shot that sent it there.",["strike"]],
+    ["BWL-038","Pick a target and commit. Halfway aimed is all the way missed.",["mental-game"]],
+    ["BWL-039","Bowling: the only sport where you can wear rental shoes and still feel like a champion.",["team-and-fun"]],
+    ["BWL-040","A missed spare doesn't make you a bad bowler. It makes you a bowler.",["spare","bad-game"]],
+    ["BWL-041","The sound of a full rack crashing down is the best noise there is. Go make some.",["strike"]],
+    ["BWL-042","The lanes don't get easier. You get better at reading them.",["adjusting"]],
+    ["BWL-043","Sometimes the smartest shot is the one that takes the sure pin, not the miracle.",["split"]],
+    ["BWL-044","Finish strong. The tenth frame remembers.",["tenth-frame"]],
+    ["BWL-045","Let the ball do the work. Muscle doesn't make it hook. Timing does.",["technique"]],
+    ["BWL-046","Clean games aren't about strikes. They're about never leaving a frame open.",["strike","spare"]],
+    ["BWL-047","Teammates who clap for your spare are worth more than any trophy.",["spare","team-and-fun"]],
+    ["BWL-048","Grind out the spares when the strikes won't come. That's how good nights get built on bad lanes.",["strike","spare","adjusting","bad-game"]],
+    ["BWL-049","Move your feet, not your target. Small adjustments, big results.",["adjusting"]],
+    ["BWL-050","If you're not having fun, you're holding the ball too tight.",["team-and-fun"]],
+    ["BWL-051","Same routine, every shot. Consistency is boring, and boring is how you score.",["mental-game","practice"]],
+    ["BWL-052","Your worst game still had good shots in it. Remember those too.",["bad-game"]],
+    ["BWL-053","The breakpoint is where the ball makes its decision. Your job is getting it there.",["adjusting"]],
+    ["BWL-054","Even the big four gets picked up once in a blue moon. Throw it like you believe it.",["split","mental-game"]],
+    ["BWL-055","You bowl against the pins, not the person on the next lane. Same goes for life.",["adjusting"]],
+    ["BWL-056","Spare shooting is where good averages are made. Do the unglamorous work.",["spare"]],
+    ["BWL-057","Ten pins, one ball, and a lane full of possibilities.",["adjusting"]],
+    ["BWL-058","Step up, see the shot, throw the shot. Confidence is just trust with a follow-through.",["mental-game"]],
+    ["BWL-059","Shake off the gutter and bowl the next frame. Nobody ever won by replaying the last one.",["gutter","bad-game"]],
+    ["BWL-060","Watch the ball reaction before you change anything. The lane is telling you something.",["adjusting"]],
+    ["BWL-061","Baby splits look easy and aren't. Plenty of things in life are like that.",["split"]],
+    ["BWL-062","Bowling shoes aren't a fashion statement. They're a commitment.",["mental-game","team-and-fun"]],
+    ["BWL-063","Trust your release. Second-guessing at the line is how balls end up in the channel.",["gutter","mental-game"]],
+    ["BWL-064","Kids don't remember their scores. They remember who high-fived them after every frame.",["team-and-fun","coaching"]],
+    ["BWL-065","Strike out in the tenth and walk off like you meant it.",["strike","tenth-frame"]],
+    ["BWL-066","Between shots, sit down, sip some water, and leave the last frame on the lane.",["split","tenth-frame","adjusting"]],
+    ["BWL-067","Burned-up lanes reward patience. So do burned-out days.",["adjusting"]],
+    ["BWL-068","You learn more from one bad game than from three easy ones, if you're paying attention.",["bad-game"]],
+    ["BWL-069","Fix one thing at a time. Change everything and you'll never know what worked.",["practice"]],
+    ["BWL-070","Some nights the pins just won't fall. That's not a verdict on you.",["bad-game"]],
+    ["BWL-071","The best bowlers are the ones still smiling in the last game of the night.",["team-and-fun"]],
+    ["BWL-072","Gutter balls build character. Lots and lots of character.",["gutter"]],
+    ["BWL-073","Everybody has a corner pin that humbles them. Practice it anyway.",["split","bad-game","practice"]],
+    ["BWL-074","Speed, rotation, target. Get one right at a time and the rest will follow.",["technique","practice"]],
+    ["BWL-075","Sixty feet is a long way to doubt yourself. Make it a long way to believe.",["strike","mental-game"]],
+    ["BWL-076","An average is just a story about the past. Tonight's game hasn't been written yet.",["game-start"]],
+    ["BWL-077","Win the frame in front of you. The game will add itself up.",["mental-game","game-start"]],
+    ["BWL-078","League night is proof that grown-ups still need recess.",["team-and-fun"]],
+    ["BWL-079","A 7-10 is just life saying, \"Show me how you handle this.\"",["split"]],
+    ["BWL-080","A smooth swing beats a strong arm every time.",["technique"]],
+    ["BWL-081","The house shot makes you feel great. The sport shot makes you better.",["adjusting"]],
+    ["BWL-082","Some people golf to relax. We throw heavy balls at pins, which is cheaper than therapy.",["team-and-fun"]],
+    ["BWL-083","Shoot spares straight. Save the fancy stuff for the strikes.",["strike","spare"]],
+    ["BWL-084","You'll always remember your first 200. Remember who was there for it, too.",["milestone","team-and-fun"]],
+    ["BWL-085","Score is what you earned. Effort is what you gave. Be proud of both.",["game-end"]],
+    ["BWL-086","When the pocket disappears, go find it. It's still out there somewhere.",["strike","adjusting"]],
+    ["BWL-087","Bowling's the one place where knocking everything down is a good thing.",["team-and-fun"]],
+    ["BWL-088","Stand tall at the line. Posture is half the shot.",["technique"]],
+    ["BWL-089","Spares are bowling's second chances. Don't waste them.",["spare"]],
+    ["BWL-090","See it before you throw it. Every good shot starts in your head.",["mental-game"]],
+    ["BWL-091","Leagues aren't won in week one. They're won by showing up every week after.",["team-and-fun"]],
+    ["BWL-092","My ball has a mind of its own. Some nights it's even a genius.",["team-and-fun"]],
+    ["BWL-093","Help the new bowler pick out a ball. Somebody did it for you once.",["team-and-fun","coaching"]],
+    ["BWL-094","Every lane has a story written in oil. Learn to read it.",["adjusting"]],
+    ["BWL-095","Hear that? That's preparation finding the pocket.",["strike"]],
+    ["BWL-096","Pause at the line. One breath. Then throw.",["mental-game"]],
+    ["BWL-097","There's no such thing as a wasted night at the lanes with people you like.",["adjusting","team-and-fun"]],
+    ["BWL-098","The last frame is just a frame. Bowl it the same as the first.",["tenth-frame"]],
+    ["BWL-099","Pick a side and commit. Half-hearted split shots never fall.",["split","mental-game"]],
+    ["BWL-100","The game's not over until the last pin stops wobbling.",["tenth-frame"]],
+    ["SDL-093","Doesn't matter how many gutter balls you throw tonight. What matters is that you keep showing up to practice.",["gutter","practice"]],
+    ["CCH-022","Celebrate the spare as loud as the strike. That's how kids learn every shot matters.",["strike","spare","team-and-fun","coaching"]],
+    ["CCH-044","Lead with patience. You're not just building bowlers. You're building people.",["team-and-fun"]],
+    ["CCH-046","Smile on the lanes. Kids mirror their coaches.",["adjusting","team-and-fun","coaching"]],
+    ["CCH-073","Teach kids to set goals they control: a clean approach, a good spare, a good attitude.",["spare","team-and-fun","coaching"]],
+    ["HUM-005","Some days you're the bowling ball. Some days you're the 10-pin, wobbling and refusing to fall.",["split","tenth-frame"]],
+    ["HUM-027","Confidence is wearing rental bowling shoes like they're designer.",["mental-game","team-and-fun"]],
+    ["HUM-032","Whoever said money can't buy happiness never bought a new bowling ball.",["team-and-fun"]],
+    ["HUM-044","Nobody looks cool walking back from a gutter ball. That's the beauty of it.",["gutter"]],
+    ["HUM-070","Keep calm and check the lane conditions.",["adjusting","mental-game"]],
+    ["HUM-072","A strike is great. A strike when somebody's actually watching is legendary.",["strike"]]
+  ];
+  let lastQuoteId = null;
+  function pickQuote(moments){
+    let pool = QUOTES.filter(q => q[2].some(m => moments.indexOf(m) >= 0));
+    if (!pool.length) return null;
+    if (pool.length > 1) pool = pool.filter(q => q[0] !== lastQuoteId);
+    const q = pick(pool);
+    lastQuoteId = q[0];
+    return q;
+  }
+  // Which kind of quote fits how the night went (no trigger for the rest, so they stay in the general pool).
+  function recapQuoteMoments(s){
+    const n = s.games.length;
+    if (s.high >= 200) return ['strike','tenth-frame','spare'];
+    if (n >= 2 && s.games[n-1].total <= s.games[0].total - 25) return ['bad-game'];
+    return ['team-and-fun','spare','mental-game'];
+  }
+  let recapQuote = {key:'', q:null};  // openRecap re-runs on re-render \u2014 keep the same quote for the same recap
 
   /* ---------- input rules ---------- */
   // returns {fi, max, special:'X'|'/'} for the active bowler's next roll.
@@ -3405,6 +3548,13 @@
       ${splitTiles}`;
 
     document.getElementById('recapCall').textContent = '🎙 ' + seriesCall(b);
+    {
+      const qKey = (b.bid || b.name) + '|' + s.games.length + '|' + s.series;
+      if (recapQuote.key !== qKey) recapQuote = {key:qKey, q:pickQuote(recapQuoteMoments(s))};
+      const qc = document.getElementById('quoteCard');
+      if (recapQuote.q){ document.getElementById('quoteText').textContent = recapQuote.q[1]; qc.style.display = ''; }
+      else qc.style.display = 'none';
+    }
 
     // standings
     const st = document.getElementById('recapStandings');
@@ -6055,7 +6205,8 @@
   let introTimer = null;
   function showIntro(){
     document.getElementById('introQuote').innerHTML = introLine(bowlers.map(b=>b.name), eventLabel);
-    document.getElementById('introSub').textContent = pick(introSubLines);
+    const iq = Math.random() < 0.5 ? pickQuote(['game-start']) : null;
+    document.getElementById('introSub').textContent = iq ? iq[1] : pick(introSubLines);
     const fill = document.getElementById('introBarFill');
     fill.classList.remove('run'); void fill.offsetWidth; // restart the CSS transition
     introView.classList.add('open');
